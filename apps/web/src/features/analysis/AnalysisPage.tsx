@@ -5,6 +5,7 @@ import { ErrorMessage } from "../../components/ErrorMessage";
 import { formatDateTime } from "../../lib/format";
 import { captureImageUrl, useAnalysis, useOverlay } from "./api";
 import { CONFIDENCE_LABELS, SEVERITY_LABELS, SEVERITY_STYLES } from "./labels";
+import { CheckItemCard } from "./CheckItemCard";
 import { PhotoMarkers } from "./PhotoMarkers";
 import { SafetyPanel } from "./SafetyPanel";
 
@@ -69,7 +70,7 @@ export function AnalysisPage() {
         {selectedAnchor && <AnchorDetails anchor={selectedAnchor} />}
       </section>
 
-      <ChecksSection checks={detail.checks} result={result} />
+      <ChecksSection analysisId={detail.id} checks={detail.checks} result={result} />
       <FindingsSection result={result} />
 
       <Section title="Beobachtungen">
@@ -169,36 +170,25 @@ function AnchorDetails({ anchor }: { anchor: OverlayAnchor }) {
   );
 }
 
-function ChecksSection({ checks, result }: { checks: CheckItem[]; result: AnalysisResult }) {
+function ChecksSection({
+  analysisId,
+  checks,
+  result,
+}: {
+  analysisId: string;
+  checks: CheckItem[];
+  result: AnalysisResult;
+}) {
+  const open = checks.filter((c) => c.status === "open").length;
   return (
     <Section title="Nächste Prüfschritte">
+      <p className="text-xs text-stone-500">
+        {open} von {checks.length} offen. Abhaken dokumentiert deine Arbeit – es ändert nicht die
+        Einschätzung und ist keine Freigabe.
+      </p>
       <ol className="space-y-2">
         {checks.map((check) => (
-          <li key={check.id} className="rounded-lg bg-white p-3 shadow-sm">
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              <span className="font-bold text-stone-500">{check.position + 1}.</span>
-              {check.requires_qualified_person && (
-                <span className="rounded bg-red-700 px-1.5 font-semibold text-white">Nur Fachkraft</span>
-              )}
-              {check.source === "policy" && (
-                <span className="rounded bg-stone-800 px-1.5 font-semibold text-white">
-                  Pflicht (Sicherheitsprüfung)
-                </span>
-              )}
-              {check.reference && <span className="text-stone-600">{check.reference}</span>}
-              <span className="ml-auto text-stone-500">{check.status === "open" ? "offen" : check.status}</span>
-            </div>
-            <p className="mt-1 font-medium">{check.action}</p>
-            <p className="text-sm text-stone-600">{check.reason}</p>
-            {check.component_indices.length > 0 && (
-              <p className="mt-1 text-xs text-stone-500">
-                An:{" "}
-                {check.component_indices
-                  .map((i) => `${i + 1}. ${result.components[i]?.name ?? "?"}`)
-                  .join(", ")}
-              </p>
-            )}
-          </li>
+          <CheckItemCard key={check.id} analysisId={analysisId} check={check} result={result} />
         ))}
       </ol>
     </Section>

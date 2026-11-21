@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.10.0] – 2026-11-21
+
+### Hinzugefügt
+- **Prüfschritte dokumentieren** (`PATCH /analyses/{id}/checks/{check_id}`): erledigt / nicht
+  zutreffend / wieder offen, mit Name, Zeitpunkt, Kommentar. Fachkraft-Schritte verlangen eine
+  ausdrückliche Bestätigung, „nicht zutreffend“ eine Begründung. Ändert nie das KI-Ergebnis.
+- **Projektnotizen** (`GET/POST /projects/{id}/notes`, `DELETE …/notes/{note_id}`).
+- **Projektbericht** (`GET /projects/{id}/report`, Web-Seite zum Drucken bzw. „Als PDF
+  speichern“) mit Haftungshinweis an erster Stelle und Stand der Prüfschritte.
+- Web: abhakbare Prüfschritt-Karten, Notizen auf der Projektseite, Berichtsseite mit
+  Druckansicht; Name wird lokal für das nächste Mal gemerkt.
+- ADR 0008; 21 neue Backend-Tests (251), 8 neue Frontend-Tests (29).
+
+### Hinweis
+- Neue Tabelle `project_notes` und Spalte `check_items.qualified_person_confirmed`: eine
+  vorhandene lokale `smartcraft.db` bitte löschen.
+
 ## [0.9.0] – 2026-11-21
 
 ### Hinzugefügt

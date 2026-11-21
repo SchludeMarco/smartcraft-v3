@@ -42,6 +42,11 @@ class ProjectRow(Base):
         passive_deletes=True,
         order_by="AnalysisRow.created_at.desc()",
     )
+    notes: Mapped[list["ProjectNoteRow"]] = relationship(
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="ProjectNoteRow.created_at.desc()",
+    )
 
 
 class AnalysisRow(Base):
@@ -115,3 +120,19 @@ class CheckItemRow(Base):
     completed_by: Mapped[str | None] = mapped_column(String(200))
     completed_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
     comment: Mapped[str | None] = mapped_column(Text)
+    # Nur bei Schritten mit Fachkraft-Pflicht: dokumentierte Bestätigung durch den Menschen
+    qualified_person_confirmed: Mapped[bool | None] = mapped_column(Boolean)
+
+
+class ProjectNoteRow(Base):
+    """Freie Notiz zum Projekt (Dokumentation durch den Handwerker)."""
+
+    __tablename__ = "project_notes"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    project_id: Mapped[str] = mapped_column(
+        ForeignKey("projects.id", ondelete="CASCADE"), index=True
+    )
+    text: Mapped[str] = mapped_column(Text)
+    author: Mapped[str | None] = mapped_column(String(200))
+    created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)

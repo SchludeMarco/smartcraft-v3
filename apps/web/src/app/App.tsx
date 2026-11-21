@@ -4,22 +4,24 @@ import { AnalysisPage } from "../features/analysis/AnalysisPage";
 import { NewAnalysisPage } from "../features/analysis/NewAnalysisPage";
 import { ProjectPage } from "../features/projects/ProjectPage";
 import { ProjectsPage } from "../features/projects/ProjectsPage";
+import { ReportPage } from "../features/report/ReportPage";
 
 export function App() {
   return (
     <div className="mx-auto flex min-h-dvh max-w-2xl flex-col">
-      <header className="flex items-center justify-between bg-stone-900 px-4 py-3 text-white">
+      <header className="flex items-center justify-between bg-stone-900 px-4 py-3 text-white print:hidden">
         <Link to="/" className="text-lg font-bold tracking-tight">
           Sm@rtCraft
         </Link>
         <span className="text-xs text-stone-400">Der Kollege in der Hosentasche</span>
       </header>
       <TestModeBanner />
-      <main className="flex-1 px-4 py-5">
+      <main className="flex-1 px-4 py-5 print:p-0">
         <Routes>
           <Route path="/" element={<ProjectsPage />} />
           <Route path="/projects/:projectId" element={<ProjectPage />} />
           <Route path="/projects/:projectId/analyses/new" element={<NewAnalysisPage />} />
+          <Route path="/projects/:projectId/report" element={<ReportPage />} />
           <Route path="/analyses/:analysisId" element={<AnalysisPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

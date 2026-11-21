@@ -7,7 +7,7 @@ erscheinen direkt an der Installation. Entwickelt wird Smartphone-first; Analyse
 Sicherheitslogik sind von Anfang an geräteunabhängig (siehe
 [AR-Ausbaustufe](docs/06-ar-ausbaustufe.md)).
 
-**Status:** MVP-Schritt 7 – Foto aufnehmen und Ergebnis mit markierten Bauteilen anzeigen (KI: nur Mock).
+**Status:** MVP-Schritt 8 – Dokumentation im Projekt: Prüfschritte abhaken, Notizen, Projektbericht (KI: nur Mock).
 
 ## Erste Ausbaustufe: Installation Analyzer
 
@@ -64,6 +64,10 @@ API-Überblick (interaktiv unter `/docs`):
 | POST | `/projects/{id}/analyses` | Fotos hochladen und analysieren (multipart: `trade`, `files`, `note`) |
 | GET | `/analyses/{id}` | Analyse mit Ergebnis, Fotos und Prüfschritten |
 | GET | `/analyses/{id}/captures/{capture_id}/image` | Bereinigtes Foto (ohne Metadaten) |
+| PATCH | `/analyses/{id}/checks/{check_id}` | Prüfschritt dokumentieren (ändert nie das KI-Ergebnis) |
+| GET / POST | `/projects/{id}/notes` | Projektnotizen |
+| DELETE | `/projects/{id}/notes/{note_id}` | Notiz löschen |
+| GET | `/projects/{id}/report` | Projektbericht mit Haftungshinweis |
 | GET | `/meta/trades` | Gewerke mit Anzeigenamen |
 | GET | `/analyses/{id}/overlay` | Geräteunabhängige Einblendungs-Sicht (Markierungen, später AR) mit Pflicht-Sicherheitsblock |
 

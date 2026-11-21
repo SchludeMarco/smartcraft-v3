@@ -18,3 +18,7 @@ export type TradeOption = Schemas["TradeOut"];
 export type Health = Schemas["HealthResponse"];
 export type Severity = Schemas["Finding"]["severity"];
 export type Confidence = Schemas["Finding"]["confidence"];
+export type CheckUpdate = Schemas["CheckUpdate"];
+export type Note = Schemas["NoteOut"];
+export type ProjectReport = Schemas["ProjectReportOut"];
+export type NoteCreate = Schemas["NoteCreate"];

@@ -7,12 +7,14 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from smartcraft_api.domain.analysis import AnalysisResult
+from smartcraft_api.domain.documentation import CheckUpdate, NoteCreate, validate_check_update
 from smartcraft_api.domain.projects import ProjectCreate, ProjectUpdate
 from smartcraft_api.persistence.db import utcnow
 from smartcraft_api.persistence.models import (
     AnalysisRow,
     CaptureRow,
     CheckItemRow,
+    ProjectNoteRow,
     ProjectRow,
 )
 from smartcraft_api.safety import POLICY_VERSION
@@ -158,3 +160,58 @@ def get_analysis(session: Session, analysis_id: str) -> AnalysisRow | None:
 def load_result(row: AnalysisRow) -> AnalysisResult:
     """Gespeichertes Ergebnis wieder streng validieren (erkennt kaputte/manipulierte Daten)."""
     return AnalysisResult.model_validate(row.result)
+
+
+# --- Dokumentation -----------------------------------------------------------------
+
+
+def get_check(session: Session, analysis_id: str, check_id: str) -> CheckItemRow | None:
+    check = session.get(CheckItemRow, check_id)
+    return check if check is not None and check.analysis_id == analysis_id else None
+
+
+def update_check(session: Session, check: CheckItemRow, update: CheckUpdate) -> CheckItemRow:
+    """Dokumentiert einen Prüfschritt. Ändert nie das gespeicherte KI-Ergebnis."""
+    validate_check_update(update, requires_qualified_person=check.requires_qualified_person)
+    check.status = update.status
+    if update.status == "open":
+        check.completed_by = None
+        check.completed_at = None
+        check.comment = None
+        check.qualified_person_confirmed = None
+    else:
+        check.completed_by = update.completed_by
+        check.completed_at = utcnow()
+        check.comment = update.comment
+        check.qualified_person_confirmed = (
+            update.qualified_person_confirmed if check.requires_qualified_person else None
+        )
+    session.commit()
+    return check
+
+
+def create_note(session: Session, project: ProjectRow, data: NoteCreate) -> ProjectNoteRow:
+    note = ProjectNoteRow(project_id=project.id, text=data.text, author=data.author)
+    project.updated_at = utcnow()
+    session.add(note)
+    session.commit()
+    return note
+
+
+def list_notes(session: Session, project_id: str) -> list[ProjectNoteRow]:
+    stmt = (
+        select(ProjectNoteRow)
+        .where(ProjectNoteRow.project_id == project_id)
+        .order_by(ProjectNoteRow.created_at.desc())
+    )
+    return list(session.scalars(stmt))
+
+
+def get_note(session: Session, project_id: str, note_id: str) -> ProjectNoteRow | None:
+    note = session.get(ProjectNoteRow, note_id)
+    return note if note is not None and note.project_id == project_id else None
+
+
+def delete_note(session: Session, note: ProjectNoteRow) -> None:
+    session.delete(note)
+    session.commit()

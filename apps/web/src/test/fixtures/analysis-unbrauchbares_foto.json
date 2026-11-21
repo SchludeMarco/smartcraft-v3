@@ -88,7 +88,7 @@
   },
   "captures": [
     {
-      "id": "c0",
+      "id": "a-unbrauchbares_foto-c0",
       "position": 0,
       "media_type": "image/jpeg",
       "size_bytes": 1338,
@@ -98,7 +98,7 @@
   ],
   "checks": [
     {
-      "id": "k0",
+      "id": "a-unbrauchbares_foto-k0",
       "position": 0,
       "action": "Neues Foto aufnehmen: frontal, scharf, gut ausgeleuchtet, Beschriftungen lesbar",
       "reason": "Die Bildqualität reicht für eine belastbare Einschätzung nicht aus.",
@@ -109,7 +109,8 @@
       "status": "open",
       "completed_by": null,
       "completed_at": null,
-      "comment": null
+      "comment": null,
+      "qualified_person_confirmed": null
     }
   ]
 }

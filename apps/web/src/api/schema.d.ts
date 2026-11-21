@@ -38,6 +38,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/analyses/{analysis_id}/checks/{check_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Check
+         * @description Prüfschritt dokumentieren (erledigt / nicht zutreffend / wieder offen).
+         *
+         *     Ändert nie das KI-Ergebnis, die Risikostufe oder die Fachkraft-Pflicht.
+         */
+        patch: operations["update_check_analyses__analysis_id__checks__check_id__patch"];
+        trace?: never;
+    };
     "/analyses/{analysis_id}/overlay": {
         parameters: {
             query?: never;
@@ -167,6 +189,63 @@ export interface paths {
          * @description Fotos hochladen und analysieren. Ergebnis ist immer durch die Safety-Policy geprüft.
          */
         post: operations["create_analysis_projects__project_id__analyses_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{project_id}/notes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Notes */
+        get: operations["list_notes_projects__project_id__notes_get"];
+        put?: never;
+        /** Create Note */
+        post: operations["create_note_projects__project_id__notes_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{project_id}/notes/{note_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Note */
+        delete: operations["delete_note_projects__project_id__notes__note_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{project_id}/report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Project Report
+         * @description Alle Analysen, Prüfschritt-Dokumentation und Notizen eines Projekts.
+         *
+         *     Dokumentation, keine Freigabe – der Haftungshinweis ist Pflichtbestandteil.
+         */
+        get: operations["project_report_projects__project_id__report_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -323,6 +402,8 @@ export interface components {
             id: string;
             /** Position */
             position: number;
+            /** Qualified Person Confirmed */
+            qualified_person_confirmed: boolean | null;
             /** Reason */
             reason: string;
             /** Reference */
@@ -334,6 +415,26 @@ export interface components {
              * @enum {string}
              */
             source: "model" | "policy";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "open" | "done" | "not_applicable";
+        };
+        /** CheckUpdate */
+        CheckUpdate: {
+            /** Comment */
+            comment?: string | null;
+            /**
+             * Completed By
+             * @description Name der Person
+             */
+            completed_by?: string | null;
+            /**
+             * Qualified Person Confirmed
+             * @description Bestätigung, dass eine qualifizierte Fachkraft den Schritt ausgeführt hat
+             */
+            qualified_person_confirmed?: boolean | null;
             /**
              * Status
              * @enum {string}
@@ -455,6 +556,27 @@ export interface components {
              * @enum {string}
              */
             source: "model" | "policy";
+        };
+        /** NoteCreate */
+        NoteCreate: {
+            /** Author */
+            author?: string | null;
+            /** Text */
+            text: string;
+        };
+        /** NoteOut */
+        NoteOut: {
+            /** Author */
+            author: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Id */
+            id: string;
+            /** Text */
+            text: string;
         };
         /**
          * Observation
@@ -603,6 +725,25 @@ export interface components {
             updated_at: string;
         };
         /**
+         * ProjectReportOut
+         * @description Projektbericht – Dokumentation, keine Freigabe. Enthält immer den Haftungshinweis.
+         */
+        ProjectReportOut: {
+            /** Analyses */
+            analyses: components["schemas"]["AnalysisDetailOut"][];
+            /** Disclaimer */
+            disclaimer: string;
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            /** Notes */
+            notes: components["schemas"]["NoteOut"][];
+            project: components["schemas"]["ProjectOut"];
+            summary: components["schemas"]["ReportSummaryOut"];
+        };
+        /**
          * ProjectUpdate
          * @description Nur gesetzte Felder werden geändert; `null` leert ein optionales Feld.
          */
@@ -636,6 +777,26 @@ export interface components {
             x: number;
             /** Y */
             y: number;
+        };
+        /** ReportSummaryOut */
+        ReportSummaryOut: {
+            /** Analysis Count */
+            analysis_count: number;
+            /** Checks Done */
+            checks_done: number;
+            /** Checks Not Applicable */
+            checks_not_applicable: number;
+            /** Checks Open */
+            checks_open: number;
+            /** Checks Total */
+            checks_total: number;
+            /** Contains Test Data */
+            contains_test_data: boolean;
+            highest_risk: components["schemas"]["RiskLevel"] | null;
+            /** Qualified Checks Open */
+            qualified_checks_open: number;
+            /** Qualified Person Required */
+            qualified_person_required: boolean;
         };
         /**
          * RiskLevel
@@ -737,6 +898,42 @@ export interface operations {
                 };
                 content: {
                     "image/jpeg": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_check_analyses__analysis_id__checks__check_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                analysis_id: string;
+                check_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckItemOut"];
                 };
             };
             /** @description Validation Error */
@@ -1064,6 +1261,133 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    list_notes_projects__project_id__notes_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NoteOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_note_projects__project_id__notes_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NoteCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NoteOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_note_projects__project_id__notes__note_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                note_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    project_report_projects__project_id__report_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProjectReportOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
             };
         };
     };

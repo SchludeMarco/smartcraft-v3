@@ -49,6 +49,7 @@ class CheckItemOut(_Out):
     completed_by: str | None
     completed_at: datetime | None
     comment: str | None
+    qualified_person_confirmed: bool | None
 
 
 class CaptureOut(_Out):
@@ -68,3 +69,33 @@ class AnalysisDetailOut(_Out):
     result: AnalysisResult
     captures: list[CaptureOut]
     checks: list[CheckItemOut]
+
+
+class NoteOut(_Out):
+    id: str
+    text: str
+    author: str | None
+    created_at: datetime
+
+
+class ReportSummaryOut(BaseModel):
+    analysis_count: int
+    highest_risk: RiskLevel | None
+    qualified_person_required: bool
+    contains_test_data: bool
+    checks_total: int
+    checks_open: int
+    checks_done: int
+    checks_not_applicable: int
+    qualified_checks_open: int
+
+
+class ProjectReportOut(BaseModel):
+    """Projektbericht – Dokumentation, keine Freigabe. Enthält immer den Haftungshinweis."""
+
+    generated_at: datetime
+    disclaimer: str
+    project: ProjectOut
+    summary: ReportSummaryOut
+    notes: list[NoteOut]
+    analyses: list[AnalysisDetailOut]
