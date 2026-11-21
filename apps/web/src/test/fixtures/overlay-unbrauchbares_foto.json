@@ -1,0 +1,25 @@
+{
+  "overlay_version": "1.0.0",
+  "analysis_schema_version": "1.2.0",
+  "safety": {
+    "risk_level": "low",
+    "qualified_person_required": false,
+    "hazards": [],
+    "notices": [
+      "TESTDATEN: Dieses Ergebnis stammt aus einem festen Beispielszenario der Mock-KI. Das Foto wurde NICHT ausgewertet. Nicht für Entscheidungen verwenden."
+    ],
+    "disclaimer": "KI-gestützte Ersteinschätzung auf Basis eines Fotos. Sie ersetzt keine Prüfung, Messung oder Abnahme durch eine qualifizierte Fachkraft und stellt keine Sicherheitsfreigabe dar.",
+    "is_test_data": true
+  },
+  "anchors": [],
+  "general_findings": [],
+  "general_checks": [
+    {
+      "position": 0,
+      "action": "Neues Foto aufnehmen: frontal, scharf, gut ausgeleuchtet, Beschriftungen lesbar",
+      "requires_qualified_person": false,
+      "reference": null,
+      "source": "policy"
+    }
+  ]
+}

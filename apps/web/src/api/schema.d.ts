@@ -78,6 +78,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/meta/analysis-limits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Analysis Limits */
+        get: operations["analysis_limits_meta_analysis_limits_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/meta/trades": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Trades
+         * @description Gewerke mit Anzeigenamen – eine Quelle für alle Clients (Web, später AR).
+         */
+        get: operations["list_trades_meta_trades_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/projects": {
         parameters: {
             query?: never;
@@ -158,6 +195,15 @@ export interface components {
             /** Project Id */
             project_id: string;
             result: components["schemas"]["AnalysisResult"];
+        };
+        /** AnalysisLimitsOut */
+        AnalysisLimitsOut: {
+            /** Allowed Media Types */
+            allowed_media_types: string[];
+            /** Max Images */
+            max_images: number;
+            /** Max Note Length */
+            max_note_length: number;
         };
         /** AnalysisOverlay */
         AnalysisOverlay: {
@@ -613,6 +659,12 @@ export interface components {
          * @enum {string}
          */
         Trade: "klempner" | "elektriker" | "maler" | "tischler" | "zimmerer" | "mechaniker" | "maurer" | "dachdecker" | "gaertner" | "allround";
+        /** TradeOut */
+        TradeOut: {
+            id: components["schemas"]["Trade"];
+            /** Label */
+            label: string;
+        };
         /** ValidationError */
         ValidationError: {
             /** Context */
@@ -745,6 +797,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HealthResponse"];
+                };
+            };
+        };
+    };
+    analysis_limits_meta_analysis_limits_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisLimitsOut"];
+                };
+            };
+        };
+    };
+    list_trades_meta_trades_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TradeOut"][];
                 };
             };
         };

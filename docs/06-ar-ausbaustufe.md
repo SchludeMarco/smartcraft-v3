@@ -70,7 +70,7 @@ Einblendungen im Sichtfeld sind sicherheitskritischer als ein Bericht auf dem Ha
 | Stufe | Inhalt | Plattform | Kosten / Abhängigkeiten |
 |---|---|---|---|
 | **AR-0 – Datenfundament** ✅ | Regionen, Bauteil-Verweise, verankerte Pflicht-Prüfschritte, Overlay-Endpunkt | Backend | keine |
-| **AR-1 – Markierungen im Foto** | Ergebnisansicht zeigt Rahmen und Beschriftungen auf dem Foto; Antippen eines Bauteils zeigt dessen Prüfschritte | Web/Smartphone | keine |
+| **AR-1 – Markierungen im Foto** ✅ (Grundversion) | Ergebnisansicht zeigt Rahmen und Beschriftungen auf dem Foto; Antippen eines Bauteils zeigt dessen Prüfschritte | Web/Smartphone | keine |
 | **AR-2 – Live-Kamera am Smartphone** | Kamerabild mit Einblendungen; Analyse auf Knopfdruck, Anker folgen dem Bild | Browser (WebXR, wo verfügbar) oder native App | Entscheidung E5 |
 | **AR-3 – AR-Brille** | Freihändige Nutzung, Sprachsteuerung, Prüfschritte im Sichtfeld abhaken | AR-Brille | Entscheidung E5, ggf. Hardware/SDK |
 | **AR-4 – Räumliche Verankerung** | Bauteile bleiben im Raum markiert und werden bei erneutem Besuch der Baustelle wiedergefunden | Gerät + Backend | Entscheidung E6 |
