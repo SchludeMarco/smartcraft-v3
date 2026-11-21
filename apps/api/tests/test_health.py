@@ -1,11 +1,9 @@
 from fastapi.testclient import TestClient
 
 from smartcraft_api import __version__
-from smartcraft_api.main import create_app
 
 
-def test_health_returns_ok_and_mock_provider_by_default() -> None:
-    client = TestClient(create_app())
+def test_health_returns_ok_and_mock_provider_by_default(client: TestClient) -> None:
 
     response = client.get("/health")
 
@@ -16,8 +14,7 @@ def test_health_returns_ok_and_mock_provider_by_default() -> None:
     assert body["ai_provider"] == "mock"
 
 
-def test_openapi_schema_is_available() -> None:
-    client = TestClient(create_app())
+def test_openapi_schema_is_available(client: TestClient) -> None:
 
     response = client.get("/openapi.json")
 

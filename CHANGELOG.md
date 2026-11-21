@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0] – 2026-11-21
+
+### Hinzugefügt
+- Persistenz mit SQLAlchemy 2 und SQLite (`persistence/`): Tabellen `projects`,
+  `analyses`, `captures`, `check_items`; Repository mit Projekt-CRUD und
+  `save_analysis()` (nur Ergebnisse der aktuellen Policy-Version).
+- Projekt-API: `POST/GET /projects`, `GET/PATCH/DELETE /projects/{id}`,
+  `GET /projects/{id}/analyses`; Analyse lesen: `GET /analyses/{id}`.
+- Gespeicherte Ergebnisse werden beim Lesen erneut gegen das Schema validiert.
+- `SMARTCRAFT_DATABASE_URL`; Start per App-Factory (`uvicorn --factory`).
+- ADR 0004, 26 neue Tests (164 gesamt).
+
 ## [0.3.0] – 2026-11-21
 
 ### Hinzugefügt

@@ -92,7 +92,7 @@ Bewusst **nicht** enthalten: `approved`, `is_safe`, `compliant`, Reparaturanleit
 | Bereich | Entscheidung | Begründung |
 |---|---|---|
 | Backend | Python 3.12, FastAPI, Pydantic v2 | Starke Schemas, OpenAPI gratis, gutes KI-Ökosystem, passt zu vorhandener Erfahrung |
-| Persistenz | SQLModel + SQLite (MVP), Alembic sobald Schema stabil | Kostenlos, lokal, später Postgres ohne Umbau |
+| Persistenz | SQLAlchemy 2 + SQLite (MVP), Alembic sobald Schema stabil (ADR 0004) | Kostenlos, lokal, typsicher mit mypy strict, später Postgres ohne Umbau |
 | Bilder | Pillow, lokale Ablage hinter Storage-Interface | Kostenlos; später S3-kompatibel |
 | Frontend | React 19 + TypeScript + Vite + Tailwind, TanStack Query | V2-Know-how weiter nutzbar, aber typisiert und modular |
 | API-Typen | `openapi-typescript` aus dem FastAPI-Schema | Eine Wahrheit für Datenverträge |

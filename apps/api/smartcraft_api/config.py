@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     # Standard ist die kostenlose Mock-KI. Echte Provider nur nach ausdrücklicher Freigabe.
     ai_provider: Literal["mock"] = "mock"
     cors_origins: list[str] = ["http://localhost:5173"]
+    # Lokale SQLite-Datei; später z. B. postgresql+psycopg://…
+    database_url: str = "sqlite:///./smartcraft.db"
 
 
 @lru_cache
