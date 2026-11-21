@@ -1,4 +1,5 @@
 import asyncio
+import uuid
 from typing import Any
 
 import pytest
@@ -33,7 +34,7 @@ def add_mock_analysis(session: Session, project_id: str, scenario: MockScenario)
         session,
         project,
         result,
-        [repo.StoredCapture("key-" + scenario.value, "image/jpeg", "0" * 64, 10, 800, 600)],
+        [repo.StoredCapture(f"{uuid.uuid4()}.jpg", "image/jpeg", "0" * 64, 10, 800, 600)],
     )
     return row.id
 

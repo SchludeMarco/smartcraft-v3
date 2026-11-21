@@ -3,7 +3,7 @@
 KI-Assistent für Handwerker auf der Baustelle: Installationen, Feuchtigkeitsschäden, Risse,
 Bauteile. Langfristig multimodal (Smartphone, später AR-Brille).
 
-**Status:** MVP-Schritt 4 – Projekte und Datenspeicherung (KI: nur Mock).
+**Status:** MVP-Schritt 5 – Foto-Upload und Analyse über die API (KI: nur Mock).
 
 ## Erste Ausbaustufe: Installation Analyzer
 
@@ -50,7 +50,18 @@ API-Überblick (interaktiv unter `/docs`):
 | POST / GET | `/projects` | Projekt anlegen / auflisten |
 | GET / PATCH / DELETE | `/projects/{id}` | Projekt lesen / ändern / endgültig löschen |
 | GET | `/projects/{id}/analyses` | Analysen eines Projekts |
+| POST | `/projects/{id}/analyses` | Fotos hochladen und analysieren (multipart: `trade`, `files`, `note`) |
 | GET | `/analyses/{id}` | Analyse mit Ergebnis, Fotos und Prüfschritten |
+| GET | `/analyses/{id}/captures/{capture_id}/image` | Bereinigtes Foto (ohne Metadaten) |
+
+Beispiel mit der Mock-KI:
+
+```bash
+curl -F trade=elektriker -F 'note=[mock:unterverteilung]' -F files=@foto.jpg \
+  http://localhost:8000/projects/<projekt-id>/analyses
+```
+
+Fotos werden vor dem Speichern neu kodiert; EXIF-Daten inkl. GPS-Position fallen dabei weg.
 
 Konfiguration über Umgebungsvariablen, siehe `apps/api/.env.example`. Standard-KI ist ein
 kostenloser Mock.

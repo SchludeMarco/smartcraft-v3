@@ -1,4 +1,5 @@
 from collections.abc import Iterator
+from pathlib import Path
 
 import pytest
 from fastapi import FastAPI
@@ -10,9 +11,14 @@ from smartcraft_api.main import create_app
 
 
 @pytest.fixture
-def app() -> FastAPI:
-    """Frische App mit In-Memory-Datenbank – keine Dateien, keine Netzwerkzugriffe."""
-    return create_app(Settings(database_url="sqlite://", environment="test"))
+def settings(tmp_path: Path) -> Settings:
+    return Settings(database_url="sqlite://", environment="test", storage_dir=tmp_path / "storage")
+
+
+@pytest.fixture
+def app(settings: Settings) -> FastAPI:
+    """Frische App mit In-Memory-DB und temporärem Foto-Speicher, ohne Netzwerkzugriffe."""
+    return create_app(settings)
 
 
 @pytest.fixture
