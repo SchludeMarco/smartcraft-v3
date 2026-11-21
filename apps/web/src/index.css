@@ -1,1 +1,149 @@
 @import "tailwindcss";
+/* Cinzel nur für den Schriftzug (Wiedererkennung aus V2), lokal statt über Google Fonts */
+@import "@fontsource/cinzel/700.css";
+
+/* Gestaltung: Aufbau und Elemente aus Sm@rtCraft V2 (Kopfleiste, Logo, Schritt-Labels,
+   Gewerk-Kacheln), Farbgebung professionell und schlicht: Lila-Blau, Indigo, ruhige Flächen,
+   polierte Buttons. Siehe docs/adr/0010-gestaltung-wie-v2.md. */
+@theme {
+  --color-brand: #4f46e5; /* Indigo */
+  --color-brand-dark: #3730a3;
+  --color-brand-light: #c7d2fe;
+  --color-ink: #0f172a; /* Überschriften */
+  --color-surface: #f7f8fc; /* Fensterflächen */
+  --color-surface-dark: #eceef7;
+  --color-line: #dfe3ef; /* feine Rahmen */
+
+  --font-display: "Cinzel", Georgia, "Times New Roman", serif;
+}
+
+body {
+  background-color: #0e1230;
+  color: #1e293b;
+}
+
+@layer components {
+  /* Kopfleiste in Lila-Blau mit dezentem Glanz (Overlay im Header-Component) */
+  .header-brand {
+    background: linear-gradient(135deg, #4c3fa8 0%, #4651c4 45%, #3361b8 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      0 10px 30px -12px rgba(30, 27, 75, 0.8);
+  }
+
+  /* Hauptfenster: helle, ruhige Fläche mit feinem Rahmen und weichem Schatten */
+  .surface-panel {
+    background: linear-gradient(180deg, #ffffff 0%, var(--color-surface) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow:
+      inset 0 1px 0 #ffffff,
+      0 24px 48px -24px rgba(8, 10, 40, 0.65);
+  }
+
+  /* Karten innerhalb des Fensters */
+  .surface-card {
+    background: #ffffff;
+    border: 1px solid var(--color-line);
+    box-shadow:
+      0 1px 2px rgba(15, 23, 42, 0.04),
+      0 6px 16px -10px rgba(15, 23, 42, 0.18);
+    transition: box-shadow 150ms ease, transform 150ms ease;
+  }
+
+  .step-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.85rem;
+    border-radius: 9999px;
+    background: linear-gradient(180deg, #eef0ff, #e3e6fd);
+    border: 1px solid #c9cef8;
+    color: var(--color-brand-dark);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+
+  /* Polierte Buttons: feiner Verlauf, Lichtkante oben, weicher Schatten */
+  .btn-primary,
+  .btn-secondary,
+  .btn-dark {
+    border-radius: 0.75rem;
+    font-weight: 600;
+    transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
+  }
+  .btn-primary {
+    background: linear-gradient(180deg, #6159ea 0%, var(--color-brand) 55%, #4338ca 100%);
+    border: 1px solid var(--color-brand-dark);
+    color: #fff;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.28),
+      0 8px 18px -8px rgba(67, 56, 202, 0.65);
+  }
+  .btn-primary:hover:not(:disabled) { filter: brightness(1.06); }
+  .btn-primary:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 3px 8px -4px rgba(67, 56, 202, 0.6);
+  }
+  .btn-primary:disabled { filter: saturate(0.5) brightness(0.95); opacity: 0.75; }
+
+  .btn-secondary {
+    background: linear-gradient(180deg, #ffffff 0%, #f3f4fa 100%);
+    border: 1px solid #d3d8e8;
+    color: #334155;
+    box-shadow:
+      inset 0 1px 0 #ffffff,
+      0 2px 6px -3px rgba(15, 23, 42, 0.2);
+  }
+  .btn-secondary:hover:not(:disabled) { border-color: #b9c0dd; }
+  .btn-secondary:active:not(:disabled) { transform: translateY(1px); }
+  .btn-secondary:disabled { opacity: 0.6; }
+
+  .btn-dark {
+    background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+    border: 1px solid #0f172a;
+    color: #fff;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.15),
+      0 8px 18px -10px rgba(15, 23, 42, 0.7);
+  }
+  .btn-dark:hover { filter: brightness(1.1); }
+  .btn-dark:active { transform: translateY(1px); }
+
+  .field {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid #d3d8e8;
+    background: #ffffff;
+    padding: 0.6rem 0.8rem;
+    font-size: 1rem;
+    color: #0f172a;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.05);
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.18);
+  }
+
+  .font-display { font-family: var(--font-display); }
+
+  /* Seitenhintergrund: tiefes Indigo-Blau mit sanftem Lichtschein oben */
+  .app-backdrop {
+    background:
+      radial-gradient(ellipse 80% 45% at 50% -10%, rgba(129, 140, 248, 0.28), transparent 60%),
+      linear-gradient(165deg, #1e1b4b 0%, #172554 45%, #0b1130 100%);
+  }
+}
+
+@media print {
+  body { background: #fff; }
+  .app-backdrop { background: none; }
+  .surface-panel, .surface-card {
+    background: #fff;
+    border: 1px solid #999;
+    box-shadow: none;
+  }
+}

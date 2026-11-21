@@ -74,12 +74,11 @@ describe("Neue Analyse", () => {
     const user = userEvent.setup();
     renderWithProviders(<App />, { route: "/projects/p1/analyses/new" });
 
-    await screen.findByRole("option", { name: "Elektriker" });
-    await user.selectOptions(screen.getByLabelText("Gewerk *"), "elektriker");
+    await user.click(await screen.findByRole("button", { name: "Elektriker" }));
     await user.upload(screen.getByTestId("gallery-input"), [photo("a.jpg"), photo("b.jpg")]);
     expect(await screen.findByAltText("Foto 2")).toBeInTheDocument();
-    await user.type(screen.getByLabelText("Notiz (optional)"), "Keller");
-    await user.click(screen.getByRole("button", { name: "Analysieren" }));
+    await user.type(screen.getByLabelText("Problembeschreibung (optional)"), "Keller");
+    await user.click(screen.getByRole("button", { name: "Problem analysieren" }));
 
     expect(await screen.findByRole("region", { name: "Sicherheit" })).toBeInTheDocument();
     const post = calls.find((c) => c.method === "POST");
@@ -95,12 +94,11 @@ describe("Neue Analyse", () => {
     const user = userEvent.setup();
     renderWithProviders(<App />, { route: "/projects/p1/analyses/new" });
 
-    await user.click(await screen.findByRole("button", { name: "Analysieren" }));
-    expect(screen.getByRole("alert")).toHaveTextContent("Bitte ein Gewerk auswählen.");
+    await user.click(await screen.findByRole("button", { name: "Problem analysieren" }));
+    expect(screen.getByRole("alert")).toHaveTextContent("Bitte einen Beruf auswählen.");
 
-    await screen.findByRole("option", { name: "Elektriker" });
-    await user.selectOptions(screen.getByLabelText("Gewerk *"), "klempner");
-    await user.click(screen.getByRole("button", { name: "Analysieren" }));
+    await user.click(await screen.findByRole("button", { name: "Klempner (Sanitär/Heizung)" }));
+    await user.click(screen.getByRole("button", { name: "Problem analysieren" }));
     expect(screen.getByRole("alert")).toHaveTextContent("mindestens ein Foto");
     expect(calls.some((c) => c.method === "POST")).toBe(false);
   });
@@ -116,10 +114,10 @@ describe("Neue Analyse", () => {
     expect(await screen.findByAltText("Foto 5")).toBeInTheDocument();
     expect(screen.queryByAltText("Foto 6")).not.toBeInTheDocument();
     expect(screen.getByRole("alert")).toHaveTextContent("Höchstens 5 Fotos");
-    expect(screen.queryByTestId("gallery-input")).not.toBeInTheDocument();
+    expect(screen.getByTestId("gallery-input")).toBeDisabled();
 
     await user.click(screen.getByRole("button", { name: "Foto 1 entfernen" }));
-    expect(screen.getByText("Fotos * (4/5)")).toBeInTheDocument();
+    expect(screen.getByText("Fotos: 4/5")).toBeInTheDocument();
   });
 
   it("zeigt eine verständliche Meldung bei zu großem Upload", async () => {
@@ -127,11 +125,10 @@ describe("Neue Analyse", () => {
     const user = userEvent.setup();
     renderWithProviders(<App />, { route: "/projects/p1/analyses/new" });
 
-    await screen.findByRole("option", { name: "Elektriker" });
-    await user.selectOptions(screen.getByLabelText("Gewerk *"), "elektriker");
+    await user.click(await screen.findByRole("button", { name: "Elektriker" }));
     await user.upload(screen.getByTestId("gallery-input"), [photo()]);
     await screen.findByAltText("Foto 1");
-    await user.click(screen.getByRole("button", { name: "Analysieren" }));
+    await user.click(screen.getByRole("button", { name: "Problem analysieren" }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent("zu groß");
   });

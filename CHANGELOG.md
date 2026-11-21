@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.12.0] – 2026-11-21
+
+### Geändert (ADR 0010)
+- **Gestaltung als Weiterentwicklung von V2:** Kopfleiste mit Logo und Schriftzug
+  „Sm@rtCraft!“ (Cinzel, lokal eingebunden), Favicons, Ablauf in den V2-Schritten
+  „1. Beruf auswählen“ / „2. Problem dokumentieren & analysieren“ / „3. Ergebnis der
+  KI-Analyse“, Berufswahl als farbige Kacheln mit Icons, Gewerk-Etiketten.
+- **Farbgebung professionell und schlicht:** Kopfleiste in Lila-Blau, Indigo-Hintergrund,
+  helle Fensterflächen mit feinem Rahmen, polierte Buttons, neutrale Grautöne.
+
 ## [0.11.0] – 2026-11-21
 
 ### Hinzugefügt (Härtung, ADR 0009)

@@ -1,3 +1,4 @@
+import { Printer } from "lucide-react";
 import { Link, useParams } from "react-router";
 import type { AnalysisDetail, ProjectReport } from "../../api/types";
 import { ErrorMessage } from "../../components/ErrorMessage";
@@ -15,34 +16,35 @@ export function ReportPage() {
   const { projectId = "" } = useParams();
   const report = useProjectReport(projectId);
 
-  if (report.isPending) return <p className="text-stone-500">Bericht wird erstellt …</p>;
+  if (report.isPending) return <p className="text-slate-500">Bericht wird erstellt …</p>;
   if (report.isError) return <ErrorMessage error={report.error} />;
 
   const r = report.data;
   return (
     <article className="space-y-6 print:space-y-4 print:text-sm">
       <div className="flex items-center justify-between print:hidden">
-        <Link to={`/projects/${projectId}`} className="text-sm text-amber-700">
+        <Link to={`/projects/${projectId}`} className="text-sm font-semibold text-brand">
           ← Zum Projekt
         </Link>
         <button
           type="button"
           onClick={() => window.print()}
-          className="rounded bg-stone-900 px-4 py-2 font-semibold text-white"
+          className="btn-dark flex items-center gap-2 px-4 py-2 text-sm"
         >
+          <Printer className="h-4 w-4" aria-hidden="true" />
           Drucken / als PDF speichern
         </button>
       </div>
 
       <header className="space-y-1">
-        <p className="text-xs tracking-wide text-stone-500 uppercase">Sm@rtCraft · Projektbericht</p>
-        <h1 className="text-2xl font-bold">{r.project.name}</h1>
+        <p className="text-xs font-semibold tracking-widest uppercase text-brand">Sm@rtCraft · Projektbericht</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-ink">{r.project.name}</h1>
         {r.project.address && <p>{r.project.address}</p>}
         {r.project.client && <p className="text-sm">Auftraggeber: {r.project.client}</p>}
-        <p className="text-xs text-stone-500">Erstellt am {formatDateTime(r.generated_at)}</p>
+        <p className="text-xs text-slate-500">Erstellt am {formatDateTime(r.generated_at)}</p>
       </header>
 
-      <p role="note" className="rounded border-2 border-stone-800 p-3 text-sm font-medium">
+      <p role="note" className="rounded-xl border border-slate-300 bg-slate-50 p-3 text-sm font-medium">
         {r.disclaimer}
       </p>
 
@@ -50,7 +52,7 @@ export function ReportPage() {
 
       {r.project.description && (
         <section>
-          <h2 className="text-lg font-semibold">Beschreibung</h2>
+          <h2 className="text-lg font-semibold text-ink">Beschreibung</h2>
           <p className="whitespace-pre-line">{r.project.description}</p>
         </section>
       )}
@@ -61,11 +63,11 @@ export function ReportPage() {
 
       {r.notes.length > 0 && (
         <section className="space-y-2 break-inside-avoid">
-          <h2 className="text-lg font-semibold">Notizen</h2>
+          <h2 className="text-lg font-semibold text-ink">Notizen</h2>
           <ul className="space-y-1">
             {r.notes.map((n) => (
               <li key={n.id}>
-                <span className="text-stone-500">
+                <span className="text-slate-500">
                   {formatDateTime(n.created_at)}
                   {n.author && ` · ${n.author}`}:
                 </span>{" "}
@@ -82,8 +84,8 @@ export function ReportPage() {
 function Summary({ report }: { report: ProjectReport }) {
   const s = report.summary;
   return (
-    <section aria-label="Zusammenfassung" className="space-y-2 rounded-lg bg-white p-4 shadow-sm print:shadow-none">
-      <h2 className="text-lg font-semibold">Zusammenfassung</h2>
+    <section aria-label="Zusammenfassung" className="surface-card space-y-2 rounded-xl p-4">
+      <h2 className="text-lg font-semibold text-ink">Zusammenfassung</h2>
       {s.contains_test_data && (
         <p className="rounded bg-amber-300 px-3 py-1 text-sm font-bold text-amber-950">
           Enthält TESTDATEN der Mock-KI – keine echte Bildauswertung.
@@ -116,8 +118,8 @@ function Summary({ report }: { report: ProjectReport }) {
 function ReportAnalysis({ analysis, index }: { analysis: AnalysisDetail; index: number }) {
   const result = analysis.result;
   return (
-    <section className="space-y-3 border-t border-stone-300 pt-4 print:break-before-page">
-      <h2 className="text-xl font-semibold">
+    <section className="space-y-3 border-t border-slate-300 pt-4 print:break-before-page">
+      <h2 className="text-xl font-semibold tracking-tight text-ink">
         Analyse {index} · {formatDateTime(analysis.created_at)}
       </h2>
       <SafetyPanel result={result} />
@@ -152,7 +154,7 @@ function ReportAnalysis({ analysis, index }: { analysis: AnalysisDetail; index: 
         <h3 className="font-semibold">Prüfschritte</h3>
         <table className="w-full border-collapse text-left text-sm">
           <thead>
-            <tr className="border-b border-stone-400">
+            <tr className="border-b border-slate-400">
               <th className="py-1 pr-2">#</th>
               <th className="py-1 pr-2">Prüfschritt</th>
               <th className="py-1">Dokumentation</th>
@@ -160,12 +162,12 @@ function ReportAnalysis({ analysis, index }: { analysis: AnalysisDetail; index: 
           </thead>
           <tbody>
             {analysis.checks.map((c) => (
-              <tr key={c.id} className="border-b border-stone-200 align-top">
+              <tr key={c.id} className="border-b border-slate-200 align-top">
                 <td className="py-1 pr-2">{c.position + 1}</td>
                 <td className="py-1 pr-2">
                   {c.action}
                   {c.requires_qualified_person && <strong> (nur Fachkraft)</strong>}
-                  {c.reference && <span className="text-stone-500"> · {c.reference}</span>}
+                  {c.reference && <span className="text-slate-500"> · {c.reference}</span>}
                 </td>
                 <td className="py-1">
                   <strong>{STATUS_TEXT[c.status]}</strong>

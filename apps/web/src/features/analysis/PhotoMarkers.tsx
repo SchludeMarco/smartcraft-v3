@@ -16,7 +16,7 @@ type Props = {
 export function PhotoMarkers({ capture, imageUrl, anchors, selected, onSelect }: Props) {
   const own = anchors.filter((a) => a.region.capture_index === capture.position);
   return (
-    <figure className="relative overflow-hidden rounded-lg bg-stone-200">
+    <figure className="relative overflow-hidden rounded-lg bg-slate-200">
       <img src={imageUrl} alt={`Foto ${capture.position + 1}`} className="block h-auto w-full" />
       {own.map((anchor) => {
         const { x, y, width, height } = anchor.region;
@@ -38,7 +38,7 @@ export function PhotoMarkers({ capture, imageUrl, anchors, selected, onSelect }:
               height: `${height * 100}%`,
             }}
           >
-            <span className="absolute -top-0.5 -left-0.5 rounded-br bg-stone-900 px-1.5 text-xs font-bold text-white">
+            <span className="absolute -top-0.5 -left-0.5 rounded-br bg-slate-900 px-1.5 text-xs font-bold text-white">
               {anchor.component_index + 1}
             </span>
           </button>

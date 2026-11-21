@@ -8,10 +8,10 @@ export function SafetyPanel({ result }: { result: AnalysisResult }) {
   return (
     <section
       aria-label="Sicherheit"
-      className="space-y-3 rounded-lg border-2 border-red-700 bg-red-50 p-4"
+      className="space-y-3 rounded-xl border border-red-200 border-l-4 border-l-red-600 bg-red-50/80 p-4 shadow-sm"
     >
       {source.is_test_data && (
-        <p className="rounded bg-amber-300 px-3 py-2 text-sm font-bold text-amber-950">
+        <p className="rounded-lg border border-amber-300 bg-amber-100 px-3 py-2 text-sm font-bold text-amber-950">
           TESTDATEN – das Foto wurde nicht ausgewertet. Nicht für Entscheidungen verwenden.
         </p>
       )}
@@ -35,7 +35,7 @@ export function SafetyPanel({ result }: { result: AnalysisResult }) {
           ))}
         </ul>
       )}
-      <p className="text-xs text-stone-700">{safety.disclaimer}</p>
+      <p className="text-xs text-slate-700">{safety.disclaimer}</p>
     </section>
   );
 }

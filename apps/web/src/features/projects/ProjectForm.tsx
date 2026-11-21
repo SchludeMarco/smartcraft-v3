@@ -8,8 +8,7 @@ type Props = {
   onCancel: () => void;
 };
 
-const inputClass =
-  "w-full rounded border border-stone-300 bg-white px-3 py-2 text-base focus:border-amber-600 focus:outline-none";
+const inputClass = "field";
 
 export function ProjectForm({ onCreated, onCancel }: Props) {
   const create = useCreateProject();
@@ -36,10 +35,12 @@ export function ProjectForm({ onCreated, onCancel }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-4 rounded-lg bg-white p-4 shadow-sm">
-      <h2 className="text-lg font-semibold">Neues Projekt</h2>
+    <form onSubmit={handleSubmit} noValidate className="surface-panel space-y-4 rounded-xl p-4">
+      <h2>
+        <span className="step-badge">Neues Projekt</span>
+      </h2>
       <label className="block space-y-1">
-        <span className="text-sm font-medium">Projektname *</span>
+        <span className="text-sm font-semibold text-slate-700">Projektname *</span>
         <input
           className={inputClass}
           value={name}
@@ -51,15 +52,15 @@ export function ProjectForm({ onCreated, onCancel }: Props) {
         {nameError && <span className="text-sm text-red-700">{nameError}</span>}
       </label>
       <label className="block space-y-1">
-        <span className="text-sm font-medium">Adresse</span>
+        <span className="text-sm font-semibold text-slate-700">Adresse</span>
         <input className={inputClass} value={address} onChange={(e) => setAddress(e.target.value)} maxLength={300} />
       </label>
       <label className="block space-y-1">
-        <span className="text-sm font-medium">Auftraggeber</span>
+        <span className="text-sm font-semibold text-slate-700">Auftraggeber</span>
         <input className={inputClass} value={client} onChange={(e) => setClient(e.target.value)} maxLength={200} />
       </label>
       <label className="block space-y-1">
-        <span className="text-sm font-medium">Beschreibung</span>
+        <span className="text-sm font-semibold text-slate-700">Beschreibung</span>
         <textarea
           className={inputClass}
           rows={3}
@@ -73,11 +74,11 @@ export function ProjectForm({ onCreated, onCancel }: Props) {
         <button
           type="submit"
           disabled={create.isPending}
-          className="flex-1 rounded bg-amber-600 px-4 py-3 font-semibold text-white disabled:opacity-60"
+          className="btn-primary flex-1 px-4 py-3"
         >
           {create.isPending ? "Wird angelegt …" : "Projekt anlegen"}
         </button>
-        <button type="button" onClick={onCancel} className="rounded border border-stone-300 px-4 py-3">
+        <button type="button" onClick={onCancel} className="btn-secondary px-4 py-3">
           Abbrechen
         </button>
       </div>

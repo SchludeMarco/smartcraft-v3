@@ -12,9 +12,9 @@ const STATUS_LABELS: Record<CheckItem["status"], string> = {
 };
 
 const STATUS_STYLES: Record<CheckItem["status"], string> = {
-  open: "bg-stone-200 text-stone-700",
+  open: "bg-slate-200 text-slate-700",
   done: "bg-green-700 text-white",
-  not_applicable: "bg-stone-500 text-white",
+  not_applicable: "bg-slate-500 text-white",
 };
 
 type Mode = "done" | "not_applicable" | null;
@@ -67,26 +67,26 @@ export function CheckItemCard({
   }
 
   return (
-    <li className="rounded-lg bg-white p-3 shadow-sm" data-testid={`check-${check.position}`}>
+    <li className="surface-card rounded-xl p-3" data-testid={`check-${check.position}`}>
       <div className="flex flex-wrap items-center gap-2 text-xs">
-        <span className="font-bold text-stone-500">{check.position + 1}.</span>
+        <span className="font-bold text-slate-500">{check.position + 1}.</span>
         {check.requires_qualified_person && (
           <span className="rounded bg-red-700 px-1.5 font-semibold text-white">Nur Fachkraft</span>
         )}
         {check.source === "policy" && (
-          <span className="rounded bg-stone-800 px-1.5 font-semibold text-white">
+          <span className="rounded bg-slate-800 px-1.5 font-semibold text-white">
             Pflicht (Sicherheitsprüfung)
           </span>
         )}
-        {check.reference && <span className="text-stone-600">{check.reference}</span>}
+        {check.reference && <span className="text-slate-600">{check.reference}</span>}
         <span className={`ml-auto rounded px-1.5 font-semibold ${STATUS_STYLES[check.status]}`}>
           {STATUS_LABELS[check.status]}
         </span>
       </div>
       <p className="mt-1 font-medium">{check.action}</p>
-      <p className="text-sm text-stone-600">{check.reason}</p>
+      <p className="text-sm text-slate-600">{check.reason}</p>
       {check.component_indices.length > 0 && (
-        <p className="mt-1 text-xs text-stone-500">
+        <p className="mt-1 text-xs text-slate-500">
           An:{" "}
           {check.component_indices
             .map((i) => `${i + 1}. ${result.components[i]?.name ?? "?"}`)
@@ -95,7 +95,7 @@ export function CheckItemCard({
       )}
 
       {check.status !== "open" && (
-        <div className="mt-2 rounded bg-stone-50 p-2 text-sm">
+        <div className="mt-2 rounded-lg bg-surface p-2 text-sm">
           <p>
             Dokumentiert von <strong>{check.completed_by}</strong>
             {check.completed_at && <> am {formatDateTime(check.completed_at)}</>}
@@ -103,12 +103,12 @@ export function CheckItemCard({
           {check.qualified_person_confirmed && (
             <p className="text-green-800">Ausführung durch Fachkraft bestätigt</p>
           )}
-          {check.comment && <p className="text-stone-600">„{check.comment}“</p>}
+          {check.comment && <p className="text-slate-600">„{check.comment}“</p>}
           <button
             type="button"
             onClick={reopen}
             disabled={update.isPending}
-            className="mt-1 text-xs text-amber-700 underline print:hidden"
+            className="mt-1 text-xs font-semibold text-brand underline print:hidden"
           >
             Wieder öffnen
           </button>
@@ -120,14 +120,14 @@ export function CheckItemCard({
           <button
             type="button"
             onClick={() => setMode("done")}
-            className="rounded bg-green-700 px-3 py-2 text-sm font-semibold text-white"
+            className="btn-primary px-4 py-2 text-sm"
           >
             Erledigt
           </button>
           <button
             type="button"
             onClick={() => setMode("not_applicable")}
-            className="rounded border border-stone-400 px-3 py-2 text-sm"
+            className="btn-secondary px-4 py-2 text-sm"
           >
             Nicht zutreffend
           </button>
@@ -135,11 +135,11 @@ export function CheckItemCard({
       )}
 
       {mode !== null && (
-        <form onSubmit={submit} className="mt-2 space-y-2 rounded bg-stone-50 p-2 print:hidden">
+        <form onSubmit={submit} className="mt-2 space-y-2 rounded-lg bg-surface p-2 print:hidden">
           <label className="block text-sm">
             <span className="font-medium">Dein Name *</span>
             <input
-              className="mt-1 w-full rounded border border-stone-300 bg-white px-2 py-2"
+              className="field mt-1"
               value={name}
               onChange={(e) => setName(e.target.value)}
               maxLength={200}
@@ -150,7 +150,7 @@ export function CheckItemCard({
               {mode === "not_applicable" ? "Begründung *" : "Kommentar (optional)"}
             </span>
             <textarea
-              className="mt-1 w-full rounded border border-stone-300 bg-white px-2 py-2"
+              className="field mt-1"
               rows={2}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
@@ -175,7 +175,7 @@ export function CheckItemCard({
             <button
               type="submit"
               disabled={update.isPending}
-              className="rounded bg-amber-600 px-3 py-2 text-sm font-semibold text-white disabled:opacity-60"
+              className="btn-primary px-4 py-2 text-sm"
             >
               Speichern
             </button>
@@ -185,7 +185,7 @@ export function CheckItemCard({
                 setMode(null);
                 update.reset();
               }}
-              className="rounded border border-stone-300 px-3 py-2 text-sm"
+              className="btn-secondary px-4 py-2 text-sm"
             >
               Abbrechen
             </button>
