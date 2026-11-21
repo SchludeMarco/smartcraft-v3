@@ -7,7 +7,7 @@
 | E1 | **Echter KI-Provider** (Gemini, OpenAI, Anthropic, lokales Modell) und ob Kosten anfallen dürfen | vor Schritt 9 | Bis dahin nur Mock. Achtung: Bei Gratis-Stufen mancher Anbieter dürfen Eingaben zum Training genutzt werden – bei Kundenfotos kritisch. |
 | E2 | **Hosting/Deployment** | nach MVP | Erst lokal; später kostenfreie Option prüfen und vorlegen |
 | E3 | **Login & Mehrbenutzer** (wer nutzt V3: nur Marco, Familie/Freunde, Betriebe?) | nach MVP | Datenmodell ist mit `owner_id` vorbereitet |
-| E4 | **Umfang Domänen im MVP**: nur Elektro + Sanitär/Heizung oder alles? | vor Schritt 3 | Elektro, Sanitär, Heizung, „sonstige“ |
+| E4 | ~~Umfang Gewerke im MVP~~ | – | **Entschieden (21.11.2026):** alle Gewerke wie in V2 |
 
 Alle übrigen technischen Entscheidungen (Stack, Struktur, Schema) sind in
 `02-architektur.md` begründet und werden ohne Rückfrage umgesetzt.

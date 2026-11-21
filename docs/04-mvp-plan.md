@@ -10,7 +10,7 @@ Jeder Schritt ist ein eigener, kleiner Pull Request mit Tests.
 |---|---|---|
 | 0 | **Bestandsaufnahme & Doku** | Diese Dokumente, CLAUDE.md, README ✅ |
 | 1 | **Backend-Gerüst** | FastAPI-App, Settings, `/health`, ruff/mypy/pytest, CI-Workflow grün ✅ |
-| 2 | **Ergebnisschema + Safety-Policy** | `InstallationAnalysis` v1, `apply_safety_policy()`; Tests: Elektro erzwingt Fachkraft-Pflicht, Freigabe-Formulierungen werden neutralisiert, Disclaimer immer gesetzt, Policy kann nie entschärfen |
+| 2 | **Ergebnisschema + Safety-Policy** | `InstallationAnalysis` v1, `apply_safety_policy()`; Tests: Elektro erzwingt Fachkraft-Pflicht, Freigabe-Formulierungen werden neutralisiert, Disclaimer immer gesetzt, Policy kann nie entschärfen ✅ |
 | 3 | **Provider-Interface + MockProvider** | `AnalysisProvider`-Protocol, Mock mit 3 Szenarien (Unterverteilung, Heizungsanlage, unbrauchbares Foto) |
 | 4 | **Persistenz + Projekt-API** | SQLModel-Tabellen `Project`, `Analysis`, `Capture`, `CheckItem`; CRUD-Endpunkte; API-Tests |
 | 5 | **Media-Pipeline + Analyse-Endpunkt** | Upload, Typ-/Größenprüfung, EXIF/GPS entfernen, Resize; `POST /projects/{id}/analyses` läuft komplett mit Mock |

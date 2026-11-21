@@ -60,9 +60,15 @@
 
 ## Ergebnisschema (Kurzfassung, v1)
 
+Umgesetzt in `apps/api/smartcraft_api/domain/analysis.py` (`AnalysisDraft` vom Provider,
+`AnalysisResult` nach der Policy). Gewerke wie in V2: Klempner (Sanitär/Heizung),
+Elektriker, Maler, Tischler/Schreiner, Zimmerer, Mechaniker, Maurer, Dachdecker, Gärtner,
+Allround.
+
 ```text
-InstallationAnalysis
-  domain: electrical | plumbing | heating | ventilation | other | unknown
+AnalysisResult
+  schema_version, trade
+  summary: str                                                             # neutral, 1–2 Sätze
   image_quality: { usable: bool, issues: [str] }
   components: [{ name, category, location_hint, labels: [{ text, confidence }] }]
   observations: [{ text, confidence: low|medium|high, component_ref? }]   # nur Sichtbares
@@ -71,8 +77,10 @@ InstallationAnalysis
   uncertainties: [str]                                                     # was nicht beurteilbar ist
   next_checks: [{ action, reason, requires_qualified_person: bool,
                   reference? }]                                            # z. B. „DIN VDE 0100-600“
-  safety: { risk_level: low|medium|high, qualified_person_required: bool,
+  safety: { risk_level: low|medium|high, hazards: [electrical|gas|structural|
+            working_at_height|hazardous_material], qualified_person_required: bool,
             notices: [str], disclaimer: str }                              # disclaimer vom Server
+  policy: { version, interventions: [{ rule_id, description }] }           # Protokoll der Policy
 ```
 
 Bewusst **nicht** enthalten: `approved`, `is_safe`, `compliant`, Reparaturanleitungen.
