@@ -28,7 +28,13 @@ const analysis: AnalysisSummary = {
   open_check_count: 3,
 };
 
-const health = { status: "ok", version: "0.6.0", environment: "test", ai_provider: "mock" };
+const health = {
+  status: "ok",
+  version: "0.8.0",
+  environment: "test",
+  ai_provider: "mock",
+  persistent_storage: true,
+};
 
 describe("Projektübersicht", () => {
   it("zeigt Projekte und den Testmodus-Hinweis", async () => {
@@ -44,6 +50,21 @@ describe("Projektübersicht", () => {
     expect(screen.getByText("Hauptstraße 5")).toBeInTheDocument();
     expect(screen.getByText("1 Analyse")).toBeInTheDocument();
     expect(await screen.findByRole("status")).toHaveTextContent(/Testmodus/);
+    expect(screen.getByRole("status")).not.toHaveTextContent(/Demo/);
+  });
+
+  it("warnt im Demo-Betrieb, dass Daten verschwinden können", async () => {
+    mockApi((req) => {
+      if (path(req) === "/health") return { body: { ...health, persistent_storage: false } };
+      if (path(req) === "/projects") return { body: [] };
+      return undefined;
+    });
+
+    renderWithProviders(<App />);
+
+    const status = await screen.findByRole("status");
+    expect(status).toHaveTextContent(/Testmodus/);
+    expect(status).toHaveTextContent(/nicht dauerhaft gespeichert/);
   });
 
   it("zeigt keinen Testmodus-Hinweis bei echtem Provider", async () => {

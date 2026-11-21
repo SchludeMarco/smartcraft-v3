@@ -354,6 +354,8 @@ export interface components {
             ai_provider: string;
             /** Environment */
             environment: string;
+            /** Persistent Storage */
+            persistent_storage: boolean;
             /**
              * Status
              * @constant

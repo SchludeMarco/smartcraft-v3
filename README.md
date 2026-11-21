@@ -21,6 +21,12 @@ Sicherheitslogik sind von Anfang an geräteunabhängig (siehe
 > jede Analyse Risiken, Unsicherheiten und die Pflicht zur Prüfung durch eine
 > Elektrofachkraft aus.
 
+## Online-Demo (Vercel)
+
+Projekt `smartcraft-v3` im Vercel-Team von Marco; jeder Push auf `main` wird automatisch
+veröffentlicht. **Nur nach Vercel-Login erreichbar.** Demo-Betrieb: Mock-KI, Daten in
+flüchtigem Speicher – Projekte und Fotos können jederzeit verschwinden (ADR 0007).
+
 ## Dokumentation
 
 - [01 – Analyse V2](docs/01-v2-analyse.md)
