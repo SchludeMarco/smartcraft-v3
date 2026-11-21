@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiError, api, apiBaseUrl, describeError, unwrap } from "../../api/client";
-import type { AnalysisDetail, Trade } from "../../api/types";
+import type { AnalysisDetail, CheckUpdate, Trade } from "../../api/types";
 import { projectKeys } from "../projects/api";
 
 export const analysisKeys = {
@@ -69,6 +69,25 @@ export function useCreateAnalysis(projectId: string) {
       void queryClient.invalidateQueries({ queryKey: projectKeys.analyses(projectId) });
       void queryClient.invalidateQueries({ queryKey: projectKeys.detail(projectId) });
       void queryClient.invalidateQueries({ queryKey: projectKeys.all });
+    },
+  });
+}
+
+export function useUpdateCheck(analysisId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ checkId, update }: { checkId: string; update: CheckUpdate }) =>
+      unwrap(
+        await api.PATCH("/analyses/{analysis_id}/checks/{check_id}", {
+          params: { path: { analysis_id: analysisId, check_id: checkId } },
+          body: update,
+        }),
+      ),
+    onSuccess: (check) => {
+      queryClient.setQueryData<AnalysisDetail>(analysisKeys.detail(analysisId), (old) =>
+        old ? { ...old, checks: old.checks.map((c) => (c.id === check.id ? check : c)) } : old,
+      );
+      void queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
   });
 }

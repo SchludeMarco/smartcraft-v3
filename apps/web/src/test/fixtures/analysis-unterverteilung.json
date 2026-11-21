@@ -194,7 +194,7 @@
   },
   "captures": [
     {
-      "id": "c0",
+      "id": "a-unterverteilung-c0",
       "position": 0,
       "media_type": "image/jpeg",
       "size_bytes": 1338,
@@ -204,7 +204,7 @@
   ],
   "checks": [
     {
-      "id": "k0",
+      "id": "a-unterverteilung-k0",
       "position": 0,
       "action": "Blindabdeckung für die offene Teilungseinheit nachrüsten lassen",
       "reason": "Berührungsschutz herstellen",
@@ -217,10 +217,11 @@
       "status": "open",
       "completed_by": null,
       "completed_at": null,
-      "comment": null
+      "comment": null,
+      "qualified_person_confirmed": null
     },
     {
-      "id": "k1",
+      "id": "a-unterverteilung-k1",
       "position": 1,
       "action": "Vor jeder Arbeit die fünf Sicherheitsregeln anwenden: freischalten, gegen Wiedereinschalten sichern, Spannungsfreiheit allpolig feststellen, erden und kurzschließen, benachbarte unter Spannung stehende Teile abdecken",
       "reason": "Ein Foto zeigt nicht, ob Teile unter Spannung stehen.",
@@ -234,10 +235,11 @@
       "status": "open",
       "completed_by": null,
       "completed_at": null,
-      "comment": null
+      "comment": null,
+      "qualified_person_confirmed": null
     },
     {
-      "id": "k2",
+      "id": "a-unterverteilung-k2",
       "position": 2,
       "action": "Prüfung der Anlage durch eine Elektrofachkraft (Sichtprüfung, Messungen, Erprobung) und Dokumentation im Prüfprotokoll",
       "reason": "Schutzmaßnahmen und Normkonformität lassen sich nur durch Messung belegen.",
@@ -251,7 +253,8 @@
       "status": "open",
       "completed_by": null,
       "completed_at": null,
-      "comment": null
+      "comment": null,
+      "qualified_person_confirmed": null
     }
   ]
 }

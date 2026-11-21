@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Response, status
 
 from smartcraft_api.api.deps import SessionDep, StorageDep
 from smartcraft_api.api.schemas import AnalysisDetailOut, CaptureOut, CheckItemOut
+from smartcraft_api.domain.documentation import CheckUpdate, DocumentationError
 from smartcraft_api.domain.overlay import AnalysisOverlay, build_overlay
 from smartcraft_api.media.storage import StorageError
 from smartcraft_api.persistence import repository as repo
@@ -65,3 +66,21 @@ def get_capture_image(
         media_type=capture.media_type,
         headers={"Cache-Control": "private, max-age=3600", "X-Content-Type-Options": "nosniff"},
     )
+
+
+@router.patch("/{analysis_id}/checks/{check_id}", response_model=CheckItemOut)
+def update_check(
+    analysis_id: str, check_id: str, update: CheckUpdate, session: SessionDep
+) -> CheckItemOut:
+    """Prüfschritt dokumentieren (erledigt / nicht zutreffend / wieder offen).
+
+    Ändert nie das KI-Ergebnis, die Risikostufe oder die Fachkraft-Pflicht.
+    """
+    _get_or_404(session, analysis_id)
+    check = repo.get_check(session, analysis_id, check_id)
+    if check is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Prüfschritt nicht gefunden")
+    try:
+        return CheckItemOut.model_validate(repo.update_check(session, check, update))
+    except DocumentationError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from exc

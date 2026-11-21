@@ -1,0 +1,411 @@
+{
+  "generated_at": "2026-11-21T18:00:00Z",
+  "disclaimer": "Dieser Bericht dokumentiert KI-gestützte Ersteinschätzungen und die von Personen eingetragenen Prüfschritte. Er ist keine Sicherheitsfreigabe, kein Prüfprotokoll nach Norm und ersetzt keine Prüfung, Messung oder Abnahme durch eine qualifizierte Fachkraft.",
+  "project": {
+    "id": "p1",
+    "name": "EFH Müller",
+    "address": "Hauptstraße 5",
+    "client": "Familie Müller",
+    "description": null,
+    "created_at": "2026-11-21T10:00:00Z",
+    "updated_at": "2026-11-21T12:00:00Z",
+    "analysis_count": 2
+  },
+  "summary": {
+    "analysis_count": 2,
+    "highest_risk": "high",
+    "qualified_person_required": true,
+    "contains_test_data": true,
+    "checks_total": 4,
+    "checks_open": 3,
+    "checks_done": 1,
+    "checks_not_applicable": 0,
+    "qualified_checks_open": 2
+  },
+  "notes": [
+    {
+      "id": "n0",
+      "text": "Kunde informiert",
+      "author": "Marco",
+      "created_at": "2026-11-21T12:30:00Z"
+    }
+  ],
+  "analyses": [
+    {
+      "id": "r0",
+      "project_id": "p1",
+      "created_at": "2026-11-21T12:00:00Z",
+      "note": "[mock:unbrauchbares_foto]",
+      "result": {
+        "schema_version": "1.2.0",
+        "trade": "allround",
+        "source": {
+          "provider_id": "mock",
+          "model_id": "mock-scenarios-v1",
+          "is_test_data": true
+        },
+        "summary": "[TESTDATEN] Mock-Szenario 'Unbrauchbares Foto': Das Bild ist stark unscharf und unterbelichtet; zu erkennen ist nur ein grauer Kasten an einer Wand.",
+        "image_quality": {
+          "usable": false,
+          "issues": [
+            "stark unscharf (Bewegungsunschärfe)",
+            "unterbelichtet",
+            "Motiv nur teilweise im Bild"
+          ]
+        },
+        "components": [
+          {
+            "name": "Unbekannter Kasten",
+            "category": "unbestimmt",
+            "location_hint": "Bildmitte",
+            "labels": [
+              {
+                "text": "???",
+                "confidence": "low"
+              }
+            ],
+            "region": null
+          }
+        ],
+        "observations": [
+          {
+            "text": "Ein grauer Kasten an einer Wand ist schemenhaft zu erkennen.",
+            "confidence": "low",
+            "component_index": 0
+          }
+        ],
+        "findings": [],
+        "uncertainties": [
+          "TESTDATEN: Dieses Ergebnis stammt aus einem festen Beispielszenario der Mock-KI. Das Foto wurde NICHT ausgewertet. Nicht für Entscheidungen verwenden.",
+          "Bildqualität: stark unscharf (Bewegungsunschärfe)",
+          "Bildqualität: unterbelichtet",
+          "Bildqualität: Motiv nur teilweise im Bild",
+          "Die Einschätzung beruht nur auf dem Foto: Verdeckte Bauteile, Messwerte, Funktion und Zustand hinter Abdeckungen wurden nicht geprüft."
+        ],
+        "next_checks": [
+          {
+            "action": "Neues Foto aufnehmen: frontal, scharf, gut ausgeleuchtet, Beschriftungen lesbar",
+            "reason": "Die Bildqualität reicht für eine belastbare Einschätzung nicht aus.",
+            "requires_qualified_person": false,
+            "reference": null,
+            "source": "policy",
+            "component_indices": []
+          }
+        ],
+        "safety": {
+          "risk_level": "low",
+          "hazards": [],
+          "qualified_person_required": false,
+          "notices": [
+            "TESTDATEN: Dieses Ergebnis stammt aus einem festen Beispielszenario der Mock-KI. Das Foto wurde NICHT ausgewertet. Nicht für Entscheidungen verwenden."
+          ],
+          "disclaimer": "KI-gestützte Ersteinschätzung auf Basis eines Fotos. Sie ersetzt keine Prüfung, Messung oder Abnahme durch eine qualifizierte Fachkraft und stellt keine Sicherheitsfreigabe dar."
+        },
+        "policy": {
+          "version": "1.2.0",
+          "interventions": [
+            {
+              "rule_id": "image-quality",
+              "description": "Konfidenz wegen unbrauchbarem Foto auf 'low' gesenkt"
+            },
+            {
+              "rule_id": "image-quality",
+              "description": "Prüfschritt 'neues Foto' ergänzt"
+            },
+            {
+              "rule_id": "test-data",
+              "description": "Als Testdaten gekennzeichnet (Provider: mock)"
+            }
+          ]
+        }
+      },
+      "captures": [
+        {
+          "id": "r0-c0",
+          "position": 0,
+          "media_type": "image/jpeg",
+          "size_bytes": 1338,
+          "width": 400,
+          "height": 300
+        }
+      ],
+      "checks": [
+        {
+          "id": "r0-k0",
+          "position": 0,
+          "action": "Neues Foto aufnehmen: frontal, scharf, gut ausgeleuchtet, Beschriftungen lesbar",
+          "reason": "Die Bildqualität reicht für eine belastbare Einschätzung nicht aus.",
+          "requires_qualified_person": false,
+          "reference": null,
+          "source": "policy",
+          "component_indices": [],
+          "status": "open",
+          "completed_by": null,
+          "completed_at": null,
+          "comment": null,
+          "qualified_person_confirmed": null
+        }
+      ]
+    },
+    {
+      "id": "r1",
+      "project_id": "p1",
+      "created_at": "2026-11-21T12:00:00Z",
+      "note": "[mock:unterverteilung]",
+      "result": {
+        "schema_version": "1.2.0",
+        "trade": "elektriker",
+        "source": {
+          "provider_id": "mock",
+          "model_id": "mock-scenarios-v1",
+          "is_test_data": true
+        },
+        "summary": "[TESTDATEN] Mock-Szenario 'Unterverteilung mit FI': Aufputz-Unterverteilung mit einem FI-Schutzschalter und sechs Leitungsschutzschaltern. Die Belegung [nicht durch KI beurteilbar].",
+        "image_quality": {
+          "usable": true,
+          "issues": []
+        },
+        "components": [
+          {
+            "name": "FI-Schutzschalter (RCD)",
+            "category": "Schutzorgan",
+            "location_hint": "Obere Hutschiene, links",
+            "labels": [
+              {
+                "text": "40A 30mA Typ A",
+                "confidence": "medium"
+              },
+              {
+                "text": "Prüftaste T",
+                "confidence": "high"
+              }
+            ],
+            "region": {
+              "capture_index": 0,
+              "x": 0.12,
+              "y": 0.25,
+              "width": 0.1,
+              "height": 0.3
+            }
+          },
+          {
+            "name": "Leitungsschutzschalter (6 Stück)",
+            "category": "Schutzorgan",
+            "location_hint": "Obere Hutschiene, rechts vom FI",
+            "labels": [
+              {
+                "text": "B16",
+                "confidence": "medium"
+              },
+              {
+                "text": "B1?",
+                "confidence": "low"
+              }
+            ],
+            "region": {
+              "capture_index": 0,
+              "x": 0.24,
+              "y": 0.25,
+              "width": 0.42,
+              "height": 0.3
+            }
+          },
+          {
+            "name": "Mantelleitungen",
+            "category": "Leitung",
+            "location_hint": "Einführung von oben",
+            "labels": [],
+            "region": {
+              "capture_index": 0,
+              "x": 0.1,
+              "y": 0.0,
+              "width": 0.6,
+              "height": 0.18
+            }
+          }
+        ],
+        "observations": [
+          {
+            "text": "Ein FI-Schutzschalter und sechs Leitungsschutzschalter sind auf einer Hutschiene montiert.",
+            "confidence": "high",
+            "component_index": 0
+          },
+          {
+            "text": "Die Beschriftung eines Leitungsschutzschalters ist nur teilweise lesbar.",
+            "confidence": "high",
+            "component_index": 1
+          },
+          {
+            "text": "Rechts neben den Leitungsschutzschaltern fehlt eine Blindabdeckung; die Öffnung ist offen.",
+            "confidence": "medium",
+            "component_index": null
+          }
+        ],
+        "findings": [
+          {
+            "title": "Offene Teilungseinheit ohne Blindabdeckung",
+            "severity": "warning",
+            "reasoning": "Durch die Öffnung könnten bei abgenommener Tür spannungsführende Teile berührbar sein.",
+            "confidence": "medium",
+            "component_indices": [
+              1
+            ]
+          },
+          {
+            "title": "Stromkreisbeschriftung fehlt",
+            "severity": "notice",
+            "reasoning": "Am Verteiler ist keine Zuordnung der Stromkreise erkennbar.",
+            "confidence": "medium",
+            "component_indices": []
+          }
+        ],
+        "uncertainties": [
+          "TESTDATEN: Dieses Ergebnis stammt aus einem festen Beispielszenario der Mock-KI. Das Foto wurde NICHT ausgewertet. Nicht für Entscheidungen verwenden.",
+          "Ob alle Stromkreise über den FI-Schutzschalter geführt sind, ist auf dem Foto nicht erkennbar.",
+          "Die Einschätzung beruht nur auf dem Foto: Verdeckte Bauteile, Messwerte, Funktion und Zustand hinter Abdeckungen wurden nicht geprüft.",
+          "Ob die Anlage sicher, mängelfrei oder normgerecht ist, kann die KI nicht beurteilen; das kann nur eine Prüfung durch eine Fachkraft klären."
+        ],
+        "next_checks": [
+          {
+            "action": "Blindabdeckung für die offene Teilungseinheit nachrüsten lassen",
+            "reason": "Berührungsschutz herstellen",
+            "requires_qualified_person": true,
+            "reference": null,
+            "source": "model",
+            "component_indices": [
+              1
+            ]
+          },
+          {
+            "action": "Vor jeder Arbeit die fünf Sicherheitsregeln anwenden: freischalten, gegen Wiedereinschalten sichern, Spannungsfreiheit allpolig feststellen, erden und kurzschließen, benachbarte unter Spannung stehende Teile abdecken",
+            "reason": "Ein Foto zeigt nicht, ob Teile unter Spannung stehen.",
+            "requires_qualified_person": true,
+            "reference": "DIN VDE 0105-100",
+            "source": "policy",
+            "component_indices": [
+              0,
+              1
+            ]
+          },
+          {
+            "action": "Prüfung der Anlage durch eine Elektrofachkraft (Sichtprüfung, Messungen, Erprobung) und Dokumentation im Prüfprotokoll",
+            "reason": "Schutzmaßnahmen und Normkonformität lassen sich nur durch Messung belegen.",
+            "requires_qualified_person": true,
+            "reference": "DIN VDE 0100-600",
+            "source": "policy",
+            "component_indices": [
+              0,
+              1
+            ]
+          }
+        ],
+        "safety": {
+          "risk_level": "high",
+          "hazards": [
+            "electrical"
+          ],
+          "qualified_person_required": true,
+          "notices": [
+            "TESTDATEN: Dieses Ergebnis stammt aus einem festen Beispielszenario der Mock-KI. Das Foto wurde NICHT ausgewertet. Nicht für Entscheidungen verwenden.",
+            "Elektrische Anlage: Arbeiten und Bewertung ausschließlich durch eine Elektrofachkraft. Lebensgefahr durch elektrischen Schlag."
+          ],
+          "disclaimer": "KI-gestützte Ersteinschätzung auf Basis eines Fotos. Sie ersetzt keine Prüfung, Messung oder Abnahme durch eine qualifizierte Fachkraft und stellt keine Sicherheitsfreigabe dar."
+        },
+        "policy": {
+          "version": "1.2.0",
+          "interventions": [
+            {
+              "rule_id": "approval-language",
+              "description": "Freigabe-Formulierung entfernt (Zusammenfassung)"
+            },
+            {
+              "rule_id": "hazard-detected:electrical",
+              "description": "Gefahr erkannt: electrical"
+            },
+            {
+              "rule_id": "risk-floor",
+              "description": "Risikostufe wegen electrical auf high angehoben"
+            },
+            {
+              "rule_id": "qualified-person",
+              "description": "Fachkraft-Pflicht wegen electrical gesetzt"
+            },
+            {
+              "rule_id": "mandatory-check",
+              "description": "Pflicht-Prüfschritt ergänzt (electrical)"
+            },
+            {
+              "rule_id": "test-data",
+              "description": "Als Testdaten gekennzeichnet (Provider: mock)"
+            }
+          ]
+        }
+      },
+      "captures": [
+        {
+          "id": "r1-c0",
+          "position": 0,
+          "media_type": "image/jpeg",
+          "size_bytes": 1338,
+          "width": 400,
+          "height": 300
+        }
+      ],
+      "checks": [
+        {
+          "id": "r1-k0",
+          "position": 0,
+          "action": "Blindabdeckung für die offene Teilungseinheit nachrüsten lassen",
+          "reason": "Berührungsschutz herstellen",
+          "requires_qualified_person": true,
+          "reference": null,
+          "source": "model",
+          "component_indices": [
+            1
+          ],
+          "status": "done",
+          "completed_by": "Max Elektro",
+          "completed_at": "2026-11-21T13:00:00Z",
+          "comment": "Messprotokoll liegt vor",
+          "qualified_person_confirmed": true
+        },
+        {
+          "id": "r1-k1",
+          "position": 1,
+          "action": "Vor jeder Arbeit die fünf Sicherheitsregeln anwenden: freischalten, gegen Wiedereinschalten sichern, Spannungsfreiheit allpolig feststellen, erden und kurzschließen, benachbarte unter Spannung stehende Teile abdecken",
+          "reason": "Ein Foto zeigt nicht, ob Teile unter Spannung stehen.",
+          "requires_qualified_person": true,
+          "reference": "DIN VDE 0105-100",
+          "source": "policy",
+          "component_indices": [
+            0,
+            1
+          ],
+          "status": "open",
+          "completed_by": null,
+          "completed_at": null,
+          "comment": null,
+          "qualified_person_confirmed": null
+        },
+        {
+          "id": "r1-k2",
+          "position": 2,
+          "action": "Prüfung der Anlage durch eine Elektrofachkraft (Sichtprüfung, Messungen, Erprobung) und Dokumentation im Prüfprotokoll",
+          "reason": "Schutzmaßnahmen und Normkonformität lassen sich nur durch Messung belegen.",
+          "requires_qualified_person": true,
+          "reference": "DIN VDE 0100-600",
+          "source": "policy",
+          "component_indices": [
+            0,
+            1
+          ],
+          "status": "open",
+          "completed_by": null,
+          "completed_at": null,
+          "comment": null,
+          "qualified_person_confirmed": null
+        }
+      ]
+    }
+  ]
+}

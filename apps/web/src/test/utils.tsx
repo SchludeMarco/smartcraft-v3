@@ -22,6 +22,7 @@ export function mockApi(handler: Handler) {
     calls.push(input.clone());
     const reply = handler(input);
     if (!reply) throw new Error(`Unerwartete Anfrage: ${input.method} ${input.url}`);
+    if (reply.status === 204) return new Response(null, { status: 204 });
     return new Response(JSON.stringify(reply.body), {
       status: reply.status ?? 200,
       headers: { "Content-Type": "application/json" },

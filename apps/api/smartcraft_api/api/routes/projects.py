@@ -6,13 +6,22 @@ from fastapi import APIRouter, File, Form, HTTPException, Response, UploadFile, 
 from smartcraft_api.ai.provider import ProviderError, ProviderOutputError
 from smartcraft_api.api.deps import ProviderDep, SessionDep, SettingsDep, StorageDep
 from smartcraft_api.api.routes.analyses import analysis_detail
-from smartcraft_api.api.schemas import AnalysisDetailOut, AnalysisSummaryOut, ProjectOut
-from smartcraft_api.domain.analysis import RiskLevel
+from smartcraft_api.api.schemas import (
+    AnalysisDetailOut,
+    AnalysisSummaryOut,
+    NoteOut,
+    ProjectOut,
+    ProjectReportOut,
+    ReportSummaryOut,
+)
+from smartcraft_api.domain.analysis import RiskLevel, max_risk
+from smartcraft_api.domain.documentation import REPORT_DISCLAIMER, NoteCreate
 from smartcraft_api.domain.projects import ProjectCreate, ProjectUpdate
 from smartcraft_api.domain.trades import Trade
 from smartcraft_api.media.processing import InvalidImageError
 from smartcraft_api.media.storage import StorageError
 from smartcraft_api.persistence import repository as repo
+from smartcraft_api.persistence.db import utcnow
 from smartcraft_api.persistence.models import AnalysisRow, ProjectRow
 from smartcraft_api.services.analysis_service import (
     MAX_IMAGES,
@@ -150,3 +159,65 @@ async def create_analysis(
             status.HTTP_502_BAD_GATEWAY, f"KI-Analyse fehlgeschlagen: {exc}"
         ) from exc
     return analysis_detail(row)
+
+
+# --- Notizen -----------------------------------------------------------------------
+
+
+@router.get("/{project_id}/notes", response_model=list[NoteOut])
+def list_notes(project_id: str, session: SessionDep) -> list[NoteOut]:
+    _get_or_404(session, project_id)
+    return [NoteOut.model_validate(n) for n in repo.list_notes(session, project_id)]
+
+
+@router.post("/{project_id}/notes", response_model=NoteOut, status_code=status.HTTP_201_CREATED)
+def create_note(project_id: str, data: NoteCreate, session: SessionDep) -> NoteOut:
+    project = _get_or_404(session, project_id)
+    return NoteOut.model_validate(repo.create_note(session, project, data))
+
+
+@router.delete("/{project_id}/notes/{note_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_note(project_id: str, note_id: str, session: SessionDep) -> Response:
+    _get_or_404(session, project_id)
+    note = repo.get_note(session, project_id, note_id)
+    if note is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Notiz nicht gefunden")
+    repo.delete_note(session, note)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+# --- Bericht -----------------------------------------------------------------------
+
+
+@router.get("/{project_id}/report", response_model=ProjectReportOut)
+def project_report(project_id: str, session: SessionDep) -> ProjectReportOut:
+    """Alle Analysen, Prüfschritt-Dokumentation und Notizen eines Projekts.
+
+    Dokumentation, keine Freigabe – der Haftungshinweis ist Pflichtbestandteil.
+    """
+    project = _get_or_404(session, project_id)
+    rows = repo.list_analyses(session, project_id)
+    analyses = [analysis_detail(row) for row in rows]
+    checks = [c for row in rows for c in row.checks]
+    risks = [RiskLevel(row.risk_level) for row in rows]
+    summary = ReportSummaryOut(
+        analysis_count=len(rows),
+        highest_risk=max_risk(*risks) if risks else None,
+        qualified_person_required=any(row.qualified_person_required for row in rows),
+        contains_test_data=any(row.is_test_data for row in rows),
+        checks_total=len(checks),
+        checks_open=sum(1 for c in checks if c.status == "open"),
+        checks_done=sum(1 for c in checks if c.status == "done"),
+        checks_not_applicable=sum(1 for c in checks if c.status == "not_applicable"),
+        qualified_checks_open=sum(
+            1 for c in checks if c.status == "open" and c.requires_qualified_person
+        ),
+    )
+    return ProjectReportOut(
+        generated_at=utcnow(),
+        disclaimer=REPORT_DISCLAIMER,
+        project=_project_out(project, len(rows)),
+        summary=summary,
+        notes=[NoteOut.model_validate(n) for n in repo.list_notes(session, project_id)],
+        analyses=analyses,
+    )

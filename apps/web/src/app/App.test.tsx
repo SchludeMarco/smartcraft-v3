@@ -103,6 +103,7 @@ describe("Projekt anlegen", () => {
       if (p === "/projects" && req.method === "POST") return { status: 201, body: created };
       if (p === "/projects/neu") return { body: created };
       if (p === "/projects/neu/analyses") return { body: [] };
+      if (p === "/projects/neu/notes") return { body: [] };
       return undefined;
     });
     const user = userEvent.setup();
@@ -167,6 +168,7 @@ describe("Projektseite", () => {
       if (p === "/health") return { body: health };
       if (p === "/projects/p1") return { body: project };
       if (p === "/projects/p1/analyses") return { body: [analysis] };
+      if (p === "/projects/p1/notes") return { body: [] };
       return undefined;
     });
 

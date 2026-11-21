@@ -3,6 +3,7 @@ import { ErrorMessage } from "../../components/ErrorMessage";
 import { RiskBadge } from "../../components/RiskBadge";
 import { formatDateTime } from "../../lib/format";
 import { useProject, useProjectAnalyses } from "./api";
+import { NotesSection } from "./NotesSection";
 
 export function ProjectPage() {
   const { projectId = "" } = useParams();
@@ -32,6 +33,9 @@ export function ProjectPage() {
         {p.address && <p className="text-stone-700">{p.address}</p>}
         {p.client && <p className="text-sm text-stone-600">Auftraggeber: {p.client}</p>}
         {p.description && <p className="text-sm whitespace-pre-line text-stone-600">{p.description}</p>}
+        <Link to={`/projects/${p.id}/report`} className="inline-block pt-1 text-sm text-amber-700 underline">
+          Projektbericht ansehen / drucken
+        </Link>
       </section>
 
       <section className="space-y-2">
@@ -73,6 +77,7 @@ export function ProjectPage() {
           ))}
         </ul>
       </section>
+      <NotesSection projectId={p.id} />
     </div>
   );
 }
