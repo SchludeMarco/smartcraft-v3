@@ -2,23 +2,23 @@ import { useQuery } from "@tanstack/react-query";
 import { FlaskConical } from "lucide-react";
 import { api, unwrap } from "../api/client";
 
-/**
- * Dauerhafte Hinweise zum Betriebsmodus:
- * - Mock-KI: Ergebnisse sind Testdaten, Fotos werden nicht ausgewertet.
- * - Flüchtiger Speicher (Vercel-Demo): Projekte und Fotos können jederzeit verschwinden.
- */
-export function TestModeBanner() {
-  const { data } = useQuery({
+function useHealth() {
+  return useQuery({
     queryKey: ["health"],
     queryFn: async () => unwrap(await api.GET("/health")),
   });
+}
+
+/**
+ * Auffälliger Hinweis nur für die Mock-KI: Ergebnisse sind Testdaten und dürfen nie
+ * mit einer echten Analyse verwechselt werden (Sicherheitsregel, nicht abschaltbar).
+ */
+export function TestModeBanner() {
+  const { data } = useHealth();
   if (!data) return null;
   const notices: string[] = [];
   if (data.ai_provider === "mock") {
     notices.push("Testmodus: Analysen kommen aus der Mock-KI und werten Fotos nicht aus.");
-  }
-  if (!data.persistent_storage) {
-    notices.push("Demo: Projekte und Fotos werden nicht dauerhaft gespeichert und können jederzeit verschwinden.");
   }
   if (notices.length === 0) return null;
   return (
@@ -34,4 +34,14 @@ export function TestModeBanner() {
       </div>
     </div>
   );
+}
+
+/**
+ * Dezenter Hinweis in der Fußzeile bei flüchtigem Speicher (Vercel-Demo):
+ * Projekte und Fotos können verschwinden. Bewusst kein Banner mehr (Wunsch Marco).
+ */
+export function StorageHint() {
+  const { data } = useHealth();
+  if (!data || data.persistent_storage) return null;
+  return <p>Demo-Speicher: Projekte und Fotos werden nicht dauerhaft gespeichert.</p>;
 }

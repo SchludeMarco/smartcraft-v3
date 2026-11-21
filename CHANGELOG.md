@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unveröffentlicht]
+
+### Geändert
+- Demo-Hinweis zum flüchtigen Speicher ist kein Banner mehr, sondern eine dezente Zeile
+  in der Fußzeile. Der Testmodus-Hinweis der Mock-KI bleibt unverändert auffällig.
+
 ## [0.13.0] – 2026-11-21
 
 ### Hinzugefügt (ADR 0011)
