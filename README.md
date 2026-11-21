@@ -3,7 +3,7 @@
 KI-Assistent für Handwerker auf der Baustelle: Installationen, Feuchtigkeitsschäden, Risse,
 Bauteile. Langfristig multimodal (Smartphone, später AR-Brille).
 
-**Status:** MVP-Schritt 2 – Ergebnisschema und Safety-Policy.
+**Status:** MVP-Schritt 3 – Mock-KI und Provider-Schnittstelle (noch keine echte KI).
 
 ## Erste Ausbaustufe: Installation Analyzer
 

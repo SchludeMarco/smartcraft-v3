@@ -44,7 +44,9 @@
    `POST /projects/{id}/analyses` hoch, optional mit Notiz und Domäne.
 2. **Media-Pipeline:** Typ/Größe prüfen, EXIF inkl. GPS entfernen, Hash bilden, speichern.
 3. **Prompt-Aufbau** aus versionierter Vorlage (`installation_v1`).
-4. **Provider-Aufruf** mit erzwungenem JSON-Schema.
+4. **Provider-Aufruf** über `AnalysisProvider` (`ai/provider.py`) mit erzwungenem JSON-Schema.
+   Ohne Freigabe nur die Mock-KI; ihre Ergebnisse sind als Testdaten gekennzeichnet
+   (`source.is_test_data`, ADR 0003).
 5. **Schema-Validierung** (Pydantic). Ungültig → ein Reparaturversuch → sonst Status `failed`.
 6. **Safety-Policy** (deterministisch, getestet):
    - Elektro erkannt (Domäne oder Bauteile/Beschriftungen wie FI/RCD, LS, NH, 230/400 V)

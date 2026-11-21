@@ -9,6 +9,7 @@ from collections.abc import Iterable
 from smartcraft_api.domain.analysis import (
     AnalysisDraft,
     AnalysisResult,
+    AnalysisSource,
     Finding,
     Hazard,
     NextCheck,
@@ -22,7 +23,7 @@ from smartcraft_api.domain.analysis import (
 from smartcraft_api.domain.trades import Trade
 from smartcraft_api.safety import rules
 
-POLICY_VERSION = "1.0.0"
+POLICY_VERSION = "1.1.1"
 
 
 class _Log:
@@ -71,7 +72,9 @@ def _append_unique(items: list[str], value: str) -> None:
         items.append(value)
 
 
-def apply_safety_policy(draft: AnalysisDraft, trade: Trade) -> AnalysisResult:
+def apply_safety_policy(
+    draft: AnalysisDraft, trade: Trade, source: AnalysisSource
+) -> AnalysisResult:
     log = _Log()
 
     # 1. Freigabe-Formulierungen neutralisieren
@@ -165,8 +168,21 @@ def apply_safety_policy(draft: AnalysisDraft, trade: Trade) -> AnalysisResult:
     if approval_found:
         _append_unique(uncertainties, rules.APPROVAL_UNCERTAINTY)
 
+    # 6. Testdaten unübersehbar kennzeichnen – unabhängig davon, was der Provider schreibt
+    if source.is_test_data:
+        if not summary.startswith(rules.TEST_DATA_PREFIX):
+            summary = f"{rules.TEST_DATA_PREFIX} {summary}"
+        if rules.TEST_DATA_NOTICE in uncertainties:
+            uncertainties.remove(rules.TEST_DATA_NOTICE)
+        uncertainties.insert(0, rules.TEST_DATA_NOTICE)
+        if rules.TEST_DATA_NOTICE in notices:
+            notices.remove(rules.TEST_DATA_NOTICE)
+        notices.insert(0, rules.TEST_DATA_NOTICE)
+        log.add("test-data", f"Als Testdaten gekennzeichnet (Provider: {source.provider_id})")
+
     return AnalysisResult(
         trade=trade,
+        source=source,
         summary=summary,
         image_quality=draft.image_quality,
         components=draft.components,

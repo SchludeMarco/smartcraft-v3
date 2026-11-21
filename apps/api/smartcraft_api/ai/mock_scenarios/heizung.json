@@ -1,0 +1,78 @@
+{
+  "summary": "Mock-Szenario 'Heizungsanlage': Wandhängende Gastherme mit Abgasrohr, darunter Heizkreisverteilung mit Ausdehnungsgefäß.",
+  "image_quality": { "usable": true, "issues": [] },
+  "components": [
+    {
+      "name": "Gas-Brennwerttherme",
+      "category": "Wärmeerzeuger",
+      "location_hint": "Wandmontage, Bildmitte",
+      "labels": [
+        { "text": "Typenschild teilweise verdeckt", "confidence": "low" }
+      ]
+    },
+    {
+      "name": "Abgasrohr",
+      "category": "Abgasanlage",
+      "location_hint": "Oberhalb der Therme",
+      "labels": []
+    },
+    {
+      "name": "Membran-Ausdehnungsgefäß",
+      "category": "Sicherheitseinrichtung",
+      "location_hint": "Links unten",
+      "labels": [{ "text": "18 l", "confidence": "medium" }]
+    },
+    {
+      "name": "Manometer",
+      "category": "Anzeige",
+      "location_hint": "Unterhalb der Therme",
+      "labels": [{ "text": "Zeiger bei ca. 0,8 bar", "confidence": "low" }]
+    }
+  ],
+  "observations": [
+    { "text": "Am Übergang des Abgasrohrs ist eine Verfärbung sichtbar.", "confidence": "medium", "component_index": 1 },
+    { "text": "Das Manometer zeigt einen niedrigen Wert an; der Zeiger ist schlecht ablesbar.", "confidence": "low", "component_index": 3 },
+    { "text": "Unter dem Ausdehnungsgefäß sind Kalkspuren an einer Verschraubung zu sehen.", "confidence": "medium", "component_index": 2 }
+  ],
+  "findings": [
+    {
+      "title": "Möglicherweise niedriger Anlagendruck",
+      "severity": "notice",
+      "reasoning": "Ein Druck unter dem üblichen Fülldruck kann auf Wasserverlust oder ein defektes Ausdehnungsgefäß hindeuten.",
+      "confidence": "low"
+    },
+    {
+      "title": "Verfärbung am Abgasrohr",
+      "severity": "warning",
+      "reasoning": "Verfärbungen können auf Kondensat- oder Abgasaustritt hindeuten.",
+      "confidence": "low"
+    },
+    {
+      "title": "Kalkspuren an Verschraubung",
+      "severity": "notice",
+      "reasoning": "Hinweis auf eine frühere oder bestehende Tropfstelle.",
+      "confidence": "medium"
+    }
+  ],
+  "uncertainties": [
+    "Der Anlagendruck lässt sich auf dem Foto nicht genau ablesen."
+  ],
+  "next_checks": [
+    {
+      "action": "Anlagendruck am Manometer ablesen und mit dem Herstellerwert vergleichen",
+      "reason": "Klärt, ob Wasser nachgefüllt oder das Ausdehnungsgefäß geprüft werden muss",
+      "requires_qualified_person": false
+    },
+    {
+      "action": "Verschraubung am Ausdehnungsgefäß auf Feuchtigkeit kontrollieren",
+      "reason": "Aktive Undichtigkeit ausschließen",
+      "requires_qualified_person": false
+    }
+  ],
+  "safety": {
+    "risk_level": "medium",
+    "hazards": [],
+    "qualified_person_required": false,
+    "notices": []
+  }
+}

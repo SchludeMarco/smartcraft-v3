@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.3.0] – 2026-11-21
+
+### Hinzugefügt
+- Provider-Schnittstelle `AnalysisProvider` mit `parse_draft()` (`ai/provider.py`) und
+  Registry (nur `mock`).
+- Kostenlose, lokale Mock-KI mit drei reproduzierbaren Szenarien: Unterverteilung mit FI,
+  Heizungsanlage, unbrauchbares Foto (`ai/mock.py`, `ai/mock_scenarios/`).
+- Analyse-Ablauf `run_analysis()`: Eingabeprüfung (1–5 Fotos, JPEG/PNG/WebP, Notiz ≤ 2000
+  Zeichen) → Provider → Schema → Safety-Policy.
+- Schema 1.1.0: `source` (Provider, Modell, `is_test_data`).
+- Policy 1.1.1: Testdaten werden in Zusammenfassung, Unsicherheiten und Hinweisen
+  unübersehbar gekennzeichnet.
+- ADR 0003, Tests für alle Szenarien (138 gesamt).
+
+### Behoben
+- Fehlalarm: „Heizkreisverteilung“ wurde als elektrische Anlage erkannt.
+
 ## [0.2.0] – 2026-11-21
 
 ### Hinzugefügt
