@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.5.0] – 2026-11-21
+
+### Hinzugefügt
+- Bildpipeline (`media/processing.py`): Formatprüfung nach Inhalt, EXIF-Drehung, Verkleinern
+  auf max. 1600 px, Neu-Kodierung als JPEG ohne Metadaten (EXIF/GPS entfernt), Größen- und
+  Auflösungslimits.
+- Lokale Foto-Ablage (`media/storage.py`) mit Schutz vor Pfad-Tricks.
+- `POST /projects/{id}/analyses` (multipart: `trade`, `files`, optional `note`): kompletter
+  Ablauf Foto → Bereinigung → KI → Safety-Policy → Speichern.
+- `GET /analyses/{id}/captures/{capture_id}/image` liefert das bereinigte Foto.
+- Projekt löschen entfernt auch die Fotodateien; bei Fehlern bleiben keine Dateien liegen.
+- Neue Variablen: `SMARTCRAFT_STORAGE_DIR`, `SMARTCRAFT_MAX_UPLOAD_MB`,
+  `SMARTCRAFT_MAX_IMAGE_MEGAPIXELS`, `SMARTCRAFT_MAX_IMAGE_EDGE`.
+- ADR 0005, 38 neue Tests (202 gesamt).
+
 ## [0.4.0] – 2026-11-21
 
 ### Hinzugefügt

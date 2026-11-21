@@ -1,12 +1,14 @@
 [project]
 name = "smartcraft-api"
-version = "0.4.0"
+version = "0.5.0"
 description = "Backend von Sm@rtCraft 3.0 – Installation Analyzer"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115",
+    "pillow>=11",
     "pydantic>=2.8",
     "pydantic-settings>=2.4",
+    "python-multipart>=0.0.9",
     "sqlalchemy>=2.0",
     "uvicorn[standard]>=0.30",
 ]
