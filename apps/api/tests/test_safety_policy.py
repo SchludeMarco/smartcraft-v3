@@ -6,12 +6,16 @@ from pydantic import ValidationError
 from smartcraft_api.domain.analysis import (
     AnalysisDraft,
     AnalysisResult,
+    AnalysisSource,
     Hazard,
     RiskLevel,
 )
 from smartcraft_api.domain.trades import Trade
 from smartcraft_api.safety import POLICY_VERSION, apply_safety_policy, rules
 from smartcraft_api.safety.policy import neutralize_approval_language
+
+REAL_SOURCE = AnalysisSource(provider_id="test", model_id="test-model", is_test_data=False)
+TEST_SOURCE = AnalysisSource(provider_id="mock", model_id="mock", is_test_data=True)
 
 
 def make_draft(**overrides: Any) -> AnalysisDraft:
@@ -95,7 +99,7 @@ def test_schema_has_no_approval_or_safety_verdict_fields(model: type[Any]) -> No
 
 @pytest.mark.parametrize("trade", list(Trade))
 def test_every_result_has_disclaimer_baseline_uncertainty_and_version(trade: Trade) -> None:
-    result = apply_safety_policy(make_draft(), trade)
+    result = apply_safety_policy(make_draft(), trade, REAL_SOURCE)
 
     assert result.safety.disclaimer == rules.DISCLAIMER
     assert rules.BASELINE_UNCERTAINTY in result.uncertainties
@@ -104,7 +108,7 @@ def test_every_result_has_disclaimer_baseline_uncertainty_and_version(trade: Tra
 
 
 def test_harmless_painting_case_stays_low_risk() -> None:
-    result = apply_safety_policy(make_draft(), Trade.MALER)
+    result = apply_safety_policy(make_draft(), Trade.MALER, REAL_SOURCE)
 
     assert result.safety.risk_level is RiskLevel.LOW
     assert result.safety.hazards == []
@@ -115,7 +119,9 @@ def test_harmless_painting_case_stays_low_risk() -> None:
 
 
 def test_electrician_trade_always_requires_qualified_person() -> None:
-    result = apply_safety_policy(make_draft(summary="Foto einer Wand."), Trade.ELEKTRIKER)
+    result = apply_safety_policy(
+        make_draft(summary="Foto einer Wand."), Trade.ELEKTRIKER, REAL_SOURCE
+    )
 
     assert Hazard.ELECTRICAL in result.safety.hazards
     assert result.safety.qualified_person_required is True
@@ -136,7 +142,7 @@ def test_electrical_detected_from_labels_even_in_other_trade() -> None:
         ],
     )
 
-    result = apply_safety_policy(draft, Trade.ALLROUND)
+    result = apply_safety_policy(draft, Trade.ALLROUND, REAL_SOURCE)
 
     assert Hazard.ELECTRICAL in result.safety.hazards
     assert result.safety.qualified_person_required is True
@@ -149,19 +155,19 @@ def test_model_claiming_low_risk_for_fi_switch_is_overridden() -> None:
         safety={"risk_level": "low", "qualified_person_required": False, "hazards": []},
     )
 
-    result = apply_safety_policy(draft, Trade.KLEMPNER)
+    result = apply_safety_policy(draft, Trade.KLEMPNER, REAL_SOURCE)
 
     assert result.safety.risk_level is RiskLevel.HIGH
     assert {"risk-floor", "qualified-person", "mandatory-check"} <= rule_ids(result)
 
 
 def test_mandatory_checks_are_not_duplicated() -> None:
-    once = apply_safety_policy(make_draft(), Trade.ELEKTRIKER)
+    once = apply_safety_policy(make_draft(), Trade.ELEKTRIKER, REAL_SOURCE)
     draft_with_checks = make_draft(
         next_checks=[c.model_dump(exclude={"source"}) for c in once.next_checks]
     )
 
-    twice = apply_safety_policy(draft_with_checks, Trade.ELEKTRIKER)
+    twice = apply_safety_policy(draft_with_checks, Trade.ELEKTRIKER, REAL_SOURCE)
 
     actions = [c.action for c in twice.next_checks]
     assert len(actions) == len(set(actions))
@@ -173,6 +179,7 @@ def test_mandatory_checks_are_not_duplicated() -> None:
 @pytest.mark.parametrize(
     ("text", "trade", "hazard", "qualified"),
     [
+        ("Unterverteilung im Flur.", Trade.ALLROUND, Hazard.ELECTRICAL, True),
         ("Gastherme mit Abgasrohr im Keller.", Trade.KLEMPNER, Hazard.GAS, True),
         ("Diagonaler Riss im Mauerwerk über dem Sturz.", Trade.MAURER, Hazard.STRUCTURAL, True),
         ("Durchbiegung am Deckenbalken.", Trade.ZIMMERER, Hazard.STRUCTURAL, True),
@@ -183,7 +190,7 @@ def test_mandatory_checks_are_not_duplicated() -> None:
 def test_hazards_enforce_minimum_requirements(
     text: str, trade: Trade, hazard: Hazard, qualified: bool
 ) -> None:
-    result = apply_safety_policy(make_draft(summary=text), trade)
+    result = apply_safety_policy(make_draft(summary=text), trade, REAL_SOURCE)
 
     assert hazard in result.safety.hazards
     rule = rules.HAZARD_RULES[hazard]
@@ -200,10 +207,11 @@ def test_hazards_enforce_minimum_requirements(
         "Absturzsicherung am Gerüst fehlt.",  # 'sicherung' darf hier nicht Elektro auslösen
         "Farbe gleichmäßig verteilt, Spannungsrisse im Putz.",
         "PE-Rohr der Wasserleitung.",
+        "Heizkreisverteilung mit drei Abgängen.",
     ],
 )
 def test_common_non_electrical_words_do_not_trigger_electrical(text: str) -> None:
-    result = apply_safety_policy(make_draft(summary=text), Trade.MALER)
+    result = apply_safety_policy(make_draft(summary=text), Trade.MALER, REAL_SOURCE)
 
     assert Hazard.ELECTRICAL not in result.safety.hazards
 
@@ -220,7 +228,7 @@ def test_critical_finding_raises_risk_to_high() -> None:
         ]
     )
 
-    result = apply_safety_policy(draft, Trade.MALER)
+    result = apply_safety_policy(draft, Trade.MALER, REAL_SOURCE)
 
     assert result.safety.risk_level is RiskLevel.HIGH
     assert "critical-finding" in rule_ids(result)
@@ -244,7 +252,7 @@ def test_policy_never_lowers_risk_or_qualified_person_requirement(
         }
     )
 
-    result = apply_safety_policy(draft, trade)
+    result = apply_safety_policy(draft, trade, REAL_SOURCE)
 
     assert result.safety.risk_level.rank >= risk.rank
     assert result.safety.qualified_person_required >= qualified
@@ -268,7 +276,7 @@ def test_policy_keeps_all_model_findings_checks_and_uncertainties() -> None:
         uncertainties=["Rückseite nicht sichtbar"],
     )
 
-    result = apply_safety_policy(draft, Trade.KLEMPNER)
+    result = apply_safety_policy(draft, Trade.KLEMPNER, REAL_SOURCE)
 
     assert [f.title for f in result.findings] == ["A", "B"]
     assert "Dichtung prüfen" in [c.action for c in result.next_checks]
@@ -328,7 +336,7 @@ def test_approval_language_in_result_is_removed_and_flagged() -> None:
         ],
     )
 
-    result = apply_safety_policy(draft, Trade.ELEKTRIKER)
+    result = apply_safety_policy(draft, Trade.ELEKTRIKER, REAL_SOURCE)
 
     model_texts = " ".join(
         [result.summary] + [f"{f.title} {f.reasoning}" for f in result.findings]
@@ -352,10 +360,43 @@ def test_unusable_image_lowers_confidence_and_requests_new_photo() -> None:
         ],
     )
 
-    result = apply_safety_policy(draft, Trade.ALLROUND)
+    result = apply_safety_policy(draft, Trade.ALLROUND, REAL_SOURCE)
 
     assert all(o.confidence == "low" for o in result.observations)
     assert all(f.confidence == "low" for f in result.findings)
     assert result.next_checks[0] == rules.UNUSABLE_IMAGE_CHECK
     assert "Bildqualität: unscharf" in result.uncertainties
     assert "image-quality" in rule_ids(result)
+
+
+# --- Testdaten-Kennzeichnung -------------------------------------------------------
+
+
+def test_real_source_is_not_marked_as_test_data() -> None:
+    result = apply_safety_policy(make_draft(), Trade.MALER, REAL_SOURCE)
+
+    assert result.source.is_test_data is False
+    assert not result.summary.startswith(rules.TEST_DATA_PREFIX)
+    assert rules.TEST_DATA_NOTICE not in result.uncertainties
+
+
+def test_test_data_is_marked_in_summary_notices_and_uncertainties() -> None:
+    result = apply_safety_policy(make_draft(), Trade.MALER, TEST_SOURCE)
+
+    assert result.source.is_test_data is True
+    assert result.summary.startswith(rules.TEST_DATA_PREFIX)
+    assert result.uncertainties[0] == rules.TEST_DATA_NOTICE
+    assert result.safety.notices[0] == rules.TEST_DATA_NOTICE
+    assert "test-data" in rule_ids(result)
+
+
+def test_test_data_marking_is_not_duplicated() -> None:
+    draft = make_draft(
+        summary=f"{rules.TEST_DATA_PREFIX} Schon markiert.",
+        uncertainties=[rules.TEST_DATA_NOTICE],
+    )
+
+    result = apply_safety_policy(draft, Trade.MALER, TEST_SOURCE)
+
+    assert result.summary.count(rules.TEST_DATA_PREFIX) == 1
+    assert result.uncertainties.count(rules.TEST_DATA_NOTICE) == 1

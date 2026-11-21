@@ -33,6 +33,12 @@ UNUSABLE_IMAGE_CHECK = NextCheck(
     source="policy",
 )
 
+TEST_DATA_PREFIX = "[TESTDATEN]"
+TEST_DATA_NOTICE = (
+    "TESTDATEN: Dieses Ergebnis stammt aus einem festen Beispielszenario der Mock-KI. "
+    "Das Foto wurde NICHT ausgewertet. Nicht für Entscheidungen verwenden."
+)
+
 NEUTRALIZED = "[nicht durch KI beurteilbar]"
 
 # Gewerke, bei denen eine Gefahr unabhängig vom Bildinhalt immer angenommen wird.
@@ -47,7 +53,8 @@ HAZARD_PATTERNS: dict[Hazard, re.Pattern[str]] = {
     Hazard.ELECTRICAL: re.compile(
         r"elektr|strom|spannung(?!sriss)|\bvolt\b|\d+\s?k?v\b|\bfi\b|\brcd\b|\brccb\b|"
         r"fehlerstrom|\bls[- ]?schalter|leitungsschutz|\bsicherung|schmelzeinsatz|\bnh\b|"
-        r"verteiler|verteilung|zählerschrank|zählerplatz|steckdose|schalter|klemme|"
+        # "Heizkreisverteiler" ist kein Elektroverteiler, daher Wortanfang bzw. Präfix
+        r"\bverteiler|\bverteilung|unterverteil|hauptverteil|stromkreisverteil|zählerschrank|zählerplatz|steckdose|schalter|klemme|"
         r"\bnym\b|\bnyy\b|schutzleiter|\bpen\b|neutralleiter|\bphasen?\b|\bl[123]\b|"
         r"kabel|\badern?\b|wallbox|wechselrichter|photovoltaik|\bpv\b|netzteil|"
         r"trafo|transformator",

@@ -16,7 +16,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from smartcraft_api.domain.trades import Trade
 
-SCHEMA_VERSION = "1.0.0"
+SCHEMA_VERSION = "1.1.0"
 
 Confidence = Literal["low", "medium", "high"]
 Severity = Literal["info", "notice", "warning", "critical"]
@@ -132,9 +132,18 @@ class PolicyReport(_Strict):
     interventions: list[PolicyIntervention]
 
 
+class AnalysisSource(_Strict):
+    """Woher das Ergebnis stammt. `is_test_data` = keine echte Analyse (z. B. Mock-KI)."""
+
+    provider_id: str
+    model_id: str
+    is_test_data: bool
+
+
 class AnalysisResult(_Strict):
     schema_version: str = SCHEMA_VERSION
     trade: Trade
+    source: AnalysisSource
     summary: str
     image_quality: ImageQuality
     components: list[Component]

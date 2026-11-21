@@ -1,0 +1,27 @@
+{
+  "summary": "Mock-Szenario 'Unbrauchbares Foto': Das Bild ist stark unscharf und unterbelichtet; zu erkennen ist nur ein grauer Kasten an einer Wand.",
+  "image_quality": {
+    "usable": false,
+    "issues": ["stark unscharf (Bewegungsunschärfe)", "unterbelichtet", "Motiv nur teilweise im Bild"]
+  },
+  "components": [
+    {
+      "name": "Unbekannter Kasten",
+      "category": "unbestimmt",
+      "location_hint": "Bildmitte",
+      "labels": [{ "text": "???", "confidence": "low" }]
+    }
+  ],
+  "observations": [
+    { "text": "Ein grauer Kasten an einer Wand ist schemenhaft zu erkennen.", "confidence": "medium", "component_index": 0 }
+  ],
+  "findings": [],
+  "uncertainties": [],
+  "next_checks": [],
+  "safety": {
+    "risk_level": "low",
+    "hazards": [],
+    "qualified_person_required": false,
+    "notices": []
+  }
+}
