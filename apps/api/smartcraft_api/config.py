@@ -27,6 +27,17 @@ class Settings(BaseSettings):
     # jederzeit verschwinden. Die Oberfläche zeigt dann einen Demo-Hinweis.
     persistent_storage: bool = True
 
+    # --- Härtung ---------------------------------------------------------------------
+    # Analysen pro Client; bremst Endlosschleifen und – mit echter KI – Kosten
+    rate_analyses_per_minute: int = Field(default=10, ge=1)
+    rate_analyses_per_day: int = Field(default=200, ge=1)
+    # Kostenbremse: Analysen pro Tag über alle Clients (pro Instanz)
+    max_analyses_per_day: int = Field(default=500, ge=1)
+    # Übrige schreibende Anfragen pro Client
+    rate_writes_per_minute: int = Field(default=120, ge=1)
+    # Maximale Dauer eines KI-Aufrufs (Vercel-Funktion: 30 s)
+    ai_timeout_seconds: float = Field(default=25, gt=0, le=120)
+
 
 @lru_cache
 def get_settings() -> Settings:

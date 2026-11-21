@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.11.0] – 2026-11-21
+
+### Hinzugefügt (Härtung, ADR 0009)
+- Rate-Limit: Analysen pro Client (10/Minute, 200/Tag), globale Tages-Kostenbremse (500),
+  schreibende Anfragen (120/Minute); Antwort 429 mit `Retry-After` und Klartext.
+- `X-Request-ID` an jeder Antwort; unerwartete Fehler → 500 ohne interne Details, mit
+  Fehler-ID für die Log-Suche.
+- Zeitlimit für KI-Aufrufe (`SMARTCRAFT_AI_TIMEOUT_SECONDS`, 25 s) → 502, nichts gespeichert.
+- Sicherheits-Header auf Vercel: Content-Security-Policy, Permissions-Policy.
+- Browser-Test des kompletten Ablaufs mit Playwright (`npm run e2e`) und CI-Job `e2e`.
+- Fehlerübersicht und Betriebshinweise: `docs/07-betrieb-und-fehler.md`.
+- 13 neue Backend-Tests (264), 1 neuer Frontend-Test (30), 2 Browser-Tests.
+
 ## [0.10.0] – 2026-11-21
 
 ### Hinzugefügt

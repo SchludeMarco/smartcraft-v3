@@ -7,6 +7,8 @@ from smartcraft_api.api.routes import analyses, health, meta, projects
 from smartcraft_api.config import Settings, get_settings
 from smartcraft_api.media.storage import LocalStorage
 from smartcraft_api.persistence.db import init_db, make_engine, make_sessionmaker
+from smartcraft_api.security.middleware import GuardMiddleware, unexpected_error_handler
+from smartcraft_api.security.rate_limit import RateLimiter
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -17,7 +19,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_origins=settings.cors_origins,
         allow_methods=["GET", "POST", "PATCH", "DELETE"],
         allow_headers=["*"],
+        expose_headers=["X-Request-ID", "Retry-After"],
     )
+    app.add_middleware(GuardMiddleware, settings=settings, limiter=RateLimiter())
+    app.add_exception_handler(Exception, unexpected_error_handler)
     engine = make_engine(settings.database_url)
     init_db(engine)
     app.state.engine = engine

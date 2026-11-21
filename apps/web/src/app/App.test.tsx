@@ -161,6 +161,30 @@ describe("Projekt anlegen", () => {
   });
 });
 
+describe("Rate-Limit", () => {
+  it("zeigt die Wartezeit des Servers bei zu vielen Anfragen", async () => {
+    mockApi((req) => {
+      const p = path(req);
+      if (p === "/health") return { body: health };
+      if (p === "/projects" && req.method === "GET") return { body: [] };
+      if (p === "/projects" && req.method === "POST")
+        return {
+          status: 429,
+          body: { detail: "Zu viele Anfragen. Bitte in 42 Sekunden erneut versuchen.", code: "rate_limited" },
+        };
+      return undefined;
+    });
+    const user = userEvent.setup();
+    renderWithProviders(<App />);
+
+    await user.click(await screen.findByRole("button", { name: "Neues Projekt" }));
+    await user.type(screen.getByLabelText("Projektname *"), "X");
+    await user.click(screen.getByRole("button", { name: "Projekt anlegen" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("in 42 Sekunden");
+  });
+});
+
 describe("Projektseite", () => {
   it("zeigt Analysen mit Risiko, Fachkraft-Pflicht und Testdaten-Kennzeichnung", async () => {
     mockApi((req) => {
