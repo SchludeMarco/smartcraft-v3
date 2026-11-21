@@ -1,57 +1,123 @@
 {
   "summary": "Mock-Szenario 'Heizungsanlage': Wandhängende Gastherme mit Abgasrohr, darunter Heizkreisverteilung mit Ausdehnungsgefäß.",
-  "image_quality": { "usable": true, "issues": [] },
+  "image_quality": {
+    "usable": true,
+    "issues": []
+  },
   "components": [
     {
       "name": "Gas-Brennwerttherme",
       "category": "Wärmeerzeuger",
       "location_hint": "Wandmontage, Bildmitte",
       "labels": [
-        { "text": "Typenschild teilweise verdeckt", "confidence": "low" }
-      ]
+        {
+          "text": "Typenschild teilweise verdeckt",
+          "confidence": "low"
+        }
+      ],
+      "region": {
+        "capture_index": 0,
+        "x": 0.3,
+        "y": 0.12,
+        "width": 0.4,
+        "height": 0.48
+      }
     },
     {
       "name": "Abgasrohr",
       "category": "Abgasanlage",
       "location_hint": "Oberhalb der Therme",
-      "labels": []
+      "labels": [],
+      "region": {
+        "capture_index": 0,
+        "x": 0.42,
+        "y": 0.0,
+        "width": 0.14,
+        "height": 0.12
+      }
     },
     {
       "name": "Membran-Ausdehnungsgefäß",
       "category": "Sicherheitseinrichtung",
       "location_hint": "Links unten",
-      "labels": [{ "text": "18 l", "confidence": "medium" }]
+      "labels": [
+        {
+          "text": "18 l",
+          "confidence": "medium"
+        }
+      ],
+      "region": {
+        "capture_index": 0,
+        "x": 0.05,
+        "y": 0.6,
+        "width": 0.16,
+        "height": 0.3
+      }
     },
     {
       "name": "Manometer",
       "category": "Anzeige",
       "location_hint": "Unterhalb der Therme",
-      "labels": [{ "text": "Zeiger bei ca. 0,8 bar", "confidence": "low" }]
+      "labels": [
+        {
+          "text": "Zeiger bei ca. 0,8 bar",
+          "confidence": "low"
+        }
+      ],
+      "region": {
+        "capture_index": 0,
+        "x": 0.46,
+        "y": 0.66,
+        "width": 0.08,
+        "height": 0.08
+      }
     }
   ],
   "observations": [
-    { "text": "Am Übergang des Abgasrohrs ist eine Verfärbung sichtbar.", "confidence": "medium", "component_index": 1 },
-    { "text": "Das Manometer zeigt einen niedrigen Wert an; der Zeiger ist schlecht ablesbar.", "confidence": "low", "component_index": 3 },
-    { "text": "Unter dem Ausdehnungsgefäß sind Kalkspuren an einer Verschraubung zu sehen.", "confidence": "medium", "component_index": 2 }
+    {
+      "text": "Am Übergang des Abgasrohrs ist eine Verfärbung sichtbar.",
+      "confidence": "medium",
+      "component_index": 1
+    },
+    {
+      "text": "Das Manometer zeigt einen niedrigen Wert an; der Zeiger ist schlecht ablesbar.",
+      "confidence": "low",
+      "component_index": 3
+    },
+    {
+      "text": "Unter dem Ausdehnungsgefäß sind Kalkspuren an einer Verschraubung zu sehen.",
+      "confidence": "medium",
+      "component_index": 2
+    }
   ],
   "findings": [
     {
       "title": "Möglicherweise niedriger Anlagendruck",
       "severity": "notice",
       "reasoning": "Ein Druck unter dem üblichen Fülldruck kann auf Wasserverlust oder ein defektes Ausdehnungsgefäß hindeuten.",
-      "confidence": "low"
+      "confidence": "low",
+      "component_indices": [
+        3,
+        2
+      ]
     },
     {
       "title": "Verfärbung am Abgasrohr",
       "severity": "warning",
       "reasoning": "Verfärbungen können auf Kondensat- oder Abgasaustritt hindeuten.",
-      "confidence": "low"
+      "confidence": "low",
+      "component_indices": [
+        1
+      ]
     },
     {
       "title": "Kalkspuren an Verschraubung",
       "severity": "notice",
       "reasoning": "Hinweis auf eine frühere oder bestehende Tropfstelle.",
-      "confidence": "medium"
+      "confidence": "medium",
+      "component_indices": [
+        2
+      ]
     }
   ],
   "uncertainties": [
@@ -61,12 +127,18 @@
     {
       "action": "Anlagendruck am Manometer ablesen und mit dem Herstellerwert vergleichen",
       "reason": "Klärt, ob Wasser nachgefüllt oder das Ausdehnungsgefäß geprüft werden muss",
-      "requires_qualified_person": false
+      "requires_qualified_person": false,
+      "component_indices": [
+        3
+      ]
     },
     {
       "action": "Verschraubung am Ausdehnungsgefäß auf Feuchtigkeit kontrollieren",
       "reason": "Aktive Undichtigkeit ausschließen",
-      "requires_qualified_person": false
+      "requires_qualified_person": false,
+      "component_indices": [
+        2
+      ]
     }
   ],
   "safety": {

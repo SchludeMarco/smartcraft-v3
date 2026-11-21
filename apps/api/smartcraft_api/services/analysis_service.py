@@ -47,6 +47,12 @@ async def run_analysis(provider: AnalysisProvider, request: AnalysisRequest) -> 
         draft = AnalysisDraft.model_validate(draft.model_dump())
     except ValidationError as exc:
         raise ProviderOutputError(str(exc)) from exc
+    for component in draft.components:
+        if component.region and component.region.capture_index >= len(request.images):
+            raise ProviderOutputError(
+                f"Bauteil '{component.name}' verweist auf Foto {component.region.capture_index}, "
+                f"es gibt aber nur {len(request.images)}"
+            )
     info = provider.info
     source = AnalysisSource(
         provider_id=info.provider_id, model_id=info.model_id, is_test_data=info.is_test_data

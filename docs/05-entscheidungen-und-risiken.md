@@ -9,6 +9,9 @@
 | E3 | **Login & Mehrbenutzer** (wer nutzt V3: nur Marco, Familie/Freunde, Betriebe?) | nach MVP | Datenmodell ist mit `owner_id` vorbereitet |
 | E4 | ~~Umfang Gewerke im MVP~~ | – | **Entschieden (21.11.2026):** alle Gewerke wie in V2 |
 
+| E5 | **AR-Plattform** (WebXR, native App, bestimmte Brille; KI in der Cloud oder auf dem Gerät) | vor AR-2 | offen, siehe `06-ar-ausbaustufe.md` |
+| E6 | **Räumliche Anker** lokal oder als (oft kostenpflichtiger) Cloud-Dienst | vor AR-4 | offen |
+
 Alle übrigen technischen Entscheidungen (Stack, Struktur, Schema) sind in
 `02-architektur.md` begründet und werden ohne Rückfrage umgesetzt.
 
@@ -23,4 +26,7 @@ Alle übrigen technischen Entscheidungen (Stack, Struktur, Schema) sind in
 | Modell-Abschaltungen (in V2 dreimal passiert) | Ausfall | Modell nur in Konfiguration, Provider-Interface, Mock als Rückfallebene |
 | Schlechte Fotos (Dunkelheit, Spiegelung, Schräglage) | Wertlose Analyse | `image_quality` im Schema, gezielte Rückmeldung „neues Foto mit …“ |
 | Funkloch auf der Baustelle | Keine Analyse möglich | Nach MVP: PWA + Warteschlange (V2-Erfahrung nutzen) |
+| AR-Einblendungen lenken bei gefährlichen Arbeiten ab | Unfallrisiko | Einblendungen nur auf Abfrage, Sicherheitsblock immer sichtbar, kein „Grün = sicher“ (`06-ar-ausbaustufe.md`) |
+| Falsch verortete Bauteile in AR | Prüfschritt am falschen Gerät | Positionsqualität im Eval-Set messen; unsichere Zuordnung kennzeichnen |
+| Dauerkamera der AR-Brille | Datenschutz (Personen, Kundendaten) | Nur bewusst ausgelöste Captures analysieren, kein Dauer-Upload |
 | Scope Creep wie in V2 | Wartungslast | MVP-Grenzen in `04-mvp-plan.md`, neue Features nur über den Plan |

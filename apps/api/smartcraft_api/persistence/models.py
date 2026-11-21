@@ -108,6 +108,8 @@ class CheckItemRow(Base):
     requires_qualified_person: Mapped[bool] = mapped_column(Boolean)
     reference: Mapped[str | None] = mapped_column(String(200))
     source: Mapped[str] = mapped_column(String(16))
+    # Bauteile (Index in result.components), an denen der Schritt auszuführen ist – Anker für AR
+    component_indices: Mapped[list[int]] = mapped_column(JSON, default=list)
     # open | done | not_applicable – gesetzt ausschließlich durch einen Menschen
     status: Mapped[str] = mapped_column(String(16), default="open")
     completed_by: Mapped[str | None] = mapped_column(String(200))

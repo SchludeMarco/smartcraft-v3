@@ -1,49 +1,100 @@
 {
   "summary": "Mock-Szenario 'Unterverteilung mit FI': Aufputz-Unterverteilung mit einem FI-Schutzschalter und sechs Leitungsschutzschaltern. Die Belegung wirkt einwandfrei.",
-  "image_quality": { "usable": true, "issues": [] },
+  "image_quality": {
+    "usable": true,
+    "issues": []
+  },
   "components": [
     {
       "name": "FI-Schutzschalter (RCD)",
       "category": "Schutzorgan",
       "location_hint": "Obere Hutschiene, links",
       "labels": [
-        { "text": "40A 30mA Typ A", "confidence": "medium" },
-        { "text": "Prüftaste T", "confidence": "high" }
-      ]
+        {
+          "text": "40A 30mA Typ A",
+          "confidence": "medium"
+        },
+        {
+          "text": "Prüftaste T",
+          "confidence": "high"
+        }
+      ],
+      "region": {
+        "capture_index": 0,
+        "x": 0.12,
+        "y": 0.25,
+        "width": 0.1,
+        "height": 0.3
+      }
     },
     {
       "name": "Leitungsschutzschalter (6 Stück)",
       "category": "Schutzorgan",
       "location_hint": "Obere Hutschiene, rechts vom FI",
       "labels": [
-        { "text": "B16", "confidence": "medium" },
-        { "text": "B1?", "confidence": "low" }
-      ]
+        {
+          "text": "B16",
+          "confidence": "medium"
+        },
+        {
+          "text": "B1?",
+          "confidence": "low"
+        }
+      ],
+      "region": {
+        "capture_index": 0,
+        "x": 0.24,
+        "y": 0.25,
+        "width": 0.42,
+        "height": 0.3
+      }
     },
     {
       "name": "Mantelleitungen",
       "category": "Leitung",
       "location_hint": "Einführung von oben",
-      "labels": []
+      "labels": [],
+      "region": {
+        "capture_index": 0,
+        "x": 0.1,
+        "y": 0.0,
+        "width": 0.6,
+        "height": 0.18
+      }
     }
   ],
   "observations": [
-    { "text": "Ein FI-Schutzschalter und sechs Leitungsschutzschalter sind auf einer Hutschiene montiert.", "confidence": "high", "component_index": 0 },
-    { "text": "Die Beschriftung eines Leitungsschutzschalters ist nur teilweise lesbar.", "confidence": "high", "component_index": 1 },
-    { "text": "Rechts neben den Leitungsschutzschaltern fehlt eine Blindabdeckung; die Öffnung ist offen.", "confidence": "medium" }
+    {
+      "text": "Ein FI-Schutzschalter und sechs Leitungsschutzschalter sind auf einer Hutschiene montiert.",
+      "confidence": "high",
+      "component_index": 0
+    },
+    {
+      "text": "Die Beschriftung eines Leitungsschutzschalters ist nur teilweise lesbar.",
+      "confidence": "high",
+      "component_index": 1
+    },
+    {
+      "text": "Rechts neben den Leitungsschutzschaltern fehlt eine Blindabdeckung; die Öffnung ist offen.",
+      "confidence": "medium"
+    }
   ],
   "findings": [
     {
       "title": "Offene Teilungseinheit ohne Blindabdeckung",
       "severity": "warning",
       "reasoning": "Durch die Öffnung könnten bei abgenommener Tür spannungsführende Teile berührbar sein.",
-      "confidence": "medium"
+      "confidence": "medium",
+      "component_indices": [
+        1
+      ]
     },
     {
       "title": "Stromkreisbeschriftung fehlt",
       "severity": "notice",
       "reasoning": "Am Verteiler ist keine Zuordnung der Stromkreise erkennbar.",
-      "confidence": "medium"
+      "confidence": "medium",
+      "component_indices": []
     }
   ],
   "uncertainties": [
@@ -53,7 +104,10 @@
     {
       "action": "Blindabdeckung für die offene Teilungseinheit nachrüsten lassen",
       "reason": "Berührungsschutz herstellen",
-      "requires_qualified_person": true
+      "requires_qualified_person": true,
+      "component_indices": [
+        1
+      ]
     }
   ],
   "safety": {

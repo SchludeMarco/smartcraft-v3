@@ -10,6 +10,7 @@ from smartcraft_api.domain.analysis import (
     AnalysisDraft,
     AnalysisResult,
     AnalysisSource,
+    Component,
     Finding,
     Hazard,
     NextCheck,
@@ -23,7 +24,7 @@ from smartcraft_api.domain.analysis import (
 from smartcraft_api.domain.trades import Trade
 from smartcraft_api.safety import rules
 
-POLICY_VERSION = "1.1.1"
+POLICY_VERSION = "1.2.0"
 
 
 class _Log:
@@ -47,6 +48,23 @@ def _searchable_texts(draft: AnalysisDraft) -> Iterable[str]:
     for f in draft.findings:
         yield f.title
         yield f.reasoning
+
+
+def _component_texts(component: Component) -> list[str]:
+    texts = [component.name, component.category, *(label.text for label in component.labels)]
+    if component.location_hint:
+        texts.append(component.location_hint)
+    return texts
+
+
+def hazard_components(draft: AnalysisDraft, hazard: Hazard) -> list[int]:
+    """Bauteile, an denen eine Gefahr erkannt wurde – Anker für Pflicht-Prüfschritte (AR)."""
+    pattern = rules.HAZARD_PATTERNS[hazard]
+    return [
+        i
+        for i, component in enumerate(draft.components)
+        if any(pattern.search(t) for t in _component_texts(component))
+    ]
 
 
 def detect_hazards(draft: AnalysisDraft, trade: Trade) -> list[Hazard]:
@@ -99,6 +117,7 @@ def apply_safety_policy(
             severity=f.severity,
             reasoning=clean(f.reasoning, "Auffälligkeit"),
             confidence=f.confidence,
+            component_indices=f.component_indices,
         )
         for f in draft.findings
     ]
@@ -109,6 +128,7 @@ def apply_safety_policy(
             requires_qualified_person=c.requires_qualified_person,
             reference=c.reference,
             source="model",
+            component_indices=c.component_indices,
         )
         for c in draft.next_checks
     ]
@@ -138,9 +158,10 @@ def apply_safety_policy(
             qualified = True
         for notice in rule.notices:
             _append_unique(notices, notice)
+        anchors = hazard_components(draft, hazard)
         for check in rule.checks:
             if check.action not in existing_actions:
-                next_checks.append(check)
+                next_checks.append(check.model_copy(update={"component_indices": anchors}))
                 existing_actions.add(check.action)
                 log.add("mandatory-check", f"Pflicht-Prüfschritt ergänzt ({hazard.value})")
 

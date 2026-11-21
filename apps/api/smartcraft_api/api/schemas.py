@@ -44,6 +44,7 @@ class CheckItemOut(_Out):
     requires_qualified_person: bool
     reference: str | None
     source: Literal["model", "policy"]
+    component_indices: list[int]
     status: Literal["open", "done", "not_applicable"]
     completed_by: str | None
     completed_at: datetime | None
