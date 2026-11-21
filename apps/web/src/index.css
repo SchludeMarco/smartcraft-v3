@@ -1,138 +1,147 @@
 @import "tailwindcss";
-/* Cinzel lokal statt über Google Fonts: kein externer Request (Datenschutz, CSP, offline) */
-@import "@fontsource/cinzel/600.css";
+/* Cinzel nur für den Schriftzug (Wiedererkennung aus V2), lokal statt über Google Fonts */
 @import "@fontsource/cinzel/700.css";
 
-/* Gestaltung bewusst als Weiterentwicklung von Sm@rtCraft V2 (src/index.css dort):
-   dunkelblauer Hintergrund, blaue Kopfleiste, Pergament-Panels, grüne Schritt-Labels
-   und Quest-Buttons, Gewerk-Akzentfarben. */
+/* Gestaltung: Aufbau und Elemente aus Sm@rtCraft V2 (Kopfleiste, Logo, Schritt-Labels,
+   Gewerk-Kacheln), Farbgebung professionell und schlicht: Lila-Blau, Indigo, ruhige Flächen,
+   polierte Buttons. Siehe docs/adr/0010-gestaltung-wie-v2.md. */
 @theme {
-  --color-parchment: #f6efdd;
-  --color-parchment-dark: #e9dcb8;
-  --color-wood: #1e4a72;
-  --color-wood-dark: #12314d;
-  --color-steel: #3d7fb8;
-  --color-steel-light: #6fb1e8;
-  --color-forest: #2f6b4f;
-  --color-forest-dark: #1c4530;
-  --color-ink: #2c4a3a;
+  --color-brand: #4f46e5; /* Indigo */
+  --color-brand-dark: #3730a3;
+  --color-brand-light: #c7d2fe;
+  --color-ink: #0f172a; /* Überschriften */
+  --color-surface: #f7f8fc; /* Fensterflächen */
+  --color-surface-dark: #eceef7;
+  --color-line: #dfe3ef; /* feine Rahmen */
 
   --font-display: "Cinzel", Georgia, "Times New Roman", serif;
 }
 
 body {
-  background-color: var(--color-wood-dark);
+  background-color: #0e1230;
+  color: #1e293b;
 }
 
 @layer components {
-  /* Pergament-Panel mit doppeltem Rahmen (Stahlblau außen, Wein-Rot innen) */
-  .panel-parchment {
-    background: linear-gradient(180deg, #fbf6e9 0%, var(--color-parchment) 100%);
-    border: 2px solid var(--color-steel);
+  /* Kopfleiste in Lila-Blau mit dezentem Glanz (Overlay im Header-Component) */
+  .header-brand {
+    background: linear-gradient(135deg, #4c3fa8 0%, #4651c4 45%, #3361b8 100%);
     box-shadow:
-      inset 0 0 0 4px #fffdf6,
-      inset 0 0 0 5px rgba(109, 43, 43, 0.35),
-      0 10px 20px -12px rgba(43, 23, 10, 0.5);
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      0 10px 30px -12px rgba(30, 27, 75, 0.8);
   }
 
-  /* Ruhigere Karte innerhalb eines Panels (Listen, Prüfschritte) */
-  .card-parchment {
-    background: #fffdf6;
-    border: 1px solid #d9c79a;
-    box-shadow: 0 2px 6px -3px rgba(43, 23, 10, 0.35);
+  /* Hauptfenster: helle, ruhige Fläche mit feinem Rahmen und weichem Schatten */
+  .surface-panel {
+    background: linear-gradient(180deg, #ffffff 0%, var(--color-surface) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow:
+      inset 0 1px 0 #ffffff,
+      0 24px 48px -24px rgba(8, 10, 40, 0.65);
   }
 
-  .header-ornate {
-    background: linear-gradient(180deg, #2c6291 0%, var(--color-wood) 55%, var(--color-wood-dark) 100%);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  /* Karten innerhalb des Fensters */
+  .surface-card {
+    background: #ffffff;
+    border: 1px solid var(--color-line);
+    box-shadow:
+      0 1px 2px rgba(15, 23, 42, 0.04),
+      0 6px 16px -10px rgba(15, 23, 42, 0.18);
+    transition: box-shadow 150ms ease, transform 150ms ease;
   }
 
-  .badge-pill {
+  .step-badge {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    padding: 0.3rem 0.9rem;
+    padding: 0.3rem 0.85rem;
     border-radius: 9999px;
-    background: linear-gradient(180deg, #4a9068, var(--color-forest));
-    border: 1px solid var(--color-forest-dark);
-    color: #fff;
-    font-weight: 700;
+    background: linear-gradient(180deg, #eef0ff, #e3e6fd);
+    border: 1px solid #c9cef8;
+    color: var(--color-brand-dark);
+    font-weight: 600;
     font-size: 0.75rem;
     letter-spacing: 0.02em;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 2px 5px rgba(0, 0, 0, 0.25);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
   }
 
-  /* Primärer Button im V2-„Quest“-Look */
-  .btn-quest {
-    border-radius: 9999px;
-    background: linear-gradient(180deg, #3f8a62, var(--color-forest-dark));
-    border: 2px solid #15311f;
-    color: #fff;
-    font-weight: 800;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 4px 10px rgba(0, 0, 0, 0.35);
+  /* Polierte Buttons: feiner Verlauf, Lichtkante oben, weicher Schatten */
+  .btn-primary,
+  .btn-secondary,
+  .btn-dark {
+    border-radius: 0.75rem;
+    font-weight: 600;
     transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
   }
-  .btn-quest:hover:not(:disabled) { filter: brightness(1.08); }
-  .btn-quest:active:not(:disabled) {
+  .btn-primary {
+    background: linear-gradient(180deg, #6159ea 0%, var(--color-brand) 55%, #4338ca 100%);
+    border: 1px solid var(--color-brand-dark);
+    color: #fff;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.28),
+      0 8px 18px -8px rgba(67, 56, 202, 0.65);
+  }
+  .btn-primary:hover:not(:disabled) { filter: brightness(1.06); }
+  .btn-primary:active:not(:disabled) {
     transform: translateY(1px);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 2px 4px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 3px 8px -4px rgba(67, 56, 202, 0.6);
   }
-  .btn-quest:disabled { filter: grayscale(0.3) brightness(0.85); }
+  .btn-primary:disabled { filter: saturate(0.5) brightness(0.95); opacity: 0.75; }
 
-  .btn-parchment {
-    border-radius: 9999px;
-    background: linear-gradient(180deg, #fbf6e9, var(--color-parchment-dark));
-    border: 2px solid #b79b5e;
-    color: var(--color-ink);
-    font-weight: 700;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 3px 6px rgba(0, 0, 0, 0.15);
-    transition: transform 120ms ease, filter 120ms ease;
+  .btn-secondary {
+    background: linear-gradient(180deg, #ffffff 0%, #f3f4fa 100%);
+    border: 1px solid #d3d8e8;
+    color: #334155;
+    box-shadow:
+      inset 0 1px 0 #ffffff,
+      0 2px 6px -3px rgba(15, 23, 42, 0.2);
   }
-  .btn-parchment:active { transform: translateY(1px); }
-  .btn-parchment:disabled { opacity: 0.6; }
+  .btn-secondary:hover:not(:disabled) { border-color: #b9c0dd; }
+  .btn-secondary:active:not(:disabled) { transform: translateY(1px); }
+  .btn-secondary:disabled { opacity: 0.6; }
 
-  .btn-steel {
-    border-radius: 9999px;
-    background: linear-gradient(180deg, var(--color-steel-light), var(--color-steel));
-    border: 2px solid #8a6d1a;
-    color: var(--color-wood-dark);
-    font-weight: 800;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 4px 14px rgba(0, 0, 0, 0.45);
-    transition: transform 120ms ease, filter 120ms ease;
+  .btn-dark {
+    background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+    border: 1px solid #0f172a;
+    color: #fff;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.15),
+      0 8px 18px -10px rgba(15, 23, 42, 0.7);
   }
-  .btn-steel:hover { filter: brightness(1.08); }
-  .btn-steel:active { transform: translateY(1px); }
+  .btn-dark:hover { filter: brightness(1.1); }
+  .btn-dark:active { transform: translateY(1px); }
 
-  .input-parchment {
+  .field {
     width: 100%;
     border-radius: 0.75rem;
-    border: 2px solid #d9c79a;
-    background: #fffdf6;
+    border: 1px solid #d3d8e8;
+    background: #ffffff;
     padding: 0.6rem 0.8rem;
     font-size: 1rem;
-    color: #1f2a24;
+    color: #0f172a;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.05);
+    transition: border-color 120ms ease, box-shadow 120ms ease;
   }
-  .input-parchment:focus {
+  .field:focus {
     outline: none;
-    border-color: var(--accent, var(--color-steel));
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent, var(--color-steel)) 25%, transparent);
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.18);
   }
 
   .font-display { font-family: var(--font-display); }
 
-  /* Dunkelblauer Verlauf hinter Kopfleiste und Panel (wie V2, ohne externes Bild) */
+  /* Seitenhintergrund: tiefes Indigo-Blau mit sanftem Lichtschein oben */
   .app-backdrop {
     background:
-      radial-gradient(ellipse 80% 50% at 50% -5%, rgba(111, 177, 232, 0.22), transparent 60%),
-      linear-gradient(165deg, #1c3a52 0%, #16324a 35%, #0f2334 65%, #081420 100%);
+      radial-gradient(ellipse 80% 45% at 50% -10%, rgba(129, 140, 248, 0.28), transparent 60%),
+      linear-gradient(165deg, #1e1b4b 0%, #172554 45%, #0b1130 100%);
   }
 }
 
-/* Druck (Projektbericht): ruhig, weiß, ohne Dekoration */
 @media print {
   body { background: #fff; }
   .app-backdrop { background: none; }
-  .panel-parchment, .card-parchment {
+  .surface-panel, .surface-card {
     background: #fff;
     border: 1px solid #999;
     box-shadow: none;

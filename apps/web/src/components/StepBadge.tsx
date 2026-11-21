@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 export function StepBadge({ children }: { children: ReactNode }) {
   return (
     <h2 className="mb-3">
-      <span className="badge-pill">{children}</span>
+      <span className="step-badge">{children}</span>
     </h2>
   );
 }

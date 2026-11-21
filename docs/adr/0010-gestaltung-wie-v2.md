@@ -10,22 +10,26 @@ Marco wünscht sich, dass V3 erkennbar eine Weiterentwicklung von V2 ist.
 
 ## Entscheidung
 
-Die Gestaltung von V2 wird übernommen und für die neuen Funktionen fortgeführt
-(Code-Struktur bleibt V3):
+**Aufbau und Elemente aus V2, Farbgebung professionell und schlicht** (Rückmeldung Marco,
+21.11.2026: Header in Lila-Blau, App insgesamt professionell und schlicht, Buttons und
+Fensterflächen poliert und edel):
 
-- Farben und Bausteine aus V2 `src/index.css`: dunkelblauer Hintergrund, blaue Kopfleiste
-  mit Glanzstreifen und Stahlblau-Linie, Pergament-Panels, grüne Schritt-Labels
-  (`badge-pill`), grüner Haupt-Button (`btn-quest`), Pergament- und Stahl-Buttons.
-- Logo (Hammer mit Blitz), Schriftzug „Sm@rt**Craft**!“ in Cinzel, Untertitel
-  „Der Kollege in der Hosentasche.“, Favicons aus V2.
-- Berufswahl als farbige Kacheln mit Icons und den Gewerk-Farben aus V2
-  (`TRADE_THEMES`); die Akzentfarbe des gewählten Gewerks färbt Seite und Ergebnis.
-- Ablauf in nummerierten Schritten wie in V2: „1. Beruf auswählen“,
-  „2. Problem dokumentieren & analysieren“, „3. Ergebnis der KI-Analyse“.
-- Cinzel wird **lokal** eingebunden (`@fontsource/cinzel`) statt über Google Fonts – kein
-  externer Request, passt zur Content-Security-Policy und funktioniert offline.
-- Sicherheitsinformationen (roter Sicherheitsblock, Testdaten-Hinweise) bleiben bewusst
-  auffälliger als die Dekoration.
+- Aus V2 übernommen: Kopfleiste mit Logo (Hammer + Blitz), Schriftzug „Sm@rt**Craft**!“ in
+  Cinzel, Untertitel „Der Kollege in der Hosentasche.“, Favicons; Ablauf in nummerierten
+  Schritten („1. Beruf auswählen“, „2. Problem dokumentieren & analysieren“,
+  „3. Ergebnis der KI-Analyse“); Berufswahl als farbige Kacheln mit Icons und den
+  Gewerkfarben aus V2.
+- Neu: Kopfleiste in Lila-Blau mit dezentem Glanz, tiefes Indigo als Seitenhintergrund,
+  helle, ruhige Fensterflächen mit feinem Rahmen und weichem Schatten, polierte Buttons
+  (Indigo-Verlauf mit Lichtkante), neutrale Schiefergrau-Texte, schlichte Sans-Serif für
+  Überschriften. Der Pergament-/Spiel-Look aus V2 entfällt.
+- Bausteine zentral in `apps/web/src/index.css` (`header-brand`, `surface-panel`,
+  `surface-card`, `step-badge`, `btn-primary`, `btn-secondary`, `btn-dark`, `field`) und
+  `lib/trades.tsx`.
+- Cinzel nur für den Schriftzug, **lokal** eingebunden (`@fontsource/cinzel`) – kein
+  externer Request, CSP-konform, offline.
+- Sicherheitsinformationen (Sicherheitsblock, Testdaten-Hinweise) bleiben deutlich
+  hervorgehoben.
 
 ## Konsequenzen
 

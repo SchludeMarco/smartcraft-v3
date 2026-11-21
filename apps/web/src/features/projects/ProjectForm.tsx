@@ -8,7 +8,7 @@ type Props = {
   onCancel: () => void;
 };
 
-const inputClass = "input-parchment";
+const inputClass = "field";
 
 export function ProjectForm({ onCreated, onCancel }: Props) {
   const create = useCreateProject();
@@ -35,12 +35,12 @@ export function ProjectForm({ onCreated, onCancel }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="panel-parchment space-y-4 rounded-xl p-4">
+    <form onSubmit={handleSubmit} noValidate className="surface-panel space-y-4 rounded-xl p-4">
       <h2>
-        <span className="badge-pill">Neues Projekt</span>
+        <span className="step-badge">Neues Projekt</span>
       </h2>
       <label className="block space-y-1">
-        <span className="text-sm font-semibold text-stone-700">Projektname *</span>
+        <span className="text-sm font-semibold text-slate-700">Projektname *</span>
         <input
           className={inputClass}
           value={name}
@@ -52,15 +52,15 @@ export function ProjectForm({ onCreated, onCancel }: Props) {
         {nameError && <span className="text-sm text-red-700">{nameError}</span>}
       </label>
       <label className="block space-y-1">
-        <span className="text-sm font-semibold text-stone-700">Adresse</span>
+        <span className="text-sm font-semibold text-slate-700">Adresse</span>
         <input className={inputClass} value={address} onChange={(e) => setAddress(e.target.value)} maxLength={300} />
       </label>
       <label className="block space-y-1">
-        <span className="text-sm font-semibold text-stone-700">Auftraggeber</span>
+        <span className="text-sm font-semibold text-slate-700">Auftraggeber</span>
         <input className={inputClass} value={client} onChange={(e) => setClient(e.target.value)} maxLength={200} />
       </label>
       <label className="block space-y-1">
-        <span className="text-sm font-semibold text-stone-700">Beschreibung</span>
+        <span className="text-sm font-semibold text-slate-700">Beschreibung</span>
         <textarea
           className={inputClass}
           rows={3}
@@ -74,11 +74,11 @@ export function ProjectForm({ onCreated, onCancel }: Props) {
         <button
           type="submit"
           disabled={create.isPending}
-          className="btn-quest flex-1 px-4 py-3"
+          className="btn-primary flex-1 px-4 py-3"
         >
           {create.isPending ? "Wird angelegt …" : "Projekt anlegen"}
         </button>
-        <button type="button" onClick={onCancel} className="btn-parchment px-4 py-3">
+        <button type="button" onClick={onCancel} className="btn-secondary px-4 py-3">
           Abbrechen
         </button>
       </div>

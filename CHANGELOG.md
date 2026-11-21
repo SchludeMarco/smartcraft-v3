@@ -2,15 +2,13 @@
 
 ## [0.12.0] – 2026-11-21
 
-### Geändert
-- **Gestaltung wie V2** (ADR 0010): dunkelblauer Hintergrund, Kopfleiste mit Logo und
-  Schriftzug „Sm@rtCraft!“ (Cinzel, lokal eingebunden), Pergament-Panels, grüne
-  Schritt-Labels und Buttons, Favicons aus V2.
-- Berufswahl als farbige Kacheln mit Icons wie in V2; Akzentfarbe je Gewerk.
-- Neue Analyse in den V2-Schritten „1. Beruf auswählen“ / „2. Problem dokumentieren &
-  analysieren“, Haupt-Button „Problem analysieren“; Ergebnis als „3. Ergebnis der
-  KI-Analyse“.
-- Gewerk-Etiketten in Analyseliste und Ergebnis.
+### Geändert (ADR 0010)
+- **Gestaltung als Weiterentwicklung von V2:** Kopfleiste mit Logo und Schriftzug
+  „Sm@rtCraft!“ (Cinzel, lokal eingebunden), Favicons, Ablauf in den V2-Schritten
+  „1. Beruf auswählen“ / „2. Problem dokumentieren & analysieren“ / „3. Ergebnis der
+  KI-Analyse“, Berufswahl als farbige Kacheln mit Icons, Gewerk-Etiketten.
+- **Farbgebung professionell und schlicht:** Kopfleiste in Lila-Blau, Indigo-Hintergrund,
+  helle Fensterflächen mit feinem Rahmen, polierte Buttons, neutrale Grautöne.
 
 ## [0.11.0] – 2026-11-21
 
