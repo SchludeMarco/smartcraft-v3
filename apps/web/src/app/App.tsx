@@ -1,6 +1,6 @@
 import { Link, Route, Routes } from "react-router";
 import { Header } from "../components/Header";
-import { TestModeBanner } from "../components/TestModeBanner";
+import { StorageHint, TestModeBanner } from "../components/TestModeBanner";
 import { AnalysisPage } from "../features/analysis/AnalysisPage";
 import { NewAnalysisPage } from "../features/analysis/NewAnalysisPage";
 import { ProjectPage } from "../features/projects/ProjectPage";
@@ -23,8 +23,9 @@ export function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
-        <footer className="py-3 text-center text-xs text-white/60 print:hidden">
-          KI-gestützte Ersteinschätzung – keine Sicherheitsfreigabe.
+        <footer className="space-y-1 py-3 text-center text-xs text-white/60 print:hidden">
+          <p>KI-gestützte Ersteinschätzung – keine Sicherheitsfreigabe.</p>
+          <StorageHint />
         </footer>
       </div>
     </div>

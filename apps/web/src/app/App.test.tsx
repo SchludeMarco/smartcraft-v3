@@ -53,18 +53,18 @@ describe("Projektübersicht", () => {
     expect(screen.getByRole("status")).not.toHaveTextContent(/Demo/);
   });
 
-  it("warnt im Demo-Betrieb, dass Daten verschwinden können", async () => {
+  it("weist im Demo-Betrieb dezent in der Fußzeile auf flüchtigen Speicher hin", async () => {
     mockApi((req) => {
-      if (path(req) === "/health") return { body: { ...health, persistent_storage: false } };
+      if (path(req) === "/health")
+        return { body: { ...health, ai_provider: "gemini", persistent_storage: false } };
       if (path(req) === "/projects") return { body: [] };
       return undefined;
     });
 
     renderWithProviders(<App />);
 
-    const status = await screen.findByRole("status");
-    expect(status).toHaveTextContent(/Testmodus/);
-    expect(status).toHaveTextContent(/nicht dauerhaft gespeichert/);
+    expect(await screen.findByText(/Demo-Speicher/)).toBeInTheDocument();
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
 
   it("zeigt keinen Testmodus-Hinweis bei echtem Provider", async () => {

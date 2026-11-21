@@ -16,7 +16,7 @@ zusätzliche Dienste (Postgres, Blob-Speicher).
 1. **Demo mit flüchtigem Speicher:** Datenbank und Fotos liegen in `/tmp`. Projekte und
    Analysen können jederzeit verschwinden (Kaltstart, neue Instanz, neues Deployment).
    `SMARTCRAFT_PERSISTENT_STORAGE=false`; `/health` meldet das, und die Oberfläche zeigt
-   dauerhaft einen Demo-Hinweis.
+   dauerhaft einen Demo-Hinweis (seit 21.11.2026 dezent in der Fußzeile statt als Banner).
 2. **Nur für Marco:** Schutz per Vercel Authentication – nur Mitglieder seines Vercel-Teams
    kommen auf die Seite. Damit können keine Fremden Fotos hochladen.
 3. **Ein Vercel-Projekt `smartcraft-v3`** für Frontend und Backend: Vite-Build als statische
