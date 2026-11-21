@@ -3,7 +3,7 @@
 KI-Assistent für Handwerker auf der Baustelle: Installationen, Feuchtigkeitsschäden, Risse,
 Bauteile. Langfristig multimodal (Smartphone, später AR-Brille).
 
-**Status:** MVP-Schritt 3 – Mock-KI und Provider-Schnittstelle (noch keine echte KI).
+**Status:** MVP-Schritt 4 – Projekte und Datenspeicherung (KI: nur Mock).
 
 ## Erste Ausbaustufe: Installation Analyzer
 
@@ -38,9 +38,19 @@ Voraussetzung: [uv](https://docs.astral.sh/uv/).
 ```bash
 cd apps/api
 uv sync
-uv run uvicorn smartcraft_api.main:app --reload   # http://localhost:8000/docs
+uv run uvicorn --factory smartcraft_api.main:create_app --reload   # http://localhost:8000/docs
 uv run pytest && uv run ruff check . && uv run mypy
 ```
+
+API-Überblick (interaktiv unter `/docs`):
+
+| Methode | Pfad | Zweck |
+|---|---|---|
+| GET | `/health` | Status, Version, KI-Provider |
+| POST / GET | `/projects` | Projekt anlegen / auflisten |
+| GET / PATCH / DELETE | `/projects/{id}` | Projekt lesen / ändern / endgültig löschen |
+| GET | `/projects/{id}/analyses` | Analysen eines Projekts |
+| GET | `/analyses/{id}` | Analyse mit Ergebnis, Fotos und Prüfschritten |
 
 Konfiguration über Umgebungsvariablen, siehe `apps/api/.env.example`. Standard-KI ist ein
 kostenloser Mock.

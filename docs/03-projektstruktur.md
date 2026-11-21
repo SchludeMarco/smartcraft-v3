@@ -30,7 +30,7 @@ smartcraft-v3/
 │   │   │   │   ├── mock.py       # deterministisch, Fixtures
 │   │   │   │   └── prompts/      # installation_v1.md (versioniert)
 │   │   │   ├── media/            # Validierung, EXIF-Strip, Resize, Storage
-│   │   │   └── persistence/      # SQLModel-Tabellen, Repository, Session
+│   │   │   └── persistence/      # SQLAlchemy-Tabellen, Repository, Session
 │   │   └── tests/                # unit/, api/, fixtures/
 │   └── web/                      # React-Client
 │       ├── package.json
