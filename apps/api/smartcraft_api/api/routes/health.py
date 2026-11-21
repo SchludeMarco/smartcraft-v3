@@ -14,6 +14,7 @@ class HealthResponse(BaseModel):
     version: str
     environment: str
     ai_provider: str
+    persistent_storage: bool
 
 
 @router.get("/health", response_model=HealthResponse)
@@ -23,4 +24,5 @@ def health(settings: SettingsDep) -> HealthResponse:
         version=__version__,
         environment=settings.environment,
         ai_provider=settings.ai_provider,
+        persistent_storage=settings.persistent_storage,
     )

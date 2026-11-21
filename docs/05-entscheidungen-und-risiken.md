@@ -5,7 +5,7 @@
 | # | Entscheidung | Wann nötig | Vorschlag |
 |---|---|---|---|
 | E1 | **Echter KI-Provider** (Gemini, OpenAI, Anthropic, lokales Modell) und ob Kosten anfallen dürfen | vor Schritt 9 | Bis dahin nur Mock. Achtung: Bei Gratis-Stufen mancher Anbieter dürfen Eingaben zum Training genutzt werden – bei Kundenfotos kritisch. |
-| E2 | **Hosting/Deployment** | nach MVP | Erst lokal; später kostenfreie Option prüfen und vorlegen |
+| E2 | ~~Hosting/Deployment~~ | – | **Entschieden (21.11.2026):** geschützte Vercel-Demo mit flüchtigem Speicher (ADR 0007); dauerhafte Speicherung folgt als eigene Entscheidung |
 | E3 | **Login & Mehrbenutzer** (wer nutzt V3: nur Marco, Familie/Freunde, Betriebe?) | nach MVP | Datenmodell ist mit `owner_id` vorbereitet |
 | E4 | ~~Umfang Gewerke im MVP~~ | – | **Entschieden (21.11.2026):** alle Gewerke wie in V2 |
 

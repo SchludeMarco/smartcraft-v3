@@ -23,6 +23,9 @@ class Settings(BaseSettings):
     max_image_megapixels: int = Field(default=50, ge=1, le=200)
     # Längste Kante nach dem Verkleinern (V2-Erfahrung: 1600 px reichen für Beschriftungen)
     max_image_edge: int = Field(default=1600, ge=320, le=4096)
+    # False = Daten liegen in flüchtigem Speicher (z. B. /tmp auf Vercel) und können
+    # jederzeit verschwinden. Die Oberfläche zeigt dann einen Demo-Hinweis.
+    persistent_storage: bool = True
 
 
 @lru_cache

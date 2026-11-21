@@ -22,6 +22,13 @@ jobs:
         run: uv run mypy
       - name: Tests
         run: uv run pytest
+      - name: requirements.txt passt zu uv.lock (Vercel)
+        run: |
+          uv export --no-dev --no-hashes --no-emit-project --quiet > /tmp/requirements.txt
+          diff -u ../../requirements.txt /tmp/requirements.txt || {
+            echo "::error::requirements.txt ist veraltet. Bitte in apps/api 'uv export --no-dev --no-hashes --no-emit-project > ../../requirements.txt' ausführen."
+            exit 1
+          }
       - name: API-Vertrag aktuell (openapi.json)
         run: |
           uv run python -m smartcraft_api.openapi_export ../web/openapi.json

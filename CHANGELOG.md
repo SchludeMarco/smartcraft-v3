@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.8.0] – 2026-11-21
+
+### Hinzugefügt
+- Vercel-Demo-Deployment (ADR 0007): `vercel.json`, Einstiegspunkt `api/index.py`
+  (FastAPI unter `/api`), `requirements.txt` aus `uv.lock`, CI prüft den Gleichstand.
+- Einstellung `SMARTCRAFT_PERSISTENT_STORAGE`; `/health` meldet `persistent_storage`.
+- Demo-Hinweis in der Web-App, wenn Daten nicht dauerhaft gespeichert werden.
+- Upload-Limit auf Vercel 4 MB (Vercel-Grenze 4,5 MB pro Anfrage).
+- Tests für den Vercel-Einstiegspunkt.
+
 ## [0.7.0] – 2026-11-21
 
 ### Hinzugefügt
