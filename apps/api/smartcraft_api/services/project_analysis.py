@@ -60,6 +60,7 @@ async def create_project_analysis(
     note: str | None,
     uploads: Sequence[bytes],
     limits: ImageLimits,
+    timeout_seconds: float = 25.0,
 ) -> AnalysisRow:
     if not uploads:
         raise InvalidAnalysisRequestError("Mindestens ein Foto erforderlich.")
@@ -72,7 +73,7 @@ async def create_project_analysis(
         images=[ImageInput(data=img.data, media_type=img.media_type) for img in images],
         note=note,
     )
-    result = await run_analysis(provider, request)
+    result = await run_analysis(provider, request, timeout_seconds=timeout_seconds)
 
     keys: list[str] = []
     try:

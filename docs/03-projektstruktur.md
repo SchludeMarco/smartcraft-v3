@@ -15,6 +15,7 @@ smartcraft-v3/
 │   ├── 04-mvp-plan.md
 │   ├── 05-entscheidungen-und-risiken.md
 │   ├── 06-ar-ausbaustufe.md
+│   ├── 07-betrieb-und-fehler.md
 │   └── adr/                      # Architecture Decision Records
 ├── apps/
 │   ├── api/                      # FastAPI-Backend

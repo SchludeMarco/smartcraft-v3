@@ -7,7 +7,7 @@ erscheinen direkt an der Installation. Entwickelt wird Smartphone-first; Analyse
 Sicherheitslogik sind von Anfang an geräteunabhängig (siehe
 [AR-Ausbaustufe](docs/06-ar-ausbaustufe.md)).
 
-**Status:** MVP-Schritt 8 – Dokumentation im Projekt: Prüfschritte abhaken, Notizen, Projektbericht (KI: nur Mock).
+**Status:** MVP-Schritte 1–8 und 10 (Härtung) umgesetzt; Schritt 9 (echte KI) wartet auf Anbieterentscheidung. KI: nur Mock.
 
 ## Erste Ausbaustufe: Installation Analyzer
 
@@ -35,6 +35,7 @@ flüchtigem Speicher – Projekte und Fotos können jederzeit verschwinden (ADR 
 - [04 – MVP-Plan](docs/04-mvp-plan.md)
 - [05 – Entscheidungen und Risiken](docs/05-entscheidungen-und-risiken.md)
 - [06 – AR-Ausbaustufe](docs/06-ar-ausbaustufe.md)
+- [07 – Betrieb und Fehlerübersicht](docs/07-betrieb-und-fehler.md)
 - [ADRs](docs/adr/)
 
 ## Tech-Stack (geplant)
@@ -89,6 +90,7 @@ cd apps/web
 npm install
 npm run dev        # http://localhost:5173 – /api wird an das Backend weitergeleitet
 npm test && npm run lint && npm run typecheck
+npm run e2e        # Browser-Test des kompletten Ablaufs (startet Backend + Frontend selbst)
 ```
 
 Nach Änderungen an der API die Typen neu erzeugen:

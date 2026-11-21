@@ -4,11 +4,14 @@ Einziger Weg, auf dem ein Ergebnis entsteht. Kein Provider-Ergebnis verlässt de
 ohne durch `apply_safety_policy` gelaufen zu sein.
 """
 
+import asyncio
+
 from pydantic import ValidationError
 
 from smartcraft_api.ai.provider import (
     AnalysisProvider,
     AnalysisRequest,
+    ProviderError,
     ProviderOutputError,
 )
 from smartcraft_api.domain.analysis import AnalysisDraft, AnalysisResult, AnalysisSource
@@ -37,9 +40,21 @@ def validate_request(request: AnalysisRequest) -> None:
         raise InvalidAnalysisRequestError(f"Notiz zu lang (max. {MAX_NOTE_LENGTH} Zeichen).")
 
 
-async def run_analysis(provider: AnalysisProvider, request: AnalysisRequest) -> AnalysisResult:
+DEFAULT_TIMEOUT_SECONDS = 25.0
+
+
+async def run_analysis(
+    provider: AnalysisProvider,
+    request: AnalysisRequest,
+    timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS,
+) -> AnalysisResult:
     validate_request(request)
-    draft = await provider.analyze(request)
+    try:
+        draft = await asyncio.wait_for(provider.analyze(request), timeout=timeout_seconds)
+    except TimeoutError as exc:
+        raise ProviderError(
+            f"Zeitüberschreitung: keine Antwort der KI nach {timeout_seconds:g} Sekunden"
+        ) from exc
     # Auch ein Provider, der fälschlich ein dict o. Ä. liefert, wird hier gestoppt.
     if not isinstance(draft, AnalysisDraft):
         raise ProviderOutputError(f"Provider lieferte {type(draft).__name__} statt AnalysisDraft")

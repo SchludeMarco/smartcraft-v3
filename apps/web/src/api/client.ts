@@ -40,6 +40,7 @@ export function describeError(error: unknown, status: number): string {
         .join(" · ");
     }
   }
+  if (status === 429) return "Zu viele Anfragen. Bitte kurz warten und erneut versuchen.";
   if (status === 413) return "Die Fotos sind zusammen zu groß. Bitte weniger Fotos auswählen.";
   if (status === 0 || status >= 500) return "Server nicht erreichbar oder Fehler im Server.";
   return `Anfrage fehlgeschlagen (${status}).`;

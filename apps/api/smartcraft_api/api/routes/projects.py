@@ -147,6 +147,7 @@ async def create_analysis(
             note=note,
             uploads=uploads,
             limits=limits,
+            timeout_seconds=settings.ai_timeout_seconds,
         )
     except (InvalidAnalysisRequestError, InvalidImageError) as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from exc
