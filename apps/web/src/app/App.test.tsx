@@ -1,0 +1,174 @@
+import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it } from "vitest";
+import type { AnalysisSummary, Project } from "../api/types";
+import { mockApi, path, renderWithProviders } from "../test/utils";
+import { App } from "./App";
+
+const project: Project = {
+  id: "p1",
+  name: "EFH Müller",
+  address: "Hauptstraße 5",
+  client: "Familie Müller",
+  description: null,
+  created_at: "2026-11-21T10:00:00Z",
+  updated_at: "2026-11-21T12:00:00Z",
+  analysis_count: 1,
+};
+
+const analysis: AnalysisSummary = {
+  id: "a1",
+  project_id: "p1",
+  created_at: "2026-11-21T12:00:00Z",
+  trade: "elektriker",
+  risk_level: "high",
+  qualified_person_required: true,
+  is_test_data: true,
+  capture_count: 1,
+  open_check_count: 3,
+};
+
+const health = { status: "ok", version: "0.6.0", environment: "test", ai_provider: "mock" };
+
+describe("Projektübersicht", () => {
+  it("zeigt Projekte und den Testmodus-Hinweis", async () => {
+    mockApi((req) => {
+      if (path(req) === "/health") return { body: health };
+      if (path(req) === "/projects") return { body: [project] };
+      return undefined;
+    });
+
+    renderWithProviders(<App />);
+
+    expect(await screen.findByText("EFH Müller")).toBeInTheDocument();
+    expect(screen.getByText("Hauptstraße 5")).toBeInTheDocument();
+    expect(screen.getByText("1 Analyse")).toBeInTheDocument();
+    expect(await screen.findByRole("status")).toHaveTextContent(/Testmodus/);
+  });
+
+  it("zeigt keinen Testmodus-Hinweis bei echtem Provider", async () => {
+    mockApi((req) => {
+      if (path(req) === "/health") return { body: { ...health, ai_provider: "gemini" } };
+      if (path(req) === "/projects") return { body: [] };
+      return undefined;
+    });
+
+    renderWithProviders(<App />);
+
+    expect(await screen.findByText(/Noch keine Projekte/)).toBeInTheDocument();
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+  });
+
+  it("zeigt eine verständliche Meldung, wenn der Server nicht antwortet", async () => {
+    mockApi((req) => {
+      if (path(req) === "/health") return { body: health };
+      if (path(req) === "/projects") return { status: 500, body: {} };
+      return undefined;
+    });
+
+    renderWithProviders(<App />);
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(/Server/);
+  });
+});
+
+describe("Projekt anlegen", () => {
+  it("legt ein Projekt an und öffnet es", async () => {
+    const created: Project = { ...project, id: "neu", name: "Neubau Schmidt", analysis_count: 0 };
+    const { calls } = mockApi((req) => {
+      const p = path(req);
+      if (p === "/health") return { body: health };
+      if (p === "/projects" && req.method === "GET") return { body: [] };
+      if (p === "/projects" && req.method === "POST") return { status: 201, body: created };
+      if (p === "/projects/neu") return { body: created };
+      if (p === "/projects/neu/analyses") return { body: [] };
+      return undefined;
+    });
+    const user = userEvent.setup();
+    renderWithProviders(<App />);
+
+    await user.click(await screen.findByRole("button", { name: "Neues Projekt" }));
+    await user.type(screen.getByLabelText("Projektname *"), "  Neubau Schmidt ");
+    await user.type(screen.getByLabelText("Adresse"), "Gartenweg 2");
+    await user.click(screen.getByRole("button", { name: "Projekt anlegen" }));
+
+    expect(await screen.findByRole("heading", { name: "Neubau Schmidt" })).toBeInTheDocument();
+    const post = calls.find((c) => c.method === "POST");
+    expect(await post?.json()).toEqual({
+      name: "Neubau Schmidt",
+      address: "Gartenweg 2",
+      client: null,
+      description: null,
+    });
+  });
+
+  it("verlangt einen Namen, ohne den Server zu fragen", async () => {
+    const { calls } = mockApi((req) => {
+      if (path(req) === "/health") return { body: health };
+      if (path(req) === "/projects") return { body: [] };
+      return undefined;
+    });
+    const user = userEvent.setup();
+    renderWithProviders(<App />);
+
+    await user.click(await screen.findByRole("button", { name: "Neues Projekt" }));
+    await user.type(screen.getByLabelText("Projektname *"), "   ");
+    await user.click(screen.getByRole("button", { name: "Projekt anlegen" }));
+
+    expect(screen.getByText("Bitte einen Projektnamen eingeben.")).toBeInTheDocument();
+    expect(calls.some((c) => c.method === "POST")).toBe(false);
+  });
+
+  it("zeigt Fehlermeldungen des Servers an", async () => {
+    mockApi((req) => {
+      const p = path(req);
+      if (p === "/health") return { body: health };
+      if (p === "/projects" && req.method === "GET") return { body: [] };
+      if (p === "/projects" && req.method === "POST")
+        return { status: 422, body: { detail: [{ msg: "Name zu lang" }] } };
+      return undefined;
+    });
+    const user = userEvent.setup();
+    renderWithProviders(<App />);
+
+    await user.click(await screen.findByRole("button", { name: "Neues Projekt" }));
+    await user.type(screen.getByLabelText("Projektname *"), "X");
+    await user.click(screen.getByRole("button", { name: "Projekt anlegen" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Name zu lang");
+  });
+});
+
+describe("Projektseite", () => {
+  it("zeigt Analysen mit Risiko, Fachkraft-Pflicht und Testdaten-Kennzeichnung", async () => {
+    mockApi((req) => {
+      const p = path(req);
+      if (p === "/health") return { body: health };
+      if (p === "/projects/p1") return { body: project };
+      if (p === "/projects/p1/analyses") return { body: [analysis] };
+      return undefined;
+    });
+
+    renderWithProviders(<App />, { route: "/projects/p1" });
+
+    expect(await screen.findByRole("heading", { name: "EFH Müller" })).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText("Risiko hoch")).toBeInTheDocument());
+    expect(screen.getByText("Fachkraft erforderlich")).toBeInTheDocument();
+    expect(screen.getByText("Testdaten")).toBeInTheDocument();
+    expect(screen.getByText(/3 offene/)).toBeInTheDocument();
+  });
+
+  it("meldet ein unbekanntes Projekt", async () => {
+    mockApi((req) => {
+      const p = path(req);
+      if (p === "/health") return { body: health };
+      if (p.startsWith("/projects/x"))
+        return { status: 404, body: { detail: "Projekt nicht gefunden" } };
+      return undefined;
+    });
+
+    renderWithProviders(<App />, { route: "/projects/x" });
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Projekt nicht gefunden");
+  });
+});

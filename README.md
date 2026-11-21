@@ -3,7 +3,7 @@
 KI-Assistent für Handwerker auf der Baustelle: Installationen, Feuchtigkeitsschäden, Risse,
 Bauteile. Langfristig multimodal (Smartphone, später AR-Brille).
 
-**Status:** MVP-Schritt 5 – Foto-Upload und Analyse über die API (KI: nur Mock).
+**Status:** MVP-Schritt 6 – Web-App mit Projekten (KI: nur Mock).
 
 ## Erste Ausbaustufe: Installation Analyzer
 
@@ -62,6 +62,24 @@ curl -F trade=elektriker -F 'note=[mock:unterverteilung]' -F files=@foto.jpg \
 ```
 
 Fotos werden vor dem Speichern neu kodiert; EXIF-Daten inkl. GPS-Position fallen dabei weg.
+
+## Lokales Setup (Web)
+
+Voraussetzung: Node.js 22. Backend wie oben auf Port 8000 starten, dann:
+
+```bash
+cd apps/web
+npm install
+npm run dev        # http://localhost:5173 – /api wird an das Backend weitergeleitet
+npm test && npm run lint && npm run typecheck
+```
+
+Nach Änderungen an der API die Typen neu erzeugen:
+
+```bash
+cd apps/api && uv run python -m smartcraft_api.openapi_export ../web/openapi.json
+cd ../web && npm run gen:api
+```
 
 Konfiguration über Umgebungsvariablen, siehe `apps/api/.env.example`. Standard-KI ist ein
 kostenloser Mock.

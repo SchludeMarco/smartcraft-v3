@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.0] – 2026-11-21
+
+### Hinzugefügt
+- Web-App `apps/web`: React 19, TypeScript (strict), Vite, Tailwind, TanStack Query,
+  React Router; mobil zuerst.
+- Projektübersicht, „Projekt anlegen“ (mit Validierung), Projektseite mit Analyseliste
+  (Risiko, Fachkraft-Pflicht, Testdaten-Kennzeichnung).
+- Dauerhafter Testmodus-Hinweis, solange das Backend die Mock-KI nutzt.
+- API-Typen werden aus dem OpenAPI-Schema generiert (`openapi_export`, `npm run gen:api`);
+  CI prüft, dass Backend-Vertrag und Frontend-Typen übereinstimmen.
+- CI-Job für das Web (Lint, Typprüfung, Tests, Build); 8 Frontend-Tests.
+
 ## [0.5.0] – 2026-11-21
 
 ### Hinzugefügt
