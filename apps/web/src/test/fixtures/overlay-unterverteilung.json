@@ -1,0 +1,138 @@
+{
+  "overlay_version": "1.0.0",
+  "analysis_schema_version": "1.2.0",
+  "safety": {
+    "risk_level": "high",
+    "qualified_person_required": true,
+    "hazards": [
+      "electrical"
+    ],
+    "notices": [
+      "TESTDATEN: Dieses Ergebnis stammt aus einem festen Beispielszenario der Mock-KI. Das Foto wurde NICHT ausgewertet. Nicht für Entscheidungen verwenden.",
+      "Elektrische Anlage: Arbeiten und Bewertung ausschließlich durch eine Elektrofachkraft. Lebensgefahr durch elektrischen Schlag."
+    ],
+    "disclaimer": "KI-gestützte Ersteinschätzung auf Basis eines Fotos. Sie ersetzt keine Prüfung, Messung oder Abnahme durch eine qualifizierte Fachkraft und stellt keine Sicherheitsfreigabe dar.",
+    "is_test_data": true
+  },
+  "anchors": [
+    {
+      "component_index": 0,
+      "name": "FI-Schutzschalter (RCD)",
+      "category": "Schutzorgan",
+      "region": {
+        "capture_index": 0,
+        "x": 0.12,
+        "y": 0.25,
+        "width": 0.1,
+        "height": 0.3
+      },
+      "labels": [
+        {
+          "text": "40A 30mA Typ A",
+          "confidence": "medium"
+        },
+        {
+          "text": "Prüftaste T",
+          "confidence": "high"
+        }
+      ],
+      "highest_severity": null,
+      "findings": [],
+      "checks": [
+        {
+          "position": 1,
+          "action": "Vor jeder Arbeit die fünf Sicherheitsregeln anwenden: freischalten, gegen Wiedereinschalten sichern, Spannungsfreiheit allpolig feststellen, erden und kurzschließen, benachbarte unter Spannung stehende Teile abdecken",
+          "requires_qualified_person": true,
+          "reference": "DIN VDE 0105-100",
+          "source": "policy"
+        },
+        {
+          "position": 2,
+          "action": "Prüfung der Anlage durch eine Elektrofachkraft (Sichtprüfung, Messungen, Erprobung) und Dokumentation im Prüfprotokoll",
+          "requires_qualified_person": true,
+          "reference": "DIN VDE 0100-600",
+          "source": "policy"
+        }
+      ]
+    },
+    {
+      "component_index": 1,
+      "name": "Leitungsschutzschalter (6 Stück)",
+      "category": "Schutzorgan",
+      "region": {
+        "capture_index": 0,
+        "x": 0.24,
+        "y": 0.25,
+        "width": 0.42,
+        "height": 0.3
+      },
+      "labels": [
+        {
+          "text": "B16",
+          "confidence": "medium"
+        },
+        {
+          "text": "B1?",
+          "confidence": "low"
+        }
+      ],
+      "highest_severity": "warning",
+      "findings": [
+        {
+          "index": 0,
+          "title": "Offene Teilungseinheit ohne Blindabdeckung",
+          "severity": "warning",
+          "confidence": "medium"
+        }
+      ],
+      "checks": [
+        {
+          "position": 0,
+          "action": "Blindabdeckung für die offene Teilungseinheit nachrüsten lassen",
+          "requires_qualified_person": true,
+          "reference": null,
+          "source": "model"
+        },
+        {
+          "position": 1,
+          "action": "Vor jeder Arbeit die fünf Sicherheitsregeln anwenden: freischalten, gegen Wiedereinschalten sichern, Spannungsfreiheit allpolig feststellen, erden und kurzschließen, benachbarte unter Spannung stehende Teile abdecken",
+          "requires_qualified_person": true,
+          "reference": "DIN VDE 0105-100",
+          "source": "policy"
+        },
+        {
+          "position": 2,
+          "action": "Prüfung der Anlage durch eine Elektrofachkraft (Sichtprüfung, Messungen, Erprobung) und Dokumentation im Prüfprotokoll",
+          "requires_qualified_person": true,
+          "reference": "DIN VDE 0100-600",
+          "source": "policy"
+        }
+      ]
+    },
+    {
+      "component_index": 2,
+      "name": "Mantelleitungen",
+      "category": "Leitung",
+      "region": {
+        "capture_index": 0,
+        "x": 0.1,
+        "y": 0.0,
+        "width": 0.6,
+        "height": 0.18
+      },
+      "labels": [],
+      "highest_severity": null,
+      "findings": [],
+      "checks": []
+    }
+  ],
+  "general_findings": [
+    {
+      "index": 1,
+      "title": "Stromkreisbeschriftung fehlt",
+      "severity": "notice",
+      "confidence": "medium"
+    }
+  ],
+  "general_checks": []
+}

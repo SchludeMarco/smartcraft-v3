@@ -1,5 +1,7 @@
 import { Link, Route, Routes } from "react-router";
 import { TestModeBanner } from "../components/TestModeBanner";
+import { AnalysisPage } from "../features/analysis/AnalysisPage";
+import { NewAnalysisPage } from "../features/analysis/NewAnalysisPage";
 import { ProjectPage } from "../features/projects/ProjectPage";
 import { ProjectsPage } from "../features/projects/ProjectsPage";
 
@@ -17,6 +19,8 @@ export function App() {
         <Routes>
           <Route path="/" element={<ProjectsPage />} />
           <Route path="/projects/:projectId" element={<ProjectPage />} />
+          <Route path="/projects/:projectId/analyses/new" element={<NewAnalysisPage />} />
+          <Route path="/analyses/:analysisId" element={<AnalysisPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

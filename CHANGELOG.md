@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.9.0] – 2026-11-21
+
+### Hinzugefügt
+- **Neue Analyse per Foto** in der Web-App: Gewerk wählen, bis zu 5 Fotos aufnehmen oder
+  aus der Galerie wählen (Vorschau, Entfernen), optionale Notiz.
+- Fotos werden schon im Browser auf max. 1600 px verkleinert und neu kodiert – bleibt unter
+  dem Vercel-Limit und entfernt Standortdaten bereits auf dem Gerät.
+- **Ergebnisansicht:** Sicherheitsblock immer zuerst (Testdaten, Risiko, Fachkraft-Pflicht,
+  Gefahren, Hinweise, Haftungshinweis), Foto mit **markierten Bauteilen** (AR-1 im Kleinen,
+  Daten aus `/analyses/{id}/overlay`), Prüfschritte mit Pflicht-Kennzeichnung und
+  Bauteilbezug, Auffälligkeiten, Beobachtungen, Unsicherheiten, Beschriftungen mit
+  Konfidenz, Protokoll der Sicherheitsprüfung.
+- Backend: `GET /meta/trades` und `GET /meta/analysis-limits` – eine Quelle für alle Clients.
+- Frontend-Testdaten aus echten Backend-Antworten (`apps/api/scripts/export_web_fixtures.py`);
+  21 Frontend-Tests, 230 Backend-Tests.
+
 ## [0.8.0] – 2026-11-21
 
 ### Hinzugefügt

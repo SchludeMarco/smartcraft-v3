@@ -2,10 +2,10 @@ import createClient from "openapi-fetch";
 import type { paths } from "./schema";
 
 // Basis-URL: im Browser "/api" (Vite-Proxy bzw. Reverse-Proxy), überschreibbar per VITE_API_BASE.
-const baseUrl = import.meta.env.VITE_API_BASE ?? `${window.location.origin}/api`;
+export const apiBaseUrl: string = import.meta.env.VITE_API_BASE ?? `${window.location.origin}/api`;
 
 export const api = createClient<paths>({
-  baseUrl,
+  baseUrl: apiBaseUrl,
   // Wrapper statt Referenz, damit Tests globalThis.fetch austauschen können.
   fetch: (request) => globalThis.fetch(request),
 });
@@ -30,7 +30,7 @@ export function unwrap<T>({ data, error, response }: FetchResult<T>): T {
   return data;
 }
 
-function describeError(error: unknown, status: number): string {
+export function describeError(error: unknown, status: number): string {
   if (error && typeof error === "object" && "detail" in error) {
     const detail = (error as { detail: unknown }).detail;
     if (typeof detail === "string") return detail;
@@ -40,6 +40,7 @@ function describeError(error: unknown, status: number): string {
         .join(" · ");
     }
   }
+  if (status === 413) return "Die Fotos sind zusammen zu groß. Bitte weniger Fotos auswählen.";
   if (status === 0 || status >= 500) return "Server nicht erreichbar oder Fehler im Server.";
   return `Anfrage fehlgeschlagen (${status}).`;
 }

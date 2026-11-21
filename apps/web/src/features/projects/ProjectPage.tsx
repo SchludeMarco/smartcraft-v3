@@ -36,14 +36,21 @@ export function ProjectPage() {
 
       <section className="space-y-2">
         <h2 className="text-lg font-semibold">Analysen</h2>
-        <p className="rounded border border-dashed border-stone-400 p-3 text-sm text-stone-600">
-          Neue Analyse per Foto folgt im nächsten Schritt.
-        </p>
+        <Link
+          to={`/projects/${p.id}/analyses/new`}
+          className="block rounded bg-amber-600 px-4 py-3 text-center font-semibold text-white"
+        >
+          Neue Analyse per Foto
+        </Link>
         {analyses.isError && <ErrorMessage error={analyses.error} />}
         {analyses.data?.length === 0 && <p className="text-stone-600">Noch keine Analysen.</p>}
         <ul className="space-y-2">
           {analyses.data?.map((a) => (
-            <li key={a.id} className="rounded-lg bg-white p-3 shadow-sm">
+            <li key={a.id}>
+              <Link
+                to={`/analyses/${a.id}`}
+                className="block rounded-lg bg-white p-3 shadow-sm hover:ring-2 hover:ring-amber-500"
+              >
               <div className="flex flex-wrap items-center gap-2">
                 <RiskBadge level={a.risk_level} />
                 {a.qualified_person_required && (
@@ -61,6 +68,7 @@ export function ProjectPage() {
                 {formatDateTime(a.created_at)} · {a.capture_count} Foto(s) · {a.open_check_count} offene
                 Prüfschritte
               </div>
+              </Link>
             </li>
           ))}
         </ul>
