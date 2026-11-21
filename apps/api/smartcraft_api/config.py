@@ -4,7 +4,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field
+from pydantic import AliasChoices, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -12,8 +12,14 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="SMARTCRAFT_", env_file=".env", extra="ignore")
 
     environment: Literal["development", "test", "production"] = "development"
-    # Standard ist die kostenlose Mock-KI. Echte Provider nur nach ausdrücklicher Freigabe.
-    ai_provider: Literal["mock"] = "mock"
+    # Standard ist die kostenlose Mock-KI. "gemini" = wie V2 (Schlüssel des Betreibers).
+    ai_provider: Literal["mock", "gemini"] = "mock"
+    # Gemini-Schlüssel nur als Umgebungsvariable (Vercel), nie im Repo.
+    gemini_api_key: SecretStr | None = Field(
+        default=None,
+        validation_alias=AliasChoices("SMARTCRAFT_GEMINI_API_KEY", "GEMINI_API_KEY"),
+    )
+    gemini_model: str = "gemini-flash-lite-latest"
     cors_origins: list[str] = ["http://localhost:5173"]
     # Lokale SQLite-Datei; später z. B. postgresql+psycopg://…
     database_url: str = "sqlite:///./smartcraft.db"
