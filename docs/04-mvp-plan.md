@@ -17,7 +17,7 @@ Jeder Schritt ist ein eigener, kleiner Pull Request mit Tests.
 | 6 | **Web-Gerüst** | Vite + React + TS, generierte API-Typen, Projektliste, Projekt anlegen ✅ |
 | 7 | **Capture & Ergebnisansicht** | Kamera-Upload (`capture="environment"`), Ladezustand, Ergebnis mit Sicherheitsbanner oben, Beobachtungen/Auffälligkeiten/Unsicherheiten/Prüfschritte getrennt dargestellt; Bauteile im Foto markiert (AR-1) ✅ |
 | 8 | **Dokumentation im Projekt** | Notizen, Prüfschritte abhaken (Mensch), Projektbericht als druckbare Seite/PDF ✅ |
-| 9 | **Echter KI-Provider** *(nur nach Freigabe)* | Provider hinter Feature-Flag, Eval-Set mit 10–20 eigenen Fotos, Messung: Schemaquote, Policy-Eingriffe, Halluzinationen bei Beschriftungen |
+| 9 | **Echter KI-Provider** *(Gemini wie V2, freigegeben 21.11.2026; Eval-Set offen)* | Provider hinter Feature-Flag, Eval-Set mit 10–20 eigenen Fotos, Messung: Schemaquote, Policy-Eingriffe, Halluzinationen bei Beschriftungen |
 | 10 | **Härtung** | Rate-Limit, Fehlerbilder, E2E-Test (Playwright), README-Setup in 5 Minuten nachvollziehbar ✅ |
 
 ## Definition of Done (MVP)

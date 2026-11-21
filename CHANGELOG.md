@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.13.0] – 2026-11-21
+
+### Hinzugefügt (ADR 0011)
+- **Echte KI wie in V2:** Google-Gemini-Provider (`gemini-flash-lite-latest`) hinter
+  `SMARTCRAFT_AI_PROVIDER=gemini`. Schlüssel über `SMARTCRAFT_GEMINI_API_KEY` oder wie in
+  V2 `GEMINI_API_KEY`; geht im Header mit, nie in der URL oder in Fehlermeldungen.
+- Versionierter System-Prompt (`ai/prompts.py`, Prompt 1.0.0) mit Ergebnisschema; die
+  Problembeschreibung wird als Daten, nicht als Anweisung übergeben.
+- Antworten werden streng gegen das Schema geprüft (unbekannte Felder wie „approved“ →
+  Fehler 502) und laufen wie bisher durch die Safety-Policy.
+- Standard bleibt die kostenlose Mock-KI; ohne Schlüssel startet `gemini` nicht.
+
 ## [0.12.0] – 2026-11-21
 
 ### Geändert (ADR 0010)
