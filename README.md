@@ -3,7 +3,7 @@
 KI-Assistent für Handwerker auf der Baustelle: Installationen, Feuchtigkeitsschäden, Risse,
 Bauteile. Langfristig multimodal (Smartphone, später AR-Brille).
 
-**Status:** Phase 0 – Bestandsaufnahme und Architektur abgeschlossen, Implementierung folgt.
+**Status:** MVP-Schritt 1 – Backend-Gerüst.
 
 ## Erste Ausbaustufe: Installation Analyzer
 
@@ -30,3 +30,17 @@ Bauteile. Langfristig multimodal (Smartphone, später AR-Brille).
 
 FastAPI + Pydantic + SQLModel (Backend) · React + TypeScript + Vite + Tailwind (Web) ·
 austauschbarer KI-Provider mit Mock als Standard.
+
+## Lokales Setup (Backend)
+
+Voraussetzung: [uv](https://docs.astral.sh/uv/).
+
+```bash
+cd apps/api
+uv sync
+uv run uvicorn smartcraft_api.main:app --reload   # http://localhost:8000/docs
+uv run pytest && uv run ruff check . && uv run mypy
+```
+
+Konfiguration über Umgebungsvariablen, siehe `apps/api/.env.example`. Standard-KI ist ein
+kostenloser Mock.
