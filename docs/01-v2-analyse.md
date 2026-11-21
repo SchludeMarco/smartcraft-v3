@@ -50,6 +50,7 @@ TTS, Gästeliste, Admin-Bereich mit Fehlerreports.
 | Rate-Limit / Kostenbremse | Bei echter KI-Nutzung wieder nötig |
 | Gewerks-Prompts (VDE-Check, TrinkwV …) | Inhaltliche Vorlage für spätere Domänen-Prompts |
 | Doku-Disziplin (CHANGELOG, error_log, „Entstehung & Hürden“) | Wird übernommen, schlanker |
+| Gestaltung (Kopfleiste, Pergament-Panels, Gewerk-Kacheln und -Farben, Schritt-Labels) | Wiedererkennung: V3 sieht aus wie eine Weiterentwicklung von V2 (ADR 0010) |
 
 ## 5. Bekannte Schwächen und technische Schulden
 

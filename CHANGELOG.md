@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.12.0] – 2026-11-21
+
+### Geändert
+- **Gestaltung wie V2** (ADR 0010): dunkelblauer Hintergrund, Kopfleiste mit Logo und
+  Schriftzug „Sm@rtCraft!“ (Cinzel, lokal eingebunden), Pergament-Panels, grüne
+  Schritt-Labels und Buttons, Favicons aus V2.
+- Berufswahl als farbige Kacheln mit Icons wie in V2; Akzentfarbe je Gewerk.
+- Neue Analyse in den V2-Schritten „1. Beruf auswählen“ / „2. Problem dokumentieren &
+  analysieren“, Haupt-Button „Problem analysieren“; Ergebnis als „3. Ergebnis der
+  KI-Analyse“.
+- Gewerk-Etiketten in Analyseliste und Ergebnis.
+
 ## [0.11.0] – 2026-11-21
 
 ### Hinzugefügt (Härtung, ADR 0009)

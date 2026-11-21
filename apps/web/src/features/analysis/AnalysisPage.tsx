@@ -2,7 +2,10 @@ import { useState, type ReactNode } from "react";
 import { Link, useParams } from "react-router";
 import type { AnalysisResult, CheckItem, OverlayAnchor } from "../../api/types";
 import { ErrorMessage } from "../../components/ErrorMessage";
+import { StepBadge } from "../../components/StepBadge";
+import { TradeChip } from "../../components/TradeChip";
 import { formatDateTime } from "../../lib/format";
+import { tradeStyle } from "../../lib/trades";
 import { captureImageUrl, useAnalysis, useOverlay } from "./api";
 import { CONFIDENCE_LABELS, SEVERITY_LABELS, SEVERITY_STYLES } from "./labels";
 import { CheckItemCard } from "./CheckItemCard";
@@ -20,7 +23,7 @@ export function AnalysisPage() {
     return (
       <div className="space-y-3">
         <ErrorMessage error={analysis.error} />
-        <Link to="/" className="text-amber-700 underline">
+        <Link to="/" className="font-semibold text-steel underline">
           Zur Projektübersicht
         </Link>
       </div>
@@ -33,14 +36,19 @@ export function AnalysisPage() {
   const selectedAnchor = anchors.find((a) => a.component_index === selected);
 
   return (
-    <article className="space-y-5">
-      <Link to={`/projects/${detail.project_id}`} className="text-sm text-amber-700">
+    <article className="space-y-5" style={tradeStyle(result.trade)}>
+      <Link to={`/projects/${detail.project_id}`} className="text-sm font-semibold text-steel">
         ← Zum Projekt
       </Link>
-      <header className="space-y-1">
-        <h1 className="text-2xl font-bold">Analyse</h1>
-        <p className="text-sm text-stone-500">{formatDateTime(detail.created_at)}</p>
+      <header className="space-y-2">
+        <h1 className="font-display text-2xl font-bold text-wood-dark">Analyse</h1>
+        <div className="flex flex-wrap items-center gap-2 text-sm text-stone-500">
+          <TradeChip trade={result.trade} />
+          <span>{formatDateTime(detail.created_at)}</span>
+        </div>
       </header>
+
+      <StepBadge>3. Ergebnis der KI-Analyse</StepBadge>
 
       <SafetyPanel result={result} />
 
@@ -48,7 +56,7 @@ export function AnalysisPage() {
       {detail.note && <p className="text-sm text-stone-600">Notiz: {detail.note}</p>}
 
       <section className="space-y-2">
-        <h2 className="text-lg font-semibold">Fotos</h2>
+        <h2 className="font-display text-lg font-bold text-(--accent)">Fotos</h2>
         {!result.image_quality.usable && (
           <p role="alert" className="rounded bg-orange-100 px-3 py-2 text-sm text-orange-900">
             Bildqualität reicht nicht aus: {result.image_quality.issues.join(", ") || "unbekannt"}.
@@ -94,7 +102,7 @@ export function AnalysisPage() {
       <Section title="Bauteile und Beschriftungen">
         <ol className="space-y-2 text-sm">
           {result.components.map((c, i) => (
-            <li key={i} className="rounded bg-white p-3 shadow-sm">
+            <li key={i} className="card-parchment rounded-xl p-3">
               <div className="font-medium">
                 {i + 1}. {c.name} <span className="font-normal text-stone-500">· {c.category}</span>
               </div>
@@ -131,7 +139,7 @@ export function AnalysisPage() {
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="space-y-2">
-      <h2 className="text-lg font-semibold">{title}</h2>
+      <h2 className="font-display text-lg font-bold text-(--accent)">{title}</h2>
       {children}
     </section>
   );
@@ -139,7 +147,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 function AnchorDetails({ anchor }: { anchor: OverlayAnchor }) {
   return (
-    <div className="space-y-2 rounded-lg bg-white p-3 shadow" aria-live="polite">
+    <div className="card-parchment space-y-2 rounded-xl border-l-4 border-l-(--accent) p-3" aria-live="polite">
       <div className="font-semibold">
         {anchor.component_index + 1}. {anchor.name}
       </div>
@@ -201,7 +209,7 @@ function FindingsSection({ result }: { result: AnalysisResult }) {
     <Section title="Auffälligkeiten">
       <ul className="space-y-2">
         {result.findings.map((f, i) => (
-          <li key={i} className="rounded-lg bg-white p-3 shadow-sm">
+          <li key={i} className="card-parchment rounded-xl p-3">
             <div className="flex items-center gap-2">
               <span className={`rounded px-1.5 text-xs font-semibold ${SEVERITY_STYLES[f.severity]}`}>
                 {SEVERITY_LABELS[f.severity]}

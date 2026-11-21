@@ -67,7 +67,7 @@ export function CheckItemCard({
   }
 
   return (
-    <li className="rounded-lg bg-white p-3 shadow-sm" data-testid={`check-${check.position}`}>
+    <li className="card-parchment rounded-xl p-3" data-testid={`check-${check.position}`}>
       <div className="flex flex-wrap items-center gap-2 text-xs">
         <span className="font-bold text-stone-500">{check.position + 1}.</span>
         {check.requires_qualified_person && (
@@ -95,7 +95,7 @@ export function CheckItemCard({
       )}
 
       {check.status !== "open" && (
-        <div className="mt-2 rounded bg-stone-50 p-2 text-sm">
+        <div className="mt-2 rounded-lg bg-parchment p-2 text-sm">
           <p>
             Dokumentiert von <strong>{check.completed_by}</strong>
             {check.completed_at && <> am {formatDateTime(check.completed_at)}</>}
@@ -108,7 +108,7 @@ export function CheckItemCard({
             type="button"
             onClick={reopen}
             disabled={update.isPending}
-            className="mt-1 text-xs text-amber-700 underline print:hidden"
+            className="mt-1 text-xs font-semibold text-steel underline print:hidden"
           >
             Wieder öffnen
           </button>
@@ -120,14 +120,14 @@ export function CheckItemCard({
           <button
             type="button"
             onClick={() => setMode("done")}
-            className="rounded bg-green-700 px-3 py-2 text-sm font-semibold text-white"
+            className="btn-quest px-4 py-2 text-sm"
           >
             Erledigt
           </button>
           <button
             type="button"
             onClick={() => setMode("not_applicable")}
-            className="rounded border border-stone-400 px-3 py-2 text-sm"
+            className="btn-parchment px-4 py-2 text-sm"
           >
             Nicht zutreffend
           </button>
@@ -135,11 +135,11 @@ export function CheckItemCard({
       )}
 
       {mode !== null && (
-        <form onSubmit={submit} className="mt-2 space-y-2 rounded bg-stone-50 p-2 print:hidden">
+        <form onSubmit={submit} className="mt-2 space-y-2 rounded-lg bg-parchment p-2 print:hidden">
           <label className="block text-sm">
             <span className="font-medium">Dein Name *</span>
             <input
-              className="mt-1 w-full rounded border border-stone-300 bg-white px-2 py-2"
+              className="input-parchment mt-1"
               value={name}
               onChange={(e) => setName(e.target.value)}
               maxLength={200}
@@ -150,7 +150,7 @@ export function CheckItemCard({
               {mode === "not_applicable" ? "Begründung *" : "Kommentar (optional)"}
             </span>
             <textarea
-              className="mt-1 w-full rounded border border-stone-300 bg-white px-2 py-2"
+              className="input-parchment mt-1"
               rows={2}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
@@ -175,7 +175,7 @@ export function CheckItemCard({
             <button
               type="submit"
               disabled={update.isPending}
-              className="rounded bg-amber-600 px-3 py-2 text-sm font-semibold text-white disabled:opacity-60"
+              className="btn-quest px-4 py-2 text-sm"
             >
               Speichern
             </button>
@@ -185,7 +185,7 @@ export function CheckItemCard({
                 setMode(null);
                 update.reset();
               }}
-              className="rounded border border-stone-300 px-3 py-2 text-sm"
+              className="btn-parchment px-4 py-2 text-sm"
             >
               Abbrechen
             </button>

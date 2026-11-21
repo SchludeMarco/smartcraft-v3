@@ -9,7 +9,7 @@ const STYLES: Record<RiskLevel, { label: string; className: string }> = {
 export function RiskBadge({ level }: { level: RiskLevel }) {
   const style = STYLES[level];
   return (
-    <span className={`rounded px-2 py-0.5 text-xs font-semibold ${style.className}`}>
+    <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${style.className}`}>
       {style.label}
     </span>
   );

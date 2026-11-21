@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { FlaskConical } from "lucide-react";
 import { api, unwrap } from "../api/client";
 
 /**
@@ -21,10 +22,16 @@ export function TestModeBanner() {
   }
   if (notices.length === 0) return null;
   return (
-    <div role="status" className="space-y-1 bg-amber-300 px-4 py-2 text-sm font-medium text-amber-950">
-      {notices.map((notice) => (
-        <p key={notice}>{notice}</p>
-      ))}
+    <div
+      role="status"
+      className="flex gap-2 rounded-xl border-2 border-amber-500 bg-amber-100 px-3 py-2 text-sm font-medium text-amber-950"
+    >
+      <FlaskConical className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+      <div className="space-y-1">
+        {notices.map((notice) => (
+          <p key={notice}>{notice}</p>
+        ))}
+      </div>
     </div>
   );
 }

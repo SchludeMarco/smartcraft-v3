@@ -17,11 +17,11 @@ test("Projekt → Foto → Analyse → Prüfschritt dokumentieren → Bericht", 
 
   // Analyse per Foto
   await page.getByRole("link", { name: "Neue Analyse per Foto" }).click();
-  await page.getByLabel("Gewerk *").selectOption("elektriker");
+  await page.getByRole("button", { name: "Elektriker" }).click();
   await page.getByTestId("gallery-input").setInputFiles(photo);
   await expect(page.getByAltText("Foto 1")).toBeVisible();
-  await page.getByLabel("Notiz (optional)").fill("[mock:unterverteilung]");
-  await page.getByRole("button", { name: "Analysieren" }).click();
+  await page.getByLabel("Problembeschreibung (optional)").fill("[mock:unterverteilung]");
+  await page.getByRole("button", { name: "Problem analysieren" }).click();
 
   // Ergebnis: Sicherheitsblock zuerst, Markierungen im Foto
   const safety = page.getByRole("region", { name: "Sicherheit" });
@@ -60,10 +60,10 @@ test("Hochgeladenes Foto wird ohne Standortdaten ausgeliefert", async ({ page, r
   const project = await request.post("http://localhost:8000/projects", { data: { name: "GPS-Test" } });
   const { id } = await project.json();
   await page.goto(`/projects/${id}/analyses/new`);
-  await page.getByLabel("Gewerk *").selectOption("maler");
+  await page.getByRole("button", { name: "Maler" }).click();
   await page.getByTestId("gallery-input").setInputFiles(photo);
   await expect(page.getByAltText("Foto 1")).toBeVisible();
-  await page.getByRole("button", { name: "Analysieren" }).click();
+  await page.getByRole("button", { name: "Problem analysieren" }).click();
   await expect(page.getByRole("region", { name: "Sicherheit" })).toBeVisible();
 
   const image = page.locator("figure img").first();
