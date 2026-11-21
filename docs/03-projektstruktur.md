@@ -14,6 +14,7 @@ smartcraft-v3/
 │   ├── 03-projektstruktur.md
 │   ├── 04-mvp-plan.md
 │   ├── 05-entscheidungen-und-risiken.md
+│   ├── 06-ar-ausbaustufe.md
 │   └── adr/                      # Architecture Decision Records
 ├── apps/
 │   ├── api/                      # FastAPI-Backend
@@ -22,7 +23,7 @@ smartcraft-v3/
 │   │   │   ├── main.py           # App-Factory, Router-Registrierung
 │   │   │   ├── config.py         # Settings (pydantic-settings, .env)
 │   │   │   ├── api/routes/       # health, projects, analyses
-│   │   │   ├── domain/           # Pydantic-Schemas (InstallationAnalysis v1 …)
+│   │   │   ├── domain/           # Pydantic-Schemas (AnalysisResult, Overlay für AR …)
 │   │   │   ├── services/         # analysis_service: Pipeline-Orchestrierung
 │   │   │   ├── safety/           # policy.py, rules/, Versionskonstante
 │   │   │   ├── ai/

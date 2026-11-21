@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.7.0] – 2026-11-21
+
+### Hinzugefügt
+- **AR-Ausbaustufe in Vision, Architektur und Roadmap** (`docs/06-ar-ausbaustufe.md`,
+  ADR 0006): AR-Brillen als gleichrangiger Client derselben Analyse- und Sicherheitslogik;
+  Ausbaustufen AR-0 bis AR-4; Sicherheitsregeln für Einblendungen im Sichtfeld.
+- Schema 1.2.0: optionale Bauteil-Region im Foto (`Component.region`, normierte
+  Koordinaten) und Bauteil-Verweise an Auffälligkeiten und Prüfschritten
+  (`component_indices`); ungültige Verweise werden abgelehnt.
+- Policy 1.2.0: Pflicht-Prüfschritte werden an den Bauteilen verankert, an denen die Gefahr
+  erkannt wurde.
+- `GET /analyses/{id}/overlay`: geräteunabhängige Einblendungs-Sicht mit Pflicht-
+  Sicherheitsblock (Format 1.0.0).
+- Mock-Szenarien mit Bauteil-Regionen; 23 neue Tests (225 gesamt).
+
+### Hinweis
+- Neue Spalte `check_items.component_indices`: eine vorhandene lokale `smartcraft.db`
+  bitte löschen (Migrationen folgen).
+
 ## [0.6.0] – 2026-11-21
 
 ### Hinzugefügt

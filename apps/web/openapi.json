@@ -57,6 +57,53 @@
         "title": "AnalysisDetailOut",
         "type": "object"
       },
+      "AnalysisOverlay": {
+        "additionalProperties": false,
+        "properties": {
+          "analysis_schema_version": {
+            "title": "Analysis Schema Version",
+            "type": "string"
+          },
+          "anchors": {
+            "items": {
+              "$ref": "#/components/schemas/OverlayAnchor"
+            },
+            "title": "Anchors",
+            "type": "array"
+          },
+          "general_checks": {
+            "items": {
+              "$ref": "#/components/schemas/OverlayCheck"
+            },
+            "title": "General Checks",
+            "type": "array"
+          },
+          "general_findings": {
+            "items": {
+              "$ref": "#/components/schemas/OverlayFinding"
+            },
+            "title": "General Findings",
+            "type": "array"
+          },
+          "overlay_version": {
+            "default": "1.0.0",
+            "title": "Overlay Version",
+            "type": "string"
+          },
+          "safety": {
+            "$ref": "#/components/schemas/OverlaySafety"
+          }
+        },
+        "required": [
+          "analysis_schema_version",
+          "safety",
+          "anchors",
+          "general_findings",
+          "general_checks"
+        ],
+        "title": "AnalysisOverlay",
+        "type": "object"
+      },
       "AnalysisResult": {
         "additionalProperties": false,
         "properties": {
@@ -98,7 +145,7 @@
             "$ref": "#/components/schemas/Safety"
           },
           "schema_version": {
-            "default": "1.1.0",
+            "default": "1.2.0",
             "title": "Schema Version",
             "type": "string"
           },
@@ -339,6 +386,13 @@
             ],
             "title": "Completed By"
           },
+          "component_indices": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Component Indices",
+            "type": "array"
+          },
           "id": {
             "title": "Id",
             "type": "string"
@@ -392,6 +446,7 @@
           "requires_qualified_person",
           "reference",
           "source",
+          "component_indices",
           "status",
           "completed_by",
           "completed_at",
@@ -430,6 +485,16 @@
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Region"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -443,6 +508,15 @@
         "additionalProperties": false,
         "description": "Auffälligkeit mit Begründung – eine Vermutung, keine Feststellung.",
         "properties": {
+          "component_indices": {
+            "default": [],
+            "description": "Betroffene Bauteile (Index in `components`)",
+            "items": {
+              "type": "integer"
+            },
+            "title": "Component Indices",
+            "type": "array"
+          },
           "confidence": {
             "enum": [
               "low",
@@ -587,6 +661,15 @@
             "title": "Action",
             "type": "string"
           },
+          "component_indices": {
+            "default": [],
+            "description": "Bauteile, an denen der Schritt ausgeführt wird; leer = allgemein",
+            "items": {
+              "type": "integer"
+            },
+            "title": "Component Indices",
+            "type": "array"
+          },
           "reason": {
             "title": "Reason",
             "type": "string"
@@ -658,6 +741,230 @@
           "confidence"
         ],
         "title": "Observation",
+        "type": "object"
+      },
+      "OverlayAnchor": {
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "checks": {
+            "items": {
+              "$ref": "#/components/schemas/OverlayCheck"
+            },
+            "title": "Checks",
+            "type": "array"
+          },
+          "component_index": {
+            "title": "Component Index",
+            "type": "integer"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/OverlayFinding"
+            },
+            "title": "Findings",
+            "type": "array"
+          },
+          "highest_severity": {
+            "anyOf": [
+              {
+                "enum": [
+                  "info",
+                  "notice",
+                  "warning",
+                  "critical"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Highest Severity"
+          },
+          "labels": {
+            "items": {
+              "$ref": "#/components/schemas/OverlayLabel"
+            },
+            "title": "Labels",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          }
+        },
+        "required": [
+          "component_index",
+          "name",
+          "category",
+          "region",
+          "labels",
+          "highest_severity",
+          "findings",
+          "checks"
+        ],
+        "title": "OverlayAnchor",
+        "type": "object"
+      },
+      "OverlayCheck": {
+        "additionalProperties": false,
+        "description": "`position` entspricht `CheckItem.position` – darüber kann ein Client ihn abhaken.",
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference"
+          },
+          "requires_qualified_person": {
+            "title": "Requires Qualified Person",
+            "type": "boolean"
+          },
+          "source": {
+            "enum": [
+              "model",
+              "policy"
+            ],
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "position",
+          "action",
+          "requires_qualified_person",
+          "reference",
+          "source"
+        ],
+        "title": "OverlayCheck",
+        "type": "object"
+      },
+      "OverlayFinding": {
+        "additionalProperties": false,
+        "properties": {
+          "confidence": {
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "title": "Confidence",
+            "type": "string"
+          },
+          "index": {
+            "title": "Index",
+            "type": "integer"
+          },
+          "severity": {
+            "enum": [
+              "info",
+              "notice",
+              "warning",
+              "critical"
+            ],
+            "title": "Severity",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "index",
+          "title",
+          "severity",
+          "confidence"
+        ],
+        "title": "OverlayFinding",
+        "type": "object"
+      },
+      "OverlayLabel": {
+        "additionalProperties": false,
+        "properties": {
+          "confidence": {
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "title": "Confidence",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "confidence"
+        ],
+        "title": "OverlayLabel",
+        "type": "object"
+      },
+      "OverlaySafety": {
+        "additionalProperties": false,
+        "properties": {
+          "disclaimer": {
+            "title": "Disclaimer",
+            "type": "string"
+          },
+          "hazards": {
+            "items": {
+              "$ref": "#/components/schemas/Hazard"
+            },
+            "title": "Hazards",
+            "type": "array"
+          },
+          "is_test_data": {
+            "title": "Is Test Data",
+            "type": "boolean"
+          },
+          "notices": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notices",
+            "type": "array"
+          },
+          "qualified_person_required": {
+            "title": "Qualified Person Required",
+            "type": "boolean"
+          },
+          "risk_level": {
+            "$ref": "#/components/schemas/RiskLevel"
+          }
+        },
+        "required": [
+          "risk_level",
+          "qualified_person_required",
+          "hazards",
+          "notices",
+          "disclaimer",
+          "is_test_data"
+        ],
+        "title": "OverlaySafety",
         "type": "object"
       },
       "PolicyIntervention": {
@@ -882,6 +1189,51 @@
         "title": "ProjectUpdate",
         "type": "object"
       },
+      "Region": {
+        "additionalProperties": false,
+        "description": "Position eines Bauteils im (bereinigten) Foto – Grundlage für Markierungen und AR.\n\nNormierte Koordinaten 0..1, Ursprung oben links, unabhängig von der Bildauflösung.",
+        "properties": {
+          "capture_index": {
+            "description": "Index des Fotos innerhalb der Analyse",
+            "minimum": 0.0,
+            "title": "Capture Index",
+            "type": "integer"
+          },
+          "height": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1.0,
+            "title": "Height",
+            "type": "number"
+          },
+          "width": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1.0,
+            "title": "Width",
+            "type": "number"
+          },
+          "x": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "X",
+            "type": "number"
+          },
+          "y": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Y",
+            "type": "number"
+          }
+        },
+        "required": [
+          "capture_index",
+          "x",
+          "y",
+          "width",
+          "height"
+        ],
+        "title": "Region",
+        "type": "object"
+      },
       "RiskLevel": {
         "enum": [
           "low",
@@ -990,7 +1342,7 @@
   },
   "info": {
     "title": "Sm@rtCraft API",
-    "version": "0.6.0"
+    "version": "0.7.0"
   },
   "openapi": "3.1.0",
   "paths": {
@@ -1078,6 +1430,49 @@
           }
         },
         "summary": "Get Capture Image",
+        "tags": [
+          "analyses"
+        ]
+      }
+    },
+    "/analyses/{analysis_id}/overlay": {
+      "get": {
+        "description": "Geräteunabhängige Einblendungs-Sicht (Markierungen im Foto, später AR-Brille).\n\nEnthält immer den Sicherheitsblock; Prüfschritte sind über `position` mit den\nPrüfschritten aus `GET /analyses/{id}` verknüpft.",
+        "operationId": "get_analysis_overlay_analyses__analysis_id__overlay_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "analysis_id",
+            "required": true,
+            "schema": {
+              "title": "Analysis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisOverlay"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Analysis Overlay",
         "tags": [
           "analyses"
         ]

@@ -9,14 +9,15 @@ Zwei Stufen:
 Bewusst gibt es KEIN Feld für Freigabe, „sicher“ oder Normkonformität.
 """
 
+from collections.abc import Sequence
 from enum import StrEnum
-from typing import Literal
+from typing import Literal, Protocol, Self
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from smartcraft_api.domain.trades import Trade
 
-SCHEMA_VERSION = "1.1.0"
+SCHEMA_VERSION = "1.2.0"
 
 Confidence = Literal["low", "medium", "high"]
 Severity = Literal["info", "notice", "warning", "critical"]
@@ -57,11 +58,34 @@ class LabelReading(_Strict):
     confidence: Confidence
 
 
+_EDGE_TOLERANCE = 1e-6
+
+
+class Region(_Strict):
+    """Position eines Bauteils im (bereinigten) Foto – Grundlage für Markierungen und AR.
+
+    Normierte Koordinaten 0..1, Ursprung oben links, unabhängig von der Bildauflösung.
+    """
+
+    capture_index: int = Field(ge=0, description="Index des Fotos innerhalb der Analyse")
+    x: float = Field(ge=0, le=1)
+    y: float = Field(ge=0, le=1)
+    width: float = Field(gt=0, le=1)
+    height: float = Field(gt=0, le=1)
+
+    @model_validator(mode="after")
+    def _inside_image(self) -> "Region":
+        if self.x + self.width > 1 + _EDGE_TOLERANCE or self.y + self.height > 1 + _EDGE_TOLERANCE:
+            raise ValueError("Region ragt über den Bildrand hinaus")
+        return self
+
+
 class Component(_Strict):
     name: str
     category: str = Field(description="z. B. Schutzorgan, Leitung, Armatur, Bauteil")
     location_hint: str | None = None
     labels: list[LabelReading] = []
+    region: Region | None = None
 
 
 class Observation(_Strict):
@@ -79,6 +103,9 @@ class Finding(_Strict):
     severity: Severity
     reasoning: str
     confidence: Confidence
+    component_indices: list[int] = Field(
+        default=[], description="Betroffene Bauteile (Index in `components`)"
+    )
 
 
 class NextCheck(_Strict):
@@ -87,6 +114,9 @@ class NextCheck(_Strict):
     requires_qualified_person: bool
     reference: str | None = None
     source: Literal["model", "policy"] = "model"
+    component_indices: list[int] = Field(
+        default=[], description="Bauteile, an denen der Schritt ausgeführt wird; leer = allgemein"
+    )
 
 
 class ImageQuality(_Strict):
@@ -112,6 +142,32 @@ class AnalysisDraft(_Strict):
     uncertainties: list[str] = []
     next_checks: list[NextCheck] = []
     safety: DraftSafety
+
+    @model_validator(mode="after")
+    def _component_references_exist(self) -> Self:
+        _check_component_refs(self)
+        return self
+
+
+class _HasComponentRefs(Protocol):
+    @property
+    def components(self) -> Sequence[Component]: ...
+    @property
+    def observations(self) -> Sequence[Observation]: ...
+    @property
+    def findings(self) -> Sequence[Finding]: ...
+    @property
+    def next_checks(self) -> Sequence[NextCheck]: ...
+
+
+def _check_component_refs(model: _HasComponentRefs) -> None:
+    count = len(model.components)
+    refs = [o.component_index for o in model.observations if o.component_index is not None]
+    refs += [i for f in model.findings for i in f.component_indices]
+    refs += [i for c in model.next_checks for i in c.component_indices]
+    invalid = sorted({i for i in refs if not 0 <= i < count})
+    if invalid:
+        raise ValueError(f"Verweis auf nicht vorhandene Bauteile: {invalid}")
 
 
 class PolicyIntervention(_Strict):
@@ -153,3 +209,8 @@ class AnalysisResult(_Strict):
     next_checks: list[NextCheck]
     safety: Safety
     policy: PolicyReport
+
+    @model_validator(mode="after")
+    def _component_references_exist(self) -> Self:
+        _check_component_refs(self)
+        return self

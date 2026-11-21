@@ -28,7 +28,19 @@ Jeder Schritt ist ein eigener, kleiner Pull Request mit Tests.
   eine Elektrofachkraft.
 - CI grün, Doku aktuell, keine Secrets im Repo, keine laufenden Kosten.
 
+## Roadmap nach dem MVP
+
+| Phase | Inhalt |
+|---|---|
+| **AR-0 – AR-Datenfundament** ✅ | Bauteil-Regionen, Bauteil-Verweise, verankerte Pflicht-Prüfschritte, Overlay-Endpunkt (bereits vorgezogen, ADR 0006) |
+| **Ausbau 1 – Baustellen-tauglich** | PWA/Offline-Warteschlange (V2-Erfahrung), Login, weitere Analysetypen (Feuchtigkeit, Risse) |
+| **AR-Ausbaustufe** | AR-1 Markierungen im Foto → AR-2 Live-Kamera am Smartphone → AR-3 AR-Brille mit Sprachsteuerung → AR-4 räumliche Verankerung. Details: `06-ar-ausbaustufe.md` |
+
+Die AR-Funktion ist zentraler Bestandteil der Sm@rtCraft-3.0-Vision. AR-1 baut nur auf
+vorhandenen Daten auf und kann direkt nach dem MVP folgen; ab AR-2 werden Plattform- und
+Kostenentscheidungen (E5, E6) vorher vorgelegt.
+
 ## Bewusst nicht im MVP
 
 Login/Mehrbenutzer, Offline-Queue, TTS, Video-Suche, Kostenschätzung, Materialliste,
-Standort, Teilen, Admin-Bereich, Deployment, AR-Brille.
+Standort, Teilen, Admin-Bereich, Deployment, AR-Clients (die AR-Datenbasis ist aber bereits angelegt).

@@ -21,3 +21,12 @@
 - Vor jedem Commit: Tests, Linter, Typprüfung grün.
 - Architekturentscheidungen als ADR in `docs/adr/`; `CHANGELOG.md` pflegen.
 - Keine Prompts oder KI-Logik im Frontend.
+
+## Mehrere Clients und AR (siehe docs/06-ar-ausbaustufe.md)
+
+- AR-Brillen sind ein geplanter, gleichrangiger Client. Backend-API und Ergebnisschema
+  dürfen nichts Smartphone-Spezifisches enthalten (keine Layouts, Bildschirmgrößen, Gesten).
+- Analyse- und Sicherheitslogik gibt es genau einmal im Backend – nie im Client duplizieren.
+- Bauteilbezogene Daten (Regionen, `component_indices`) bei Schema-Änderungen erhalten.
+- Jede Einblendungs-Schnittstelle liefert den Sicherheitsblock als Pflichtbestandteil.
+- Keine AR-SDKs, Hardware-Abhängigkeiten oder kostenpflichtigen AR-Dienste ohne Zustimmung.

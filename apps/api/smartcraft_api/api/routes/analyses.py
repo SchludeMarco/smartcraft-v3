@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Response, status
 
 from smartcraft_api.api.deps import SessionDep, StorageDep
 from smartcraft_api.api.schemas import AnalysisDetailOut, CaptureOut, CheckItemOut
+from smartcraft_api.domain.overlay import AnalysisOverlay, build_overlay
 from smartcraft_api.media.storage import StorageError
 from smartcraft_api.persistence import repository as repo
 from smartcraft_api.persistence.models import AnalysisRow
@@ -31,6 +32,16 @@ def _get_or_404(session: SessionDep, analysis_id: str) -> AnalysisRow:
 @router.get("/{analysis_id}", response_model=AnalysisDetailOut)
 def get_analysis(analysis_id: str, session: SessionDep) -> AnalysisDetailOut:
     return analysis_detail(_get_or_404(session, analysis_id))
+
+
+@router.get("/{analysis_id}/overlay", response_model=AnalysisOverlay)
+def get_analysis_overlay(analysis_id: str, session: SessionDep) -> AnalysisOverlay:
+    """Geräteunabhängige Einblendungs-Sicht (Markierungen im Foto, später AR-Brille).
+
+    Enthält immer den Sicherheitsblock; Prüfschritte sind über `position` mit den
+    Prüfschritten aus `GET /analyses/{id}` verknüpft.
+    """
+    return build_overlay(repo.load_result(_get_or_404(session, analysis_id)))
 
 
 @router.get(

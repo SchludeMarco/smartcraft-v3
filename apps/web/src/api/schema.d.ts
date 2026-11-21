@@ -38,6 +38,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/analyses/{analysis_id}/overlay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Analysis Overlay
+         * @description Geräteunabhängige Einblendungs-Sicht (Markierungen im Foto, später AR-Brille).
+         *
+         *     Enthält immer den Sicherheitsblock; Prüfschritte sind über `position` mit den
+         *     Prüfschritten aus `GET /analyses/{id}` verknüpft.
+         */
+        get: operations["get_analysis_overlay_analyses__analysis_id__overlay_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -136,6 +159,23 @@ export interface components {
             project_id: string;
             result: components["schemas"]["AnalysisResult"];
         };
+        /** AnalysisOverlay */
+        AnalysisOverlay: {
+            /** Analysis Schema Version */
+            analysis_schema_version: string;
+            /** Anchors */
+            anchors: components["schemas"]["OverlayAnchor"][];
+            /** General Checks */
+            general_checks: components["schemas"]["OverlayCheck"][];
+            /** General Findings */
+            general_findings: components["schemas"]["OverlayFinding"][];
+            /**
+             * Overlay Version
+             * @default 1.0.0
+             */
+            overlay_version: string;
+            safety: components["schemas"]["OverlaySafety"];
+        };
         /** AnalysisResult */
         AnalysisResult: {
             /** Components */
@@ -151,7 +191,7 @@ export interface components {
             safety: components["schemas"]["Safety"];
             /**
              * Schema Version
-             * @default 1.1.0
+             * @default 1.2.0
              */
             schema_version: string;
             source: components["schemas"]["AnalysisSource"];
@@ -231,6 +271,8 @@ export interface components {
             completed_at: string | null;
             /** Completed By */
             completed_by: string | null;
+            /** Component Indices */
+            component_indices: number[];
             /** Id */
             id: string;
             /** Position */
@@ -268,12 +310,19 @@ export interface components {
             location_hint?: string | null;
             /** Name */
             name: string;
+            region?: components["schemas"]["Region"] | null;
         };
         /**
          * Finding
          * @description Auffälligkeit mit Begründung – eine Vermutung, keine Feststellung.
          */
         Finding: {
+            /**
+             * Component Indices
+             * @description Betroffene Bauteile (Index in `components`)
+             * @default []
+             */
+            component_indices: number[];
             /**
              * Confidence
              * @enum {string}
@@ -340,6 +389,12 @@ export interface components {
         NextCheck: {
             /** Action */
             action: string;
+            /**
+             * Component Indices
+             * @description Bauteile, an denen der Schritt ausgeführt wird; leer = allgemein
+             * @default []
+             */
+            component_indices: number[];
             /** Reason */
             reason: string;
             /** Reference */
@@ -367,6 +422,84 @@ export interface components {
             confidence: "low" | "medium" | "high";
             /** Text */
             text: string;
+        };
+        /** OverlayAnchor */
+        OverlayAnchor: {
+            /** Category */
+            category: string;
+            /** Checks */
+            checks: components["schemas"]["OverlayCheck"][];
+            /** Component Index */
+            component_index: number;
+            /** Findings */
+            findings: components["schemas"]["OverlayFinding"][];
+            /** Highest Severity */
+            highest_severity: ("info" | "notice" | "warning" | "critical") | null;
+            /** Labels */
+            labels: components["schemas"]["OverlayLabel"][];
+            /** Name */
+            name: string;
+            region: components["schemas"]["Region"];
+        };
+        /**
+         * OverlayCheck
+         * @description `position` entspricht `CheckItem.position` – darüber kann ein Client ihn abhaken.
+         */
+        OverlayCheck: {
+            /** Action */
+            action: string;
+            /** Position */
+            position: number;
+            /** Reference */
+            reference: string | null;
+            /** Requires Qualified Person */
+            requires_qualified_person: boolean;
+            /**
+             * Source
+             * @enum {string}
+             */
+            source: "model" | "policy";
+        };
+        /** OverlayFinding */
+        OverlayFinding: {
+            /**
+             * Confidence
+             * @enum {string}
+             */
+            confidence: "low" | "medium" | "high";
+            /** Index */
+            index: number;
+            /**
+             * Severity
+             * @enum {string}
+             */
+            severity: "info" | "notice" | "warning" | "critical";
+            /** Title */
+            title: string;
+        };
+        /** OverlayLabel */
+        OverlayLabel: {
+            /**
+             * Confidence
+             * @enum {string}
+             */
+            confidence: "low" | "medium" | "high";
+            /** Text */
+            text: string;
+        };
+        /** OverlaySafety */
+        OverlaySafety: {
+            /** Disclaimer */
+            disclaimer: string;
+            /** Hazards */
+            hazards: components["schemas"]["Hazard"][];
+            /** Is Test Data */
+            is_test_data: boolean;
+            /** Notices */
+            notices: string[];
+            /** Qualified Person Required */
+            qualified_person_required: boolean;
+            risk_level: components["schemas"]["RiskLevel"];
         };
         /** PolicyIntervention */
         PolicyIntervention: {
@@ -434,6 +567,27 @@ export interface components {
             description?: string | null;
             /** Name */
             name?: string | null;
+        };
+        /**
+         * Region
+         * @description Position eines Bauteils im (bereinigten) Foto – Grundlage für Markierungen und AR.
+         *
+         *     Normierte Koordinaten 0..1, Ursprung oben links, unabhängig von der Bildauflösung.
+         */
+        Region: {
+            /**
+             * Capture Index
+             * @description Index des Fotos innerhalb der Analyse
+             */
+            capture_index: number;
+            /** Height */
+            height: number;
+            /** Width */
+            width: number;
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
         };
         /**
          * RiskLevel
@@ -529,6 +683,37 @@ export interface operations {
                 };
                 content: {
                     "image/jpeg": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_analysis_overlay_analyses__analysis_id__overlay_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                analysis_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisOverlay"];
                 };
             };
             /** @description Validation Error */

@@ -14,9 +14,10 @@
 5. **KI-Anbieter austauschbar.** Ein Provider-Interface mit `MockProvider` (Standard,
    kostenlos, deterministisch) und später echten Providern. Modellname kommt aus der
    Konfiguration, nie aus dem Code.
-6. **Multimodal-fähig von Anfang an.** Eingaben sind „Captures“ (heute Foto, später
-   Video-Frame, Audio-Notiz, AR-Brillen-Snapshot). Das Frontend ist eine von mehreren
-   möglichen Clients der API.
+6. **Multimodal und AR-fähig von Anfang an.** Eingaben sind „Captures“ (heute Foto, später
+   Video-Frame, Audio-Notiz, AR-Brillen-Snapshot). Das Web-Frontend ist einer von mehreren
+   gleichrangigen Clients der API; AR-Brillen nutzen dieselbe Analyse- und Sicherheitslogik
+   (siehe Abschnitt „Mehrere Clients und AR“ und `06-ar-ausbaustufe.md`).
 
 ## Komponenten
 
@@ -28,7 +29,7 @@
 │  Ergebnisansicht     │   typisierte Antworten         │  ├─ safety (Policy, Regeln)  │
 └──────────────────────┘   (Typen aus OpenAPI)          │  ├─ ai (Provider-Interface)  │
         später:                                         │  │   ├─ MockProvider         │
-  AR-Brille / native App                                │  │   └─ GeminiProvider (*)   │
+  AR-Brille / native App ── GET /analyses/{id}/overlay ▶│  │   └─ GeminiProvider (*)   │
                                                         │  ├─ media (Bildpipeline)     │
                                                         │  └─ persistence (SQLModel)   │
                                                         └──────┬───────────────┬───────┘
@@ -72,13 +73,14 @@ AnalysisResult
   schema_version, trade
   summary: str                                                             # neutral, 1–2 Sätze
   image_quality: { usable: bool, issues: [str] }
-  components: [{ name, category, location_hint, labels: [{ text, confidence }] }]
+  components: [{ name, category, location_hint, labels: [{ text, confidence }],
+                 region?: { capture_index, x, y, width, height } }]       # 0..1, für Markierungen/AR
   observations: [{ text, confidence: low|medium|high, component_ref? }]   # nur Sichtbares
   findings: [{ title, severity: info|notice|warning|critical,
-               reasoning, confidence }]                                    # Auffälligkeiten
+               reasoning, confidence, component_indices }]                 # Auffälligkeiten
   uncertainties: [str]                                                     # was nicht beurteilbar ist
   next_checks: [{ action, reason, requires_qualified_person: bool,
-                  reference? }]                                            # z. B. „DIN VDE 0100-600“
+                  reference?, source, component_indices }]                 # z. B. „DIN VDE 0100-600“
   safety: { risk_level: low|medium|high, hazards: [electrical|gas|structural|
             working_at_height|hazardous_material], qualified_person_required: bool,
             notices: [str], disclaimer: str }                              # disclaimer vom Server
@@ -86,6 +88,22 @@ AnalysisResult
 ```
 
 Bewusst **nicht** enthalten: `approved`, `is_safe`, `compliant`, Reparaturanleitungen.
+
+## Mehrere Clients und AR
+
+Sm@rtCraft ist langfristig ein multimodaler Assistent für Smartphone **und AR-Brillen**
+(Details und Ausbaustufen: `06-ar-ausbaustufe.md`, Entscheidung: ADR 0006).
+
+- **Ein Backend, mehrere Clients:** Analyse, Schema und Safety-Policy existieren nur einmal.
+  Ein AR-Client bekommt exakt dieselben, bereits geprüften Ergebnisse wie das Smartphone.
+- **Positionsdaten:** Bauteile tragen optional eine Region im Foto; Auffälligkeiten und
+  Prüfschritte verweisen auf Bauteile. Die Policy verankert Pflicht-Prüfschritte an den
+  Bauteilen, an denen sie die Gefahr erkannt hat.
+- **Overlay-Schnittstelle:** `GET /analyses/{id}/overlay` liefert eine geräteunabhängige
+  Einblendungs-Sicht (Anker + Pflicht-Sicherheitsblock). Smartphone-Markierungen (AR-1) und
+  AR-Brillen (AR-3) nutzen dasselbe Format.
+- **Keine Bindung an eine Oberfläche:** Die API kennt keine Layouts, Bildschirmgrößen oder
+  Gesten. Plattform-spezifisches entsteht ausschließlich im jeweiligen Client.
 
 ## Technologieentscheidungen
 

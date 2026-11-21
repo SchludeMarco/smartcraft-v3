@@ -129,6 +129,7 @@ def save_analysis(
                 requires_qualified_person=check.requires_qualified_person,
                 reference=check.reference,
                 source=check.source,
+                component_indices=list(check.component_indices),
             )
             for i, check in enumerate(result.next_checks)
         ],

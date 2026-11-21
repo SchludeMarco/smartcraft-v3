@@ -1,7 +1,11 @@
 # Sm@rtCraft 3.0 – Der Kollege in der Hosentasche
 
 KI-Assistent für Handwerker auf der Baustelle: Installationen, Feuchtigkeitsschäden, Risse,
-Bauteile. Langfristig multimodal (Smartphone, später AR-Brille).
+Bauteile. Langfristig ein multimodaler Assistent für **Smartphone und AR-Brillen**: Bauteile
+werden im Sichtfeld erkannt und beschriftet, Prüfschritte und technische Informationen
+erscheinen direkt an der Installation. Entwickelt wird Smartphone-first; Analyse- und
+Sicherheitslogik sind von Anfang an geräteunabhängig (siehe
+[AR-Ausbaustufe](docs/06-ar-ausbaustufe.md)).
 
 **Status:** MVP-Schritt 6 – Web-App mit Projekten (KI: nur Mock).
 
@@ -24,6 +28,7 @@ Bauteile. Langfristig multimodal (Smartphone, später AR-Brille).
 - [03 – Projektstruktur](docs/03-projektstruktur.md)
 - [04 – MVP-Plan](docs/04-mvp-plan.md)
 - [05 – Entscheidungen und Risiken](docs/05-entscheidungen-und-risiken.md)
+- [06 – AR-Ausbaustufe](docs/06-ar-ausbaustufe.md)
 - [ADRs](docs/adr/)
 
 ## Tech-Stack (geplant)
@@ -53,6 +58,7 @@ API-Überblick (interaktiv unter `/docs`):
 | POST | `/projects/{id}/analyses` | Fotos hochladen und analysieren (multipart: `trade`, `files`, `note`) |
 | GET | `/analyses/{id}` | Analyse mit Ergebnis, Fotos und Prüfschritten |
 | GET | `/analyses/{id}/captures/{capture_id}/image` | Bereinigtes Foto (ohne Metadaten) |
+| GET | `/analyses/{id}/overlay` | Geräteunabhängige Einblendungs-Sicht (Markierungen, später AR) mit Pflicht-Sicherheitsblock |
 
 Beispiel mit der Mock-KI:
 
