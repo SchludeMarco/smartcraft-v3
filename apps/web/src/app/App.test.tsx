@@ -38,6 +38,19 @@ const health = {
 };
 
 describe("Projektübersicht", () => {
+  it("führt per Tipp auf den Schriftzug zurück zur Projektübersicht", async () => {
+    mockApi((req) => {
+      if (path(req) === "/health") return { body: health };
+      if (path(req) === "/projects") return { body: [project] };
+      return undefined;
+    });
+    const user = userEvent.setup();
+    renderWithProviders(<App />, { route: "/aenderungen" });
+
+    await user.click(await screen.findByText("Craft"));
+    expect(await screen.findByText("EFH Müller")).toBeInTheDocument();
+  });
+
   it("öffnet das Änderungsprotokoll über die Fußzeile", async () => {
     mockApi((req) => {
       if (path(req) === "/health") return { body: health };

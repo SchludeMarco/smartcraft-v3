@@ -105,6 +105,7 @@ stehen im [CHANGELOG](CHANGELOG.md) und in der App unter **Änderungsprotokoll**
 | 22.11.2026 13:54 | Behoben: Haftungshinweis nur bei Analysen (#24) |
 | 22.11.2026 14:08 | Behoben: Gemini-Überlastung (503) automatisch wiederholen (#25) |
 | 22.11.2026 14:14 | Neu: Entstehungsgeschichte in der README, Änderungsprotokoll in der App (#26) |
+| 22.11.2026 14:27 | Behoben: Tipp auf Logo oder Schriftzug führt zur Projektübersicht (#27) |
 
 ### Ausblick
 
