@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link, Navigate, Route, Routes } from "react-router";
-import { Disclaimer } from "../components/Disclaimer";
 import { Header } from "../components/Header";
 import { StorageHint, TestModeBanner } from "../components/TestModeBanner";
 import { AnalysisPage } from "../features/analysis/AnalysisPage";
@@ -43,7 +42,6 @@ function Shell() {
         <main className="panel-parchment w-full space-y-6 p-4 sm:p-6 lg:p-8 print:border-0 print:p-0 print:shadow-none">
           <OfflineBanners onOpenHistory={() => setShowHistory(true)} />
           <TestModeBanner />
-          <Disclaimer />
           <Routes>
             <Route path="/" element={<ProjectsPage />} />
             <Route path="/analyse" element={<HomePage />} />

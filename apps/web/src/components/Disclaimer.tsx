@@ -11,7 +11,10 @@ function hiddenThisSession(): boolean {
   }
 }
 
-/** Haftungsausschluss wie V2 (EU AI Act) – pro Sitzung wegklickbar. */
+/**
+ * Haftungsausschluss wie V2 (EU AI Act) – pro Sitzung wegklickbar. Steht nur dort, wo die KI
+ * analysiert (Analyse, Ergebnisse), nicht in der Projektübersicht (Wunsch Marco, 22.11.2026).
+ */
 export function Disclaimer() {
   const [hidden, setHidden] = useState(hiddenThisSession);
   if (hidden) return null;
