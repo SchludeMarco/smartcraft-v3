@@ -1,4 +1,5 @@
 import type { AnalysisDetail, ToolResult } from "../api/types";
+import { STORES, withStore } from "./db";
 
 /**
  * „Lokal speichern“ wie V2: Analyse inkl. Fotos und Werkzeug-Ergebnissen nur auf diesem
@@ -12,37 +13,8 @@ export type LocalAnalysis = {
   photos: Blob[];
 };
 
-const DB_NAME = "smartcraft-v3";
-const STORE = "analyses";
-
-function openDb(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
-    if (typeof indexedDB === "undefined") {
-      reject(new Error("Lokaler Speicher wird von diesem Browser nicht unterstützt."));
-      return;
-    }
-    const request = indexedDB.open(DB_NAME, 1);
-    request.onupgradeneeded = () => {
-      if (!request.result.objectStoreNames.contains(STORE)) {
-        request.result.createObjectStore(STORE, { keyPath: "id" });
-      }
-    };
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error ?? new Error("Lokaler Speicher nicht verfügbar."));
-  });
-}
-
-async function run<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
-  const db = await openDb();
-  try {
-    return await new Promise<T>((resolve, reject) => {
-      const request = action(db.transaction(STORE, mode).objectStore(STORE));
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error ?? new Error("Lokaler Speicher: Fehler."));
-    });
-  } finally {
-    db.close();
-  }
+function run<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
+  return withStore(STORES.analyses, mode, action);
 }
 
 export async function saveLocalAnalysis(entry: Omit<LocalAnalysis, "savedAt">): Promise<LocalAnalysis> {

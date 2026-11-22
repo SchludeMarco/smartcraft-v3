@@ -1,4 +1,16 @@
-import { AlertTriangle, Camera, FolderOpen, Image as ImageIcon, Loader2, RefreshCw, Smartphone, X, Zap } from "lucide-react";
+import {
+  AlertTriangle,
+  Camera,
+  CheckCircle,
+  FolderOpen,
+  Image as ImageIcon,
+  Loader2,
+  RefreshCw,
+  Smartphone,
+  WifiOff,
+  X,
+  Zap,
+} from "lucide-react";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { Link, useSearchParams } from "react-router";
 import type { Trade, TradeOption } from "../../api/types";
@@ -6,6 +18,9 @@ import { useCurrentTrade } from "../../lib/currentTrade";
 import { MAX_UPLOAD_BYTES, resizeImage } from "../../lib/resizeImage";
 import { TRADE_THEMES } from "../../lib/trades";
 import { celebrateCompletion } from "../../lib/celebrate";
+import { queueAnalysis } from "../../lib/offlineQueue";
+import { useOffline } from "../offline/OfflineContext";
+import { OfflineQueueModal } from "../offline/OfflineQueueModal";
 import { useProject } from "../projects/api";
 import { TradeTools } from "../tools/TradeTools";
 import { useAnalysis, useCreateAnalysis, useTrades } from "./api";
@@ -75,6 +90,9 @@ export function HomePage() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [processing, setProcessing] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const { online, pending } = useOffline();
+  const [queuedInfo, setQueuedInfo] = useState(false);
+  const [showQueue, setShowQueue] = useState(false);
   // Ergebnis über den Query-Cache, damit spätere Änderungen (Projekt, Prüfschritte) sichtbar sind
   const [resultId, setResultId] = useState<string | null>(null);
   const resultQuery = useAnalysis(resultId ?? "", resultId !== null);
@@ -85,7 +103,10 @@ export function HomePage() {
   useEffect(() => {
     photosRef.current = photos;
   }, [photos]);
-  useEffect(() => () => photosRef.current.forEach((p) => URL.revokeObjectURL(p.url)), []);
+  useEffect(
+    () => () => photosRef.current.forEach((p) => URL.revokeObjectURL(p.url)),
+    [],
+  );
 
   const selectedLabel = trades.data?.find((t) => t.id === trade)?.label;
   const full = photos.length >= MAX_PHOTOS;
@@ -97,14 +118,20 @@ export function HomePage() {
     event.target.value = ""; // gleiche Datei erneut wählbar
     if (files.length === 0) return;
     const free = MAX_PHOTOS - photos.length;
-    setFormError(files.length > free ? `Höchstens ${MAX_PHOTOS} Fotos pro Analyse.` : null);
+    setFormError(
+      files.length > free ? `Höchstens ${MAX_PHOTOS} Fotos pro Analyse.` : null,
+    );
     setProcessing(true);
     try {
       const added: Photo[] = [];
       for (const file of files.slice(0, Math.max(0, free))) {
         const blob = await resizeImage(file);
         photoCounter += 1;
-        added.push({ id: `foto-${photoCounter}`, blob, url: URL.createObjectURL(blob) });
+        added.push({
+          id: `foto-${photoCounter}`,
+          blob,
+          url: URL.createObjectURL(blob),
+        });
       }
       setPhotos((current) => [...current, ...added]);
     } catch {
@@ -131,10 +158,36 @@ export function HomePage() {
     create.reset();
   }
 
+  async function saveForLater() {
+    try {
+      await queueAnalysis({
+        trade,
+        note,
+        photos: photos.map((p) => p.blob),
+        projectId,
+      });
+      photos.forEach((p) => URL.revokeObjectURL(p.url));
+      setPhotos([]);
+      setNote("");
+      setQueuedInfo(true);
+    } catch {
+      setFormError(
+        "Die Analyse konnte auf diesem Gerät nicht gespeichert werden.",
+      );
+    }
+  }
+
   function analyze() {
     if (!canAnalyze) return;
+    setQueuedInfo(false);
+    if (!online) {
+      void saveForLater();
+      return;
+    }
     if (photos.reduce((sum, p) => sum + p.blob.size, 0) > MAX_UPLOAD_BYTES) {
-      setFormError("Die Fotos sind zusammen zu groß. Bitte weniger Fotos auswählen.");
+      setFormError(
+        "Die Fotos sind zusammen zu groß. Bitte weniger Fotos auswählen.",
+      );
       return;
     }
     setFormError(null);
@@ -154,10 +207,16 @@ export function HomePage() {
     <div className="space-y-6">
       {projectId && (
         <div className="flex items-start gap-3 rounded-xl border-l-4 border-(--accent) bg-(--accent-soft) p-3 shadow-md">
-          <FolderOpen className="mt-1 h-5 w-5 shrink-0 text-(--accent)" aria-hidden="true" />
+          <FolderOpen
+            className="mt-1 h-5 w-5 shrink-0 text-(--accent)"
+            aria-hidden="true"
+          />
           <p className="grow text-sm text-gray-700">
             Neue Analyse für Projekt{" "}
-            <Link to={`/projects/${projectId}`} className="font-bold text-(--accent-dark) underline">
+            <Link
+              to={`/projects/${projectId}`}
+              className="font-bold text-(--accent-dark) underline"
+            >
               {project.data?.name ?? "…"}
             </Link>
           </p>
@@ -184,12 +243,18 @@ export function HomePage() {
           className="grid grid-cols-5 gap-1.5 rounded-xl border-2 border-steel/50 bg-parchment-dark/60 p-2 shadow-inner"
         >
           {trades.data?.map((option) => (
-            <TradeButton key={option.id} option={option} selected={trade === option.id} onSelect={setTrade} />
+            <TradeButton
+              key={option.id}
+              option={option}
+              selected={trade === option.id}
+              onSelect={setTrade}
+            />
           ))}
         </div>
         {selectedLabel && (
           <p className="mt-3 text-sm font-medium text-gray-600 transition-colors duration-500 ease-in-out">
-            Aktueller Beruf: <span className="font-bold text-(--accent)">{selectedLabel}</span>
+            Aktueller Beruf:{" "}
+            <span className="font-bold text-(--accent)">{selectedLabel}</span>
           </p>
         )}
       </section>
@@ -197,13 +262,17 @@ export function HomePage() {
       {/* 2. Problem dokumentieren & analysieren */}
       <section>
         <h2 className="mb-3">
-          <span className="badge-pill">2. Problem dokumentieren &amp; analysieren</span>
+          <span className="badge-pill">
+            2. Problem dokumentieren &amp; analysieren
+          </span>
         </h2>
         <div className="panel-parchment rounded-xl p-4">
           <div className="-mt-2 mb-4 flex gap-4 border-b pb-2 text-sm font-semibold text-gray-700">
             <label
               className={`flex items-center gap-1 transition-colors duration-500 ease-in-out ${
-                full || busy ? "cursor-not-allowed opacity-40" : "cursor-pointer hover:text-(--accent)"
+                full || busy
+                  ? "cursor-not-allowed opacity-40"
+                  : "cursor-pointer hover:text-(--accent)"
               }`}
             >
               <Camera className="h-5 w-5 text-(--accent)" aria-hidden="true" />
@@ -219,10 +288,15 @@ export function HomePage() {
             </label>
             <label
               className={`flex items-center gap-1 transition-colors duration-500 ease-in-out ${
-                full || busy ? "cursor-not-allowed opacity-40" : "cursor-pointer hover:text-(--accent)"
+                full || busy
+                  ? "cursor-not-allowed opacity-40"
+                  : "cursor-pointer hover:text-(--accent)"
               }`}
             >
-              <ImageIcon className="h-5 w-5 text-(--accent)" aria-hidden="true" />
+              <ImageIcon
+                className="h-5 w-5 text-(--accent)"
+                aria-hidden="true"
+              />
               <span>Galerie</span>
               <input
                 type="file"
@@ -241,8 +315,15 @@ export function HomePage() {
               <div className="mb-4">
                 <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
                   {photos.map((photo, i) => (
-                    <div key={photo.id} className="relative flex h-24 items-center justify-center overflow-hidden rounded-lg bg-gray-100">
-                      <img src={photo.url} alt={`Foto ${i + 1}`} className="h-full w-full object-cover" />
+                    <div
+                      key={photo.id}
+                      className="relative flex h-24 items-center justify-center overflow-hidden rounded-lg bg-gray-100"
+                    >
+                      <img
+                        src={photo.url}
+                        alt={`Foto ${i + 1}`}
+                        className="h-full w-full object-cover"
+                      />
                       <button
                         type="button"
                         onClick={() => removePhoto(photo.id)}
@@ -260,7 +341,11 @@ export function HomePage() {
                 </p>
               </div>
             )}
-            {processing && <p className="mb-2 text-xs text-gray-500">Fotos werden vorbereitet …</p>}
+            {processing && (
+              <p className="mb-2 text-xs text-gray-500">
+                Fotos werden vorbereitet …
+              </p>
+            )}
             <label htmlFor="problem-desc" className="sr-only">
               Problembeschreibung
             </label>
@@ -277,7 +362,10 @@ export function HomePage() {
         </div>
 
         {formError && (
-          <p role="alert" className="mt-3 rounded-lg border-l-4 border-red-500 bg-red-100 p-2.5 text-sm text-red-700">
+          <p
+            role="alert"
+            className="mt-3 rounded-lg border-l-4 border-red-500 bg-red-100 p-2.5 text-sm text-red-700"
+          >
             {formError}
           </p>
         )}
@@ -300,8 +388,16 @@ export function HomePage() {
           >
             {create.isPending ? (
               <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin text-white" aria-hidden="true" />
+                <Loader2
+                  className="mr-2 h-5 w-5 animate-spin text-white"
+                  aria-hidden="true"
+                />
                 Analysiere...
+              </>
+            ) : !online ? (
+              <>
+                <Zap className="mr-2 h-5 w-5" aria-hidden="true" />
+                Für später speichern (offline)
               </>
             ) : (
               <>
@@ -311,6 +407,33 @@ export function HomePage() {
             )}
           </button>
         </div>
+        {queuedInfo && (
+          <p
+            role="status"
+            className="mt-3 flex items-start gap-2 rounded-xl border-l-4 border-green-400 bg-green-50 p-3 text-xs text-green-800 shadow-md"
+          >
+            <CheckCircle
+              className="h-4 w-4 shrink-0 text-green-500"
+              aria-hidden="true"
+            />
+            Kein Empfang: Diese Analyse wurde gespeichert und wird automatisch
+            durchgeführt, sobald wieder eine Verbindung besteht. Sie finden das
+            Ergebnis danach im Verlauf.
+          </p>
+        )}
+        {pending.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setShowQueue(true)}
+            className="mt-2 flex w-full items-center justify-center gap-1.5 py-2 text-xs font-semibold text-(--accent) underline hover:text-(--accent-dark)"
+          >
+            <WifiOff className="h-3.5 w-3.5" aria-hidden="true" />
+            {pending.length}{" "}
+            {pending.length === 1 ? "Analyse wartet" : "Analysen warten"} auf
+            Verbindung — verwalten
+          </button>
+        )}
+        {showQueue && <OfflineQueueModal onClose={() => setShowQueue(false)} />}
         <p className="mt-2 text-center text-[11px] text-gray-500">
           Standortdaten der Fotos werden vor dem Hochladen entfernt.
         </p>
@@ -323,12 +446,20 @@ export function HomePage() {
         </h2>
         {create.isPending ? (
           <div className="panel-parchment flex flex-col items-center justify-center rounded-xl p-8">
-            <Loader2 className="h-8 w-8 animate-spin text-(--accent)" aria-hidden="true" />
+            <Loader2
+              className="h-8 w-8 animate-spin text-(--accent)"
+              aria-hidden="true"
+            />
             <p className="mt-4 font-semibold text-gray-700">Analyse läuft...</p>
-            <p className="text-sm text-gray-500">Der Bau-Experte prüft die Situation.</p>
+            <p className="text-sm text-gray-500">
+              Der Bau-Experte prüft die Situation.
+            </p>
           </div>
         ) : create.isError ? (
-          <div role="alert" className="relative flex items-start gap-3 rounded-lg border-l-4 border-red-500 bg-red-100 p-4 pr-10 text-red-700 shadow-md">
+          <div
+            role="alert"
+            className="relative flex items-start gap-3 rounded-lg border-l-4 border-red-500 bg-red-100 p-4 pr-10 text-red-700 shadow-md"
+          >
             <button
               type="button"
               onClick={() => create.reset()}
@@ -338,12 +469,16 @@ export function HomePage() {
             >
               <X className="h-4 w-4" aria-hidden="true" />
             </button>
-            <AlertTriangle className="mt-1 h-5 w-5 shrink-0 text-red-600" aria-hidden="true" />
+            <AlertTriangle
+              className="mt-1 h-5 w-5 shrink-0 text-red-600"
+              aria-hidden="true"
+            />
             <div>
               <p className="font-bold">Analysefehler</p>
               <p className="text-sm">{create.error.message}</p>
               <p className="mt-1 text-xs text-red-500">
-                Ihre Bilder bleiben erhalten. Tippen Sie oben rechts, um es erneut zu versuchen.
+                Ihre Bilder bleiben erhalten. Tippen Sie oben rechts, um es
+                erneut zu versuchen.
               </p>
             </div>
           </div>
@@ -351,23 +486,30 @@ export function HomePage() {
           <ResultDisplay detail={result} includeSpecialTools />
         ) : (
           <div className="panel-parchment rounded-xl border-4 border-dashed border-(--accent-soft) p-8 text-center text-gray-500 transition-colors duration-700 ease-in-out">
-            <Smartphone className="mx-auto mb-3 h-8 w-8 text-(--accent)" aria-hidden="true" />
-            <p className="text-lg font-semibold text-gray-800">Starten Sie Ihre Bauanalyse</p>
+            <Smartphone
+              className="mx-auto mb-3 h-8 w-8 text-(--accent)"
+              aria-hidden="true"
+            />
+            <p className="text-lg font-semibold text-gray-800">
+              Starten Sie Ihre Bauanalyse
+            </p>
             <p className="mt-2 text-sm font-bold text-gray-600">
-              Um die Analyse zu starten, benötigen Sie eines der folgenden Elemente:
+              Um die Analyse zu starten, benötigen Sie eines der folgenden
+              Elemente:
             </p>
             <ul className="mx-auto mt-3 max-w-xs space-y-1 text-left text-sm text-gray-700">
               <li>
-                <span className="mr-1 font-bold text-(--accent)">1.</span> Ein oder mehrere Fotos der
-                Problemstelle (Abschnitt 2)
+                <span className="mr-1 font-bold text-(--accent)">1.</span> Ein
+                oder mehrere Fotos der Problemstelle (Abschnitt 2)
               </li>
               <li>
-                <span className="mr-1 font-bold text-(--accent)">2.</span> Eine detaillierte
-                Problembeschreibung (Abschnitt 2)
+                <span className="mr-1 font-bold text-(--accent)">2.</span> Eine
+                detaillierte Problembeschreibung (Abschnitt 2)
               </li>
             </ul>
             <p className="mt-4 text-xs text-gray-500">
-              Wählen Sie zuerst Ihren Beruf (Abschnitt 1) für eine präzisere Diagnose.
+              Wählen Sie zuerst Ihren Beruf (Abschnitt 1) für eine präzisere
+              Diagnose.
             </p>
           </div>
         )}

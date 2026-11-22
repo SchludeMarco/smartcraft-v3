@@ -21,7 +21,9 @@ Optik, neuer Unterbau (siehe [ADR 0012](docs/adr/0012-v2-konzept-beibehalten.md)
    und je Beruf zwei Spezial-Tools (auch ohne Analyse nutzbar)
 5. **Weitergeben** wie V2: Als PDF exportieren, Teilen (WhatsApp, Telegram, E-Mail …),
    Lokal speichern; **Verlauf** über die Kopfleiste
-6. Optional: Analyse einem Projekt zuordnen, Projektbericht
+6. **Unterwegs** wie V2: Diagnose vorlesen, Offline-Warteschlange und Offline-Kurzhilfe,
+   als App installierbar
+7. Optional: Analyse einem Projekt zuordnen, Projektbericht
 
 > Sm@rtCraft erteilt **keine** Sicherheitsfreigaben. Bei elektrischen Installationen weist
 > jede Analyse Risiken, Unsicherheiten und die Pflicht zur Prüfung durch eine

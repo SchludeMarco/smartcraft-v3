@@ -45,3 +45,11 @@ Weiterentwicklung von V2. Lila-Blau soll nur die neue Version signalisieren.
   `POST /tools/{id}`, Prüfung durch `safety/text_policy.py` (Policy 1.4.0).
 - Neu auf Wunsch von Marco: Fertig-Signal nach jeder Analyse (Wackeln, Klang, Vibration),
   rein im Client und ohne Einfluss auf Inhalte.
+
+## Nachtrag 22.11.2026 – Teile 3 und 4
+
+- PDF/Teilen/Lokal speichern/Verlauf und Vorlesen/Offline/PWA umgesetzt, alles kostenlos
+  (Druckdialog, IndexedDB, Browser-Stimme, Service Worker).
+- Weiterhin bewusst nicht übernommen (kostenpflichtig bzw. eigene Entscheidung):
+  Google-Sprachausgabe, Adresssuche/Standort, Video-Suche, Google-Login/Gästeliste, Feedback-
+  und Admin-Bereich.
