@@ -17,8 +17,8 @@ offener Proxy, fehlende Zeitlimits und schwer auffindbare Fehler reale Probleme
    einfach für die Demo; Wechsel auf einen gemeinsamen Zähler mit dauerhafter Speicherung.
 2. **Fehler-IDs:** Jede Antwort trägt `X-Request-ID`. Unerwartete Fehler liefern 500 ohne
    interne Details, aber mit Fehler-ID, die im Log mit Stacktrace steht.
-3. **KI-Zeitlimit** (`SMARTCRAFT_AI_TIMEOUT_SECONDS`, Standard 25 s) unterhalb der 30 s der
-   Vercel-Funktion; Überschreitung → 502, nichts wird gespeichert.
+3. **KI-Zeitlimit** (`SMARTCRAFT_AI_TIMEOUT_SECONDS`, Standard 25 s, seit 0.20.0 45 s) unterhalb
+   der Laufzeitgrenze der Vercel-Funktion (seit 0.20.0 60 s); Überschreitung → 502, nichts wird gespeichert.
 4. **Sicherheits-Header** auf Vercel inkl. Content-Security-Policy und Permissions-Policy.
 5. **Browser-Test (Playwright)** des kompletten Ablaufs in der CI, inkl. Prüfung, dass
    ausgelieferte Fotos keine Standortdaten enthalten.

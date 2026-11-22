@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.20.0] – 2026-11-22
+
+### Behoben
+- **„Gemini-API antwortete mit Status 503“:** Bei kurzzeitiger Überlastung der Google-Server
+  versucht das Backend es jetzt bis zu dreimal (nach 1, 2 und 4 s). Klappt es trotzdem nicht,
+  erscheint eine verständliche Meldung („Die Gemini-KI ist gerade überlastet …“).
+  KI-Zeitlimit 45 s, Vercel-Funktion 60 s (ADR 0011, Nachtrag).
+
 ## [0.19.0] – 2026-11-22
 
 - Haftungshinweis (EU AI Act) nur noch bei Analysen und Ergebnissen, nicht mehr vor der

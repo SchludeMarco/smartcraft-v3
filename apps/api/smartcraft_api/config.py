@@ -20,6 +20,8 @@ class Settings(BaseSettings):
         validation_alias=AliasChoices("SMARTCRAFT_GEMINI_API_KEY", "GEMINI_API_KEY"),
     )
     gemini_model: str = "gemini-flash-lite-latest"
+    # Optionales Ausweichmodell für den letzten Versuch bei Überlastung (leer = keins)
+    gemini_fallback_model: str = ""
     cors_origins: list[str] = ["http://localhost:5173"]
     # Lokal SQLite; dauerhaft Postgres (z. B. Neon über Vercel: DATABASE_URL / POSTGRES_URL)
     database_url: str = Field(
@@ -46,7 +48,7 @@ class Settings(BaseSettings):
     # Übrige schreibende Anfragen pro Client
     rate_writes_per_minute: int = Field(default=120, ge=1)
     # Maximale Dauer eines KI-Aufrufs (Vercel-Funktion: 30 s)
-    ai_timeout_seconds: float = Field(default=25, gt=0, le=120)
+    ai_timeout_seconds: float = Field(default=45, gt=0, le=120)
 
 
 def normalize_database_url(url: str) -> str:

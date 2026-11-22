@@ -21,7 +21,7 @@ Thinking-Modell für das 30-s-Budget zu langsam; Flash-Lite antwortete in 0–3 
 - Prompt und Schema liegen versioniert im Backend (`PROMPT_VERSION`, sichtbar in
   `source.model_id`), nicht im Client wie in V2.
 - JSON-Modus (`responseMimeType`), Temperatur 0,2. Das Schema steht im Prompt; die
-  Antwort wird mit `extra="forbid"` geprüft. Keine automatischen Wiederholungen (Kosten).
+  Antwort wird mit `extra="forbid"` geprüft. Keine automatischen Wiederholungen (Kosten) – siehe Nachtrag.
 - Die Safety-Policy bleibt die einzige Instanz für Risiko, Fachkraft-Pflicht und Hinweise.
 
 ## Folgen
@@ -30,3 +30,14 @@ Thinking-Modell für das 30-s-Budget zu langsam; Flash-Lite antwortete in 0–3 
   Empfehlung: Budget-Grenze im Google-Konto setzen.
 - Fotos gehen an Google. Vorher werden EXIF/GPS entfernt (ADR 0005).
 - Offen: Eval-Set mit 10–20 eigenen Fotos (Schemaquote, Policy-Eingriffe, Lesefehler).
+
+## Nachtrag 22.11.2026 – Überlastung (503)
+
+In Production kam „Gemini-API antwortete mit Status 503“ (Google-Server überlastet).
+Fehlgeschlagene Anfragen verursachen keine Token-Kosten, daher jetzt: bis zu drei
+Wiederholungen nach 1, 2 und 4 s bei 500/502/503/504 und Verbindungsabbruch. Nicht
+wiederholt werden 429 (Kontingent) und Zeitüberschreitungen. Bleibt es dabei, sieht der
+Nutzer „Die Gemini-KI ist gerade überlastet … in ein bis zwei Minuten erneut versuchen“.
+Zeitbudget: `SMARTCRAFT_AI_TIMEOUT_SECONDS` 45 s, Vercel `maxDuration` 60 s.
+Optional `SMARTCRAFT_GEMINI_FALLBACK_MODEL` für den letzten Versuch (Standard leer, weil
+`gemini-flash-latest` zeitweise hing).

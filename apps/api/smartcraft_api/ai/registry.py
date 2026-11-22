@@ -17,6 +17,7 @@ def get_provider(settings: Settings) -> AnalysisProvider:
         return GeminiProvider(
             api_key=settings.gemini_api_key.get_secret_value(),
             model=settings.gemini_model,
+            fallback_model=settings.gemini_fallback_model or None,
             timeout_seconds=settings.ai_timeout_seconds,
         )
     raise ValueError(f"Unbekannter KI-Provider: {settings.ai_provider}")

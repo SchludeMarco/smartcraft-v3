@@ -7,12 +7,18 @@ Unterschiede zu V2:
 - Die Antwort wird streng gegen `AnalysisDraft` geprüft und läuft danach durch die
   Safety-Policy – der Provider entscheidet nichts über Sicherheit.
 
+Bei vorübergehenden Google-Fehlern (500/502/503/504, Verbindungsabbruch) wird bis zu
+dreimal mit kurzer Pause erneut versucht – fehlgeschlagene Anfragen erzeugen keine
+Token-Kosten. 429 (Kontingent) und Zeitüberschreitungen werden nicht wiederholt.
+
 Kosten: Abrechnung über den Gemini-API-Schlüssel des Betreibers. Aktiv nur, wenn
 `SMARTCRAFT_AI_PROVIDER=gemini` UND ein Schlüssel gesetzt ist; Standard bleibt der Mock.
 """
 
+import asyncio
 import base64
 import json
+from collections.abc import Awaitable, Callable
 from typing import Any
 
 import httpx
@@ -29,6 +35,15 @@ from smartcraft_api.domain.analysis import AnalysisDraft
 
 DEFAULT_MODEL = "gemini-flash-lite-latest"
 API_BASE = "https://generativelanguage.googleapis.com/v1beta"
+# Vorübergehende Serverfehler bei Google („model overloaded“) – erneuter Versuch lohnt.
+RETRYABLE_STATUS = frozenset({500, 502, 503, 504})
+RETRY_DELAYS_SECONDS = (1.0, 2.0, 4.0)
+OVERLOADED_MESSAGE = (
+    "Die Gemini-KI ist gerade überlastet (Status {status}). "
+    "Bitte in ein bis zwei Minuten erneut versuchen."
+)
+
+Sleep = Callable[[float], Awaitable[None]]
 
 
 class GeminiProvider:
@@ -39,6 +54,9 @@ class GeminiProvider:
         *,
         timeout_seconds: float = 25,
         transport: httpx.AsyncBaseTransport | None = None,
+        fallback_model: str | None = None,
+        retry_delays: tuple[float, ...] = RETRY_DELAYS_SECONDS,
+        sleep: Sleep = asyncio.sleep,
     ) -> None:
         if not api_key:
             raise ValueError("Gemini-API-Schlüssel fehlt")
@@ -46,6 +64,9 @@ class GeminiProvider:
         self._model = model
         self._timeout = timeout_seconds
         self._transport = transport
+        self._fallback_model = fallback_model if fallback_model != model else None
+        self._retry_delays = retry_delays
+        self._sleep = sleep
         self._info = ProviderInfo(
             provider_id="gemini",
             model_id=f"{model}+prompt-{PROMPT_VERSION}",
@@ -91,24 +112,46 @@ class GeminiProvider:
         }
         return await self._generate(body)
 
+    def _attempt_models(self) -> list[str]:
+        """Hauptmodell für alle Versuche; ein optionales Ausweichmodell nur im letzten."""
+        models = [self._model] * (len(self._retry_delays) + 1)
+        if self._fallback_model and len(models) > 1:
+            models[-1] = self._fallback_model
+        return models
+
     async def _generate(self, body: dict[str, Any]) -> str:
-        url = f"{API_BASE}/models/{self._model}:generateContent"
+        models = self._attempt_models()
+        last_status = 0
+        for attempt, model in enumerate(models):
+            if attempt:
+                await self._sleep(self._retry_delays[attempt - 1])
+            response = await self._post(model, body)
+            if response is None:  # Verbindungsfehler – wie 503 behandeln
+                last_status = 503
+                continue
+            if response.status_code in RETRYABLE_STATUS:
+                last_status = response.status_code
+                continue
+            if response.status_code == 429:
+                raise ProviderError("Gemini-Kontingent erschöpft (429) – später erneut versuchen")
+            if response.status_code >= 400:
+                raise ProviderError(f"Gemini-API antwortete mit Status {response.status_code}")
+            return extract_text(response)
+        raise ProviderError(OVERLOADED_MESSAGE.format(status=last_status))
+
+    async def _post(self, model: str, body: dict[str, Any]) -> httpx.Response | None:
+        url = f"{API_BASE}/models/{model}:generateContent"
         headers = {"x-goog-api-key": self._api_key, "Content-Type": "application/json"}
         try:
             async with httpx.AsyncClient(
                 timeout=self._timeout, transport=self._transport
             ) as client:
-                response = await client.post(url, headers=headers, json=body)
+                return await client.post(url, headers=headers, json=body)
         except httpx.TimeoutException as exc:
+            # Kein erneuter Versuch: das Zeitbudget der Anfrage wäre aufgebraucht.
             raise ProviderError("Zeitüberschreitung bei der Gemini-API") from exc
-        except httpx.HTTPError as exc:
-            raise ProviderError(f"Gemini-API nicht erreichbar ({type(exc).__name__})") from exc
-
-        if response.status_code == 429:
-            raise ProviderError("Gemini-Kontingent erschöpft (429) – später erneut versuchen")
-        if response.status_code >= 400:
-            raise ProviderError(f"Gemini-API antwortete mit Status {response.status_code}")
-        return extract_text(response)
+        except httpx.HTTPError:
+            return None
 
 
 def extract_text(response: httpx.Response) -> str:
