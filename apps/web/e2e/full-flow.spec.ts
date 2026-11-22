@@ -81,4 +81,11 @@ test("Analyse nur mit Beschreibung, ohne Foto (wie V2)", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Lösung und Diagnose" })).toBeVisible();
   await expect(page.getByText("Schrittweise Lösung")).toBeVisible();
   await expect(page.getByText(/Kein Foto: Die Einschätzung beruht nur auf der Beschreibung/)).toBeVisible();
+
+  // KI-Werkzeuge wie V2: Kostenschätzung auf Basis der Diagnose, Spezial-Tool
+  await page.getByRole("button", { name: /Kostenschätzung/ }).click();
+  await expect(page.getByRole("region", { name: "Kostenschätzung" })).toContainText("TESTDATEN");
+  await page.getByRole("button", { name: /Statik-Hinweise/ }).click();
+  const statik = page.getByRole("region", { name: "Statik-Hinweise" });
+  await expect(statik).toContainText("Ausführung nur durch eine qualifizierte Fachkraft");
 });

@@ -51,10 +51,48 @@ function photo(name = "foto.jpg") {
   return new File([new Uint8Array([0xff, 0xd8, 0xff, 1, 2, 3])], name, { type: "image/jpeg" });
 }
 
+const tools = [
+  { id: "materialliste", label: "Materialliste", trade: null, kind: "materials", requires_analysis: true },
+  { id: "kundenbericht", label: "Kundenbericht", trade: null, kind: "text", requires_analysis: true },
+  { id: "elektriker-vde", label: "VDE-Vorschriften-Check", trade: "elektriker", kind: "text", requires_analysis: false },
+  { id: "klempner-normteile", label: "Normteile-Finder", trade: "klempner", kind: "text", requires_analysis: false },
+];
+
+function toolReply(toolId: string, trade: string, extra: Record<string, unknown> = {}) {
+  return {
+    tool_id: toolId,
+    label: tools.find((t) => t.id === toolId)?.label ?? toolId,
+    trade,
+    analysis_id: null,
+    basis: "trade",
+    text: "**Wichtig:** Messung nach DIN VDE 0100-600\n- Isolationswiderstand\n<script>alert(1)</script>",
+    materials: null,
+    safety: {
+      hazards: ["electrical"],
+      qualified_person_required: true,
+      notices: ["Elektrische Anlage: Arbeiten nur durch Elektrofachkraft."],
+      disclaimer: "KI-gestützter Vorschlag ohne Gewähr.",
+    },
+    source: { provider_id: "mock", model_id: "m", is_test_data: true },
+    policy: { version: "1.4.0", interventions: [] },
+    prompt_version: "1.0.0",
+    ...extra,
+  };
+}
+
 function standardApi(uploadReply?: { status?: number; body: unknown }) {
   return mockApi((req) => {
     const p = path(req);
     if (p === "/health") return { body: health };
+    if (p === "/tools") return { body: tools };
+    if (p === "/tools/elektriker-vde") return { body: toolReply("elektriker-vde", "elektriker") };
+    if (p === "/tools/materialliste")
+      return {
+        body: toolReply("materialliste", "elektriker", {
+          text: null,
+          materials: [{ category: "Material", item: "Blindabdeckung 1 TE", quantity: "2 Stk" }],
+        }),
+      };
     if (p === "/meta/trades") return { body: trades };
     if (p === "/projects") return { body: [project] };
     if (p === "/projects/p1") return { body: project };
@@ -269,5 +307,64 @@ describe("Ergebnisansicht", () => {
     expect(await screen.findByText(/Bildqualität reicht nicht aus/)).toBeInTheDocument();
     expect(screen.queryAllByRole("button", { name: /^Bauteil \d/ })).toHaveLength(0);
     expect(screen.getByText(/Neues Foto aufnehmen/)).toBeInTheDocument();
+  });
+});
+
+describe("KI-Werkzeuge wie V2", () => {
+  it("bietet Berufs-Spezial-Tools sofort nach der Berufswahl an", async () => {
+    const { calls } = standardApi();
+    const user = userEvent.setup();
+    renderWithProviders(<App />);
+
+    await user.click(await screen.findByRole("button", { name: "Elektriker" }));
+    expect(await screen.findByText("Elektriker-Spezial-Tools")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Normteile-Finder/ })).not.toBeInTheDocument();
+    await user.type(screen.getByLabelText("Problembeschreibung"), "Herd anschließen");
+    await user.click(screen.getByRole("button", { name: /VDE-Vorschriften-Check/ }));
+
+    const card = await screen.findByRole("region", { name: "VDE-Vorschriften-Check" });
+    expect(card).toHaveTextContent("Ausführung nur durch eine qualifizierte Fachkraft");
+    expect(within(card).getByText("Wichtig:").tagName).toBe("STRONG");
+    expect(card.querySelector("script")).toBeNull();
+    const post = calls.find((c) => path(c) === "/tools/elektriker-vde") as Request;
+    expect(await post.json()).toEqual({ trade: "elektriker", analysis_id: null, note: "Herd anschließen" });
+
+    await user.click(within(card).getByRole("button", { name: "VDE-Vorschriften-Check entfernen" }));
+    expect(screen.queryByRole("region", { name: "VDE-Vorschriften-Check" })).not.toBeInTheDocument();
+  });
+
+  it("zeigt beim Allround-Handwerker alle Spezial-Tools", async () => {
+    standardApi();
+    renderWithProviders(<App />);
+    expect(await screen.findByText("Alle Berufs-Spezial-Tools")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Normteile-Finder/ })).toBeInTheDocument();
+  });
+
+  it("erstellt nach der Analyse eine Materialliste auf Basis der Diagnose", async () => {
+    const { calls } = standardApi();
+    const user = userEvent.setup();
+    renderWithProviders(<App />);
+
+    await user.type(await screen.findByLabelText("Problembeschreibung"), "FI fliegt");
+    await user.click(screen.getByRole("button", { name: "Problem analysieren" }));
+    await user.click(await screen.findByRole("button", { name: /Materialliste/ }));
+
+    expect(await screen.findByText("Blindabdeckung 1 TE")).toBeInTheDocument();
+    const post = calls.find((c) => path(c) === "/tools/materialliste") as Request;
+    expect((await post.json()).analysis_id).toBe(detail.id);
+  });
+
+  it("lässt den Bildschirm wackeln, wenn die Analyse fertig ist", async () => {
+    standardApi();
+    const vibrate = vi.fn();
+    Object.defineProperty(navigator, "vibrate", { value: vibrate, configurable: true });
+    const user = userEvent.setup();
+    const { container } = renderWithProviders(<App />);
+
+    await user.type(await screen.findByLabelText("Problembeschreibung"), "Riss");
+    await user.click(screen.getByRole("button", { name: "Problem analysieren" }));
+    await screen.findByRole("heading", { name: "Lösung und Diagnose" });
+    expect(container.querySelector("#app-shell")).toHaveClass("shake");
+    expect(vibrate).toHaveBeenCalled();
   });
 });

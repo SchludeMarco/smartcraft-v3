@@ -38,3 +38,10 @@ Weiterentwicklung von V2. Lila-Blau soll nur die neue Version signalisieren.
   die V2-typische Schritt-für-Schritt-Lösung nicht als Laien-Anleitung missverstanden wird.
 - Google-Login, Gästeliste, Standort und Admin aus V2 entfallen vorerst: Zugang regelt die
   Vercel-Anmeldung (ADR 0007).
+
+## Nachtrag 22.11.2026 – Teil 2
+
+- KI-Werkzeuge liegen in `smartcraft_api/tools/catalog.py` (versioniert), Ausführung über
+  `POST /tools/{id}`, Prüfung durch `safety/text_policy.py` (Policy 1.4.0).
+- Neu auf Wunsch von Marco: Fertig-Signal nach jeder Analyse (Wackeln, Klang, Vibration),
+  rein im Client und ohne Einfluss auf Inhalte.

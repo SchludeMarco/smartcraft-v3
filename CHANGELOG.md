@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.15.0] – 2026-11-22
+
+### Hinzugefügt (Teil 2 der V2-Weiterentwicklung, ADR 0012)
+- **KI-Werkzeuge aus V2**, serverseitig und durch eine Text-Policy geprüft:
+  - „Zusätzliche KI-Tools“ unter dem Ergebnis: Materialliste (als Tabelle), Sicherheits-Check,
+    Kostenschätzung, Kundenbericht.
+  - **Berufs-Spezial-Tools** (je Beruf zwei, beim Allround-Handwerker alle 18), sofort nach
+    der Berufswahl nutzbar; Grundlage wie V2: Analyse > Beschreibung > nur der Beruf.
+  - Werkzeuge, die in V2 „auf Normkonformität prüfen“ sollten (TrinkwV, VDE), nennen jetzt
+    Anforderungen und Prüfpflichten – ohne Konformitätsaussage.
+- **Fertig-Signal:** Ist die Analyse fertig, wackelt der Bildschirm kurz, ein Klang ertönt
+  (wie V2) und das Handy vibriert. Bei „Bewegung reduzieren“ entfällt das Wackeln.
+- API: `GET /tools`, `POST /tools/{id}`; Ergebnis mit Pflicht-Sicherheitsblock.
+- Policy 1.4.0: Text-Policy für Werkzeug-Antworten (Freigabe-Sprache neutralisieren,
+  Gefahren aus Beruf/Analyse/Text, Fachkraft-Pflicht, Testdaten-Hinweis).
+
+### Behoben
+- `POST /analyses` (ohne Projekt) zählte nicht gegen das Analyse-Limit; jetzt zählen alle
+  KI-Aufrufe (Analysen und Werkzeuge) gegen dasselbe Limit.
+
 ## [0.14.0] – 2026-11-22
 
 ### Geändert (ADR 0012: V2-Konzept beibehalten)

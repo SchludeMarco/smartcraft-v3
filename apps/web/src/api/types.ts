@@ -22,3 +22,6 @@ export type CheckUpdate = Schemas["CheckUpdate"];
 export type Note = Schemas["NoteOut"];
 export type ProjectReport = Schemas["ProjectReportOut"];
 export type NoteCreate = Schemas["NoteCreate"];
+export type ToolResult = Schemas["ToolResult"];
+export type ToolInfo = Schemas["ToolOut"];
+export type MaterialItem = Schemas["MaterialItem"];

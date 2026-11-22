@@ -26,7 +26,10 @@ function Shell() {
       className="app-backdrop relative flex min-h-dvh justify-center p-4 sm:p-6 lg:p-8 print:block print:p-0"
       style={tradeStyle(trade)}
     >
-      <div className="relative z-10 flex w-full max-w-sm flex-col items-center sm:max-w-xl md:max-w-2xl lg:max-w-3xl print:max-w-none">
+      <div
+        id="app-shell"
+        className="relative z-10 flex w-full max-w-sm flex-col items-center sm:max-w-xl md:max-w-2xl lg:max-w-3xl print:max-w-none"
+      >
         <Header />
         <main className="panel-parchment w-full space-y-6 p-4 sm:p-6 lg:p-8 print:border-0 print:p-0 print:shadow-none">
           <TestModeBanner />

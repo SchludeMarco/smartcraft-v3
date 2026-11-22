@@ -5,7 +5,9 @@ import type { Trade, TradeOption } from "../../api/types";
 import { useCurrentTrade } from "../../lib/currentTrade";
 import { MAX_UPLOAD_BYTES, resizeImage } from "../../lib/resizeImage";
 import { TRADE_THEMES } from "../../lib/trades";
+import { celebrateCompletion } from "../../lib/celebrate";
 import { useProject } from "../projects/api";
+import { TradeTools } from "../tools/TradeTools";
 import { useAnalysis, useCreateAnalysis, useTrades } from "./api";
 import { ResultDisplay } from "./ResultDisplay";
 
@@ -139,7 +141,12 @@ export function HomePage() {
     setResultId(null);
     create.mutate(
       { trade, note, photos: photos.map((p) => p.blob), projectId },
-      { onSuccess: (detail) => setResultId(detail.id) },
+      {
+        onSuccess: (detail) => {
+          setResultId(detail.id);
+          celebrateCompletion();
+        },
+      },
     );
   }
 
@@ -365,6 +372,8 @@ export function HomePage() {
           </div>
         )}
       </section>
+
+      <TradeTools trade={trade} analysisId={result?.id ?? null} note={note} />
     </div>
   );
 }

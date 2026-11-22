@@ -58,6 +58,11 @@ TEST_DATA_NOTICE = (
     "Das Foto wurde NICHT ausgewertet. Nicht für Entscheidungen verwenden."
 )
 
+TEST_DATA_TOOL_NOTICE = (
+    "TESTDATEN: Feste Beispielantwort der Mock-KI – die Eingabe wurde NICHT ausgewertet. "
+    "Nicht für Entscheidungen verwenden."
+)
+
 NEUTRALIZED = "[nicht durch KI beurteilbar]"
 
 # Gewerke, bei denen eine Gefahr unabhängig vom Bildinhalt immer angenommen wird.

@@ -283,6 +283,48 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/tools": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Tools
+         * @description Alle KI-Werkzeuge: allgemeine (brauchen eine Analyse) und Berufs-Spezial-Tools.
+         */
+        get: operations["list_tools_tools_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tools/{tool_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Call Tool
+         * @description KI-Werkzeug ausführen. Grundlage wie V2: Analyse > Beschreibung > nur der Beruf.
+         *
+         *     Die Antwort ist immer durch die Text-Policy geprüft und enthält einen Sicherheitsblock.
+         */
+        post: operations["call_tool_tools__tool_id__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -598,6 +640,15 @@ export interface components {
              */
             text: string;
         };
+        /** MaterialItem */
+        MaterialItem: {
+            /** Category */
+            category: string;
+            /** Item */
+            item: string;
+            /** Quantity */
+            quantity: string;
+        };
         /** NextCheck */
         NextCheck: {
             /** Action */
@@ -878,6 +929,64 @@ export interface components {
             /** Qualified Person Required */
             qualified_person_required: boolean;
             risk_level: components["schemas"]["RiskLevel"];
+        };
+        /** ToolOut */
+        ToolOut: {
+            /** Id */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "text" | "materials";
+            /** Label */
+            label: string;
+            /** Requires Analysis */
+            requires_analysis: boolean;
+            trade: components["schemas"]["Trade"] | null;
+        };
+        /** ToolRequest */
+        ToolRequest: {
+            /** Analysis Id */
+            analysis_id?: string | null;
+            /** Note */
+            note?: string | null;
+            trade: components["schemas"]["Trade"];
+        };
+        /** ToolResult */
+        ToolResult: {
+            /** Analysis Id */
+            analysis_id: string | null;
+            /**
+             * Basis
+             * @enum {string}
+             */
+            basis: "analysis" | "description" | "trade";
+            /** Label */
+            label: string;
+            /** Materials */
+            materials?: components["schemas"]["MaterialItem"][] | null;
+            policy: components["schemas"]["PolicyReport"];
+            /** Prompt Version */
+            prompt_version: string;
+            safety: components["schemas"]["ToolSafety"];
+            source: components["schemas"]["AnalysisSource"];
+            /** Text */
+            text?: string | null;
+            /** Tool Id */
+            tool_id: string;
+            trade: components["schemas"]["Trade"];
+        };
+        /** ToolSafety */
+        ToolSafety: {
+            /** Disclaimer */
+            disclaimer: string;
+            /** Hazards */
+            hazards: components["schemas"]["Hazard"][];
+            /** Notices */
+            notices: string[];
+            /** Qualified Person Required */
+            qualified_person_required: boolean;
         };
         /**
          * Trade
@@ -1556,6 +1665,73 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
                 };
+            };
+        };
+    };
+    list_tools_tools_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ToolOut"][];
+                };
+            };
+        };
+    };
+    call_tool_tools__tool_id__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                tool_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ToolRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ToolResult"];
+                };
+            };
+            /** @description Werkzeug oder Analyse nicht gefunden */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Ungültige Eingabe */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description KI-Provider fehlgeschlagen */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

@@ -6,6 +6,7 @@ import { ErrorMessage } from "../../components/ErrorMessage";
 import { TradeChip } from "../../components/TradeChip";
 import { formatDateTime } from "../../lib/format";
 import { useProjects } from "../projects/api";
+import { GenericTools } from "../tools/GenericTools";
 import { captureImageUrl, useAssignProject, useOverlay } from "./api";
 import { CheckItemCard } from "./CheckItemCard";
 import { CONFIDENCE_LABELS, SEVERITY_LABELS, SEVERITY_STYLES } from "./labels";
@@ -85,6 +86,8 @@ export function ResultDisplay({ detail }: { detail: AnalysisDetail }) {
           </ol>
         </section>
       )}
+
+      <GenericTools detail={detail} />
 
       {detail.captures.length > 0 && (
         <section className="space-y-2" aria-label="Fotos">

@@ -194,3 +194,17 @@ body {
     box-shadow: none;
   }
 }
+
+/* Kurzes Wackeln, wenn eine Analyse fertig ist (siehe lib/celebrate.ts) */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-8px) rotate(-0.6deg); }
+  30% { transform: translateX(7px) rotate(0.5deg); }
+  45% { transform: translateX(-6px) rotate(-0.4deg); }
+  60% { transform: translateX(4px) rotate(0.3deg); }
+  75% { transform: translateX(-2px); }
+}
+.shake { animation: shake 600ms ease-in-out; }
+@media (prefers-reduced-motion: reduce) {
+  .shake { animation: none; }
+}

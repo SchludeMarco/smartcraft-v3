@@ -856,6 +856,33 @@
         "title": "LabelReading",
         "type": "object"
       },
+      "MaterialItem": {
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "maxLength": 80,
+            "title": "Category",
+            "type": "string"
+          },
+          "item": {
+            "maxLength": 300,
+            "title": "Item",
+            "type": "string"
+          },
+          "quantity": {
+            "maxLength": 80,
+            "title": "Quantity",
+            "type": "string"
+          }
+        },
+        "required": [
+          "category",
+          "item",
+          "quantity"
+        ],
+        "title": "MaterialItem",
+        "type": "object"
+      },
       "NextCheck": {
         "additionalProperties": false,
         "properties": {
@@ -1651,6 +1678,206 @@
         "title": "Safety",
         "type": "object"
       },
+      "ToolOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "text",
+              "materials"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "requires_analysis": {
+            "title": "Requires Analysis",
+            "type": "boolean"
+          },
+          "trade": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Trade"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "trade",
+          "kind",
+          "requires_analysis"
+        ],
+        "title": "ToolOut",
+        "type": "object"
+      },
+      "ToolRequest": {
+        "properties": {
+          "analysis_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Analysis Id"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "trade": {
+            "$ref": "#/components/schemas/Trade"
+          }
+        },
+        "required": [
+          "trade"
+        ],
+        "title": "ToolRequest",
+        "type": "object"
+      },
+      "ToolResult": {
+        "additionalProperties": false,
+        "properties": {
+          "analysis_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Analysis Id"
+          },
+          "basis": {
+            "enum": [
+              "analysis",
+              "description",
+              "trade"
+            ],
+            "title": "Basis",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "materials": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/MaterialItem"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Materials"
+          },
+          "policy": {
+            "$ref": "#/components/schemas/PolicyReport"
+          },
+          "prompt_version": {
+            "title": "Prompt Version",
+            "type": "string"
+          },
+          "safety": {
+            "$ref": "#/components/schemas/ToolSafety"
+          },
+          "source": {
+            "$ref": "#/components/schemas/AnalysisSource"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "tool_id": {
+            "title": "Tool Id",
+            "type": "string"
+          },
+          "trade": {
+            "$ref": "#/components/schemas/Trade"
+          }
+        },
+        "required": [
+          "tool_id",
+          "label",
+          "trade",
+          "analysis_id",
+          "basis",
+          "safety",
+          "source",
+          "policy",
+          "prompt_version"
+        ],
+        "title": "ToolResult",
+        "type": "object"
+      },
+      "ToolSafety": {
+        "additionalProperties": false,
+        "properties": {
+          "disclaimer": {
+            "title": "Disclaimer",
+            "type": "string"
+          },
+          "hazards": {
+            "items": {
+              "$ref": "#/components/schemas/Hazard"
+            },
+            "title": "Hazards",
+            "type": "array"
+          },
+          "notices": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notices",
+            "type": "array"
+          },
+          "qualified_person_required": {
+            "title": "Qualified Person Required",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "hazards",
+          "qualified_person_required",
+          "notices",
+          "disclaimer"
+        ],
+        "title": "ToolSafety",
+        "type": "object"
+      },
       "Trade": {
         "enum": [
           "klempner",
@@ -1728,7 +1955,7 @@
   },
   "info": {
     "title": "Sm@rtCraft API",
-    "version": "0.14.0"
+    "version": "0.15.0"
   },
   "openapi": "3.1.0",
   "paths": {
@@ -2596,6 +2823,84 @@
         "summary": "Project Report",
         "tags": [
           "projects"
+        ]
+      }
+    },
+    "/tools": {
+      "get": {
+        "description": "Alle KI-Werkzeuge: allgemeine (brauchen eine Analyse) und Berufs-Spezial-Tools.",
+        "operationId": "list_tools_tools_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ToolOut"
+                  },
+                  "title": "Response List Tools Tools Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Tools",
+        "tags": [
+          "tools"
+        ]
+      }
+    },
+    "/tools/{tool_id}": {
+      "post": {
+        "description": "KI-Werkzeug ausführen. Grundlage wie V2: Analyse > Beschreibung > nur der Beruf.\n\nDie Antwort ist immer durch die Text-Policy geprüft und enthält einen Sicherheitsblock.",
+        "operationId": "call_tool_tools__tool_id__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tool_id",
+            "required": true,
+            "schema": {
+              "title": "Tool Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToolRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Werkzeug oder Analyse nicht gefunden"
+          },
+          "422": {
+            "description": "Ungültige Eingabe"
+          },
+          "502": {
+            "description": "KI-Provider fehlgeschlagen"
+          }
+        },
+        "summary": "Call Tool",
+        "tags": [
+          "tools"
         ]
       }
     }
