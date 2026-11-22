@@ -5,6 +5,14 @@ Alle Änderungen an Sm@rtCraft 3.0, neueste zuerst. Jeder Eintrag trägt einen Z
 der App unter „Änderungsprotokoll“ (Fußzeile) zu sehen; die CI prüft, dass jeder PR hier
 einen Eintrag mit Zeitstempel ergänzt.
 
+## [0.22.0] – 2026-11-22 14:42
+
+### Hinzugefügt (Wunsch Marco)
+- Abzeichen **„AR-vorbereitet“** in der Kopfleiste neben „3.0“: Die App ist für AR-Brillen
+  vorbereitet (geräteunabhängige Einblendungs-Schnittstelle mit Sicherheitsblock); die
+  Brillen-Anzeige selbst folgt in einer späteren Ausbaustufe. Bewusst nicht „AR-geeignet“,
+  damit keine falschen Erwartungen entstehen.
+
 ## [0.21.1] – 2026-11-22 14:27
 
 ### Behoben (Wunsch Marco)

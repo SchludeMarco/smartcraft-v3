@@ -5,7 +5,9 @@ Bauteile. Langfristig ein multimodaler Assistent für **Smartphone und AR-Brille
 werden im Sichtfeld erkannt und beschriftet, Prüfschritte und technische Informationen
 erscheinen direkt an der Installation. Entwickelt wird Smartphone-first; Analyse- und
 Sicherheitslogik sind von Anfang an geräteunabhängig (siehe
-[AR-Ausbaustufe](docs/06-ar-ausbaustufe.md)).
+[AR-Ausbaustufe](docs/06-ar-ausbaustufe.md)). Die App trägt deshalb das Abzeichen
+**„AR-vorbereitet“**: Eine Brille lässt sich als weiterer Client anbinden, sobald eine
+ausgewählt ist; die Brillen-Anzeige selbst ist noch nicht gebaut.
 
 **Status:** MVP-Schritte 1–10 umgesetzt; KI: Gemini wie in V2 (Mock als Standard lokal).
 V3 ist eine **Weiterentwicklung von Sm@rtCraft V2**: gleicher Ablauf, gleiche Bedienung und
@@ -106,6 +108,7 @@ stehen im [CHANGELOG](CHANGELOG.md) und in der App unter **Änderungsprotokoll**
 | 22.11.2026 14:08 | Behoben: Gemini-Überlastung (503) automatisch wiederholen (#25) |
 | 22.11.2026 14:14 | Neu: Entstehungsgeschichte in der README, Änderungsprotokoll in der App (#26) |
 | 22.11.2026 14:27 | Behoben: Tipp auf Logo oder Schriftzug führt zur Projektübersicht (#27) |
+| 22.11.2026 14:42 | Neu: Abzeichen „AR-vorbereitet“ in der Kopfleiste (#28) |
 
 ### Ausblick
 
