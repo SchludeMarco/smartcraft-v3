@@ -36,14 +36,14 @@ const ROUND =
 /** Kopfleiste wie V2: Logo (Hammer + Blitz), Schriftzug, Untertitel, rechts runder Knopf. */
 export function Header({ onHistory }: { onHistory: () => void }) {
   return (
-    <header className="header-ornate relative w-full p-4 sm:p-5 print:hidden">
+    <header className="header-ornate relative w-full p-3 min-[340px]:p-4 sm:p-5 print:hidden">
       <HeaderPlate />
       <div className="relative z-10 flex items-center justify-between gap-2">
         <Link
           to="/"
           title="Zur Projektübersicht"
           aria-label="Sm@rtCraft – zur Projektübersicht"
-          className="flex min-w-0 items-center gap-2 rounded-full focus:ring-2 focus:ring-white/70 focus:outline-none sm:gap-3"
+          className="flex min-w-0 items-center gap-1.5 rounded-full min-[340px]:gap-2 focus:ring-2 focus:ring-white/70 focus:outline-none sm:gap-3"
         >
           <span className="relative block h-9 w-9 shrink-0 sm:h-10 sm:w-10">
             <Hammer className="absolute inset-0 h-full w-full text-white/90" aria-hidden="true" />
@@ -52,13 +52,16 @@ export function Header({ onHistory }: { onHistory: () => void }) {
               aria-hidden="true"
             />
           </span>
-          <h1 className="font-display min-w-0 text-lg font-bold tracking-wide whitespace-nowrap text-lavender min-[400px]:text-xl sm:text-2xl">
+          <h1 className="font-display shrink-0 text-base font-bold tracking-wide whitespace-nowrap text-lavender max-[339px]:text-sm min-[380px]:text-lg min-[420px]:text-xl sm:text-2xl">
             Sm@rt<span className="text-white">Craft</span>!
           </h1>
+          <span className="shrink-0 rounded-full bg-white/15 px-1.5 py-0.5 text-[10px] font-semibold text-white/90">
+            3.0
+          </span>
         </Link>
-        <div className="flex shrink-0 gap-2 sm:gap-3">
+        <div className="flex shrink-0 gap-1.5 min-[340px]:gap-2 sm:gap-3">
           <div className="relative flex flex-col items-center">
-            <span className="mb-0.5 text-[9px] tracking-wide text-white/70 uppercase sm:text-[10px]">Verlauf:</span>
+            <span className="mb-0.5 text-[9px] tracking-wide text-white/70 uppercase max-[339px]:text-[7px] max-[339px]:tracking-normal sm:text-[10px]">Verlauf:</span>
             <button
               type="button"
               onClick={onHistory}
@@ -70,7 +73,7 @@ export function Header({ onHistory }: { onHistory: () => void }) {
             </button>
           </div>
           <div className="relative flex flex-col items-center">
-            <span className="mb-0.5 text-[9px] tracking-wide text-white/70 uppercase sm:text-[10px]">Analyse:</span>
+            <span className="mb-0.5 text-[9px] tracking-wide text-white/70 uppercase max-[339px]:text-[7px] max-[339px]:tracking-normal sm:text-[10px]">Analyse:</span>
             <Link to="/analyse" aria-label="Analyse" title="Schnellanalyse ohne Projekt" className={ROUND}>
               <Zap className="h-5 w-5 text-white" aria-hidden="true" />
             </Link>
@@ -79,9 +82,6 @@ export function Header({ onHistory }: { onHistory: () => void }) {
       </div>
       <p className="relative z-10 mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-white/80 italic">
         <span className="whitespace-nowrap">Der Kollege in der Hosentasche.</span>
-        <span className="rounded-full bg-white/15 px-1.5 py-0.5 text-[10px] font-semibold not-italic text-white/90">
-          3.0
-        </span>
         <span
           className="inline-flex items-center gap-1 rounded-full bg-white/15 px-1.5 py-0.5 text-[10px] font-semibold whitespace-nowrap not-italic text-white/90"
           title="Für AR-Brillen vorbereitet – die Brillen-Anzeige folgt in einer späteren Ausbaustufe"
