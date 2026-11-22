@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import css from "../index.css?raw";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
+const css = readFileSync(resolve(process.cwd(), "src/index.css"), "utf8");
 
 describe("Berufsfarbe blendet weich über", () => {
   it("registriert die Akzentfarben als Farb-Eigenschaften", () => {
