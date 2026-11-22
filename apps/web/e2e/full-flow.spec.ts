@@ -98,3 +98,18 @@ test("Analyse nur mit Beschreibung, ohne Foto (wie V2)", async ({ page }) => {
   await expect(page.getByText("Lokal gespeicherte Analyse")).toBeVisible();
   await expect(page.getByRole("region", { name: "Kostenschätzung" })).toBeVisible();
 });
+
+test("Offline: Analyse für später speichern und automatisch nachholen (wie V2)", async ({ page, context }) => {
+  await page.goto("/");
+  await expect(page.getByText("1. Beruf auswählen")).toBeVisible();
+  await context.setOffline(true);
+  await expect(page.getByText("Kein Empfang")).toBeVisible();
+  await page.getByLabel("Problembeschreibung").fill("Kellerwand feucht [mock:heizung]");
+  await page.getByRole("button", { name: "Für später speichern (offline)" }).click();
+  await expect(page.getByRole("button", { name: /1 Analyse wartet auf Verbindung/ })).toBeVisible();
+
+  await context.setOffline(false);
+  await expect(page.getByText(/Offline-Analyse wurde durchgeführt/)).toBeVisible();
+  await page.getByText(/Offline-Analyse wurde durchgeführt/).click();
+  await expect(page.getByRole("dialog", { name: "Verlauf" })).toBeVisible();
+});

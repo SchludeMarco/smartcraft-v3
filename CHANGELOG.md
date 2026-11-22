@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.17.0] – 2026-11-22
+
+### Hinzugefügt (Teil 4 der V2-Weiterentwicklung, ADR 0012)
+- **Diagnose vorlesen** wie V2 (Kurz/Vollständig, Weiblich/Männlich) mit der kostenlosen
+  Browser-Stimme; Sicherheit und Testdaten-Hinweis werden immer zuerst vorgelesen.
+- **Offline wie V2:** Hinweis „Kein Empfang“, Analyse „Für später speichern (offline)“ in einer
+  Warteschlange auf dem Gerät, automatisches Nachholen bei Empfang (mit Fertig-Signal),
+  Warteschlange verwalten, **Offline-Kurzhilfe** je Beruf (Inhalte aus V2).
+- **Als App installierbar (PWA)** wie V2: App-Hülle wird gecacht, Start ohne Empfang;
+  `/api` läuft nie über den Service Worker.
+
 ## [0.16.0] – 2026-11-22
 
 ### Hinzugefügt (Teil 3 der V2-Weiterentwicklung, ADR 0012)

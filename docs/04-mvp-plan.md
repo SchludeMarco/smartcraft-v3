@@ -29,7 +29,7 @@ V3 übernimmt Ablauf, Bedienung und Optik von V2; der V3-Unterbau bleibt.
 | A | **Oberfläche und Ablauf wie V2** | Startseite 1→2→3, V2-Optik, Lösung und Diagnose, Analyse ohne Foto, Projekte optional ✅ |
 | B | **KI-Werkzeuge aus V2** | Materialliste, Sicherheits-Check, Kostenschätzung, Kundenbericht, Berufs-Spezial-Tools – serverseitig, Text-Policy; Fertig-Signal (Wackeln, Klang) ✅ |
 | C | **Weitergeben und Verlauf** | PDF-Export, Teilen, Lokal speichern, Verlauf ✅ |
-| D | **Unterwegs** | Vorlesen (Browser-Stimme), Offline-Warteschlange, PWA |
+| D | **Unterwegs** | Vorlesen (Browser-Stimme), Offline-Warteschlange, Offline-Kurzhilfe, PWA ✅ |
 
 ## Definition of Done (MVP)
 

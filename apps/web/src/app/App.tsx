@@ -7,6 +7,8 @@ import { AnalysisPage } from "../features/analysis/AnalysisPage";
 import { HomePage } from "../features/analysis/HomePage";
 import { HistoryModal } from "../features/history/HistoryModal";
 import { LocalAnalysisPage } from "../features/history/LocalAnalysisPage";
+import { OfflineBanners } from "../features/offline/OfflineBanners";
+import { OfflineProvider } from "../features/offline/OfflineContext";
 import { ProjectPage } from "../features/projects/ProjectPage";
 import { ProjectsPage } from "../features/projects/ProjectsPage";
 import { ReportPage } from "../features/report/ReportPage";
@@ -16,7 +18,9 @@ import { tradeStyle } from "../lib/trades";
 export function App() {
   return (
     <CurrentTradeProvider>
-      <Shell />
+      <OfflineProvider>
+        <Shell />
+      </OfflineProvider>
     </CurrentTradeProvider>
   );
 }
@@ -37,6 +41,7 @@ function Shell() {
         <Header onHistory={() => setShowHistory(true)} />
         {showHistory && <HistoryModal onClose={() => setShowHistory(false)} />}
         <main className="panel-parchment w-full space-y-6 p-4 sm:p-6 lg:p-8 print:border-0 print:p-0 print:shadow-none">
+          <OfflineBanners onOpenHistory={() => setShowHistory(true)} />
           <TestModeBanner />
           <Disclaimer />
           <Routes>

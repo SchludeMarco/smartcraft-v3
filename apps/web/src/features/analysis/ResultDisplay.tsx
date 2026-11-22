@@ -14,6 +14,7 @@ import { captureImageUrl, useAssignProject, useOverlay } from "./api";
 import { CheckItemCard } from "./CheckItemCard";
 import { CONFIDENCE_LABELS, SEVERITY_LABELS, SEVERITY_STYLES } from "./labels";
 import { PhotoMarkers } from "./PhotoMarkers";
+import { ReadAloud } from "./ReadAloud";
 import { SafetyPanel } from "./SafetyPanel";
 
 /**
@@ -79,6 +80,8 @@ export function ResultDisplay({
       </div>
 
       <ExportButtons detail={detail} tools={exportTools} photos={photoSource} canSaveLocally={!local} />
+
+      <ReadAloud result={result} />
 
       {result.solution_steps.length > 0 && (
         <section className="space-y-2" aria-label="Lösung">
