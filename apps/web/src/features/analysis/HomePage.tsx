@@ -17,6 +17,7 @@ import type { Trade, TradeOption } from "../../api/types";
 import { useCurrentTrade } from "../../lib/currentTrade";
 import { MAX_UPLOAD_BYTES, resizeImage } from "../../lib/resizeImage";
 import { TRADE_THEMES } from "../../lib/trades";
+import { Disclaimer } from "../../components/Disclaimer";
 import { celebrateCompletion } from "../../lib/celebrate";
 import { queueAnalysis } from "../../lib/offlineQueue";
 import { useOffline } from "../offline/OfflineContext";
@@ -205,6 +206,7 @@ export function HomePage() {
 
   return (
     <div className="space-y-6">
+      <Disclaimer />
       {projectId && (
         <div className="flex items-start gap-3 rounded-xl border-l-4 border-(--accent) bg-(--accent-soft) p-3 shadow-md">
           <FolderOpen

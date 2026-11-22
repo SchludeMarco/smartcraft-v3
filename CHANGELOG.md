@@ -2,6 +2,9 @@
 
 ## [0.19.0] – 2026-11-22
 
+- Haftungshinweis (EU AI Act) nur noch bei Analysen und Ergebnissen, nicht mehr vor der
+  Projektauswahl beim Start.
+
 ### Geändert (Wunsch Marco)
 - **Start in der Projektübersicht:** Projekt auswählen oder anlegen; ohne Projekte ist das
   Formular für das erste Projekt direkt offen. Der V2-Ablauf liegt unter `/analyse` und wird

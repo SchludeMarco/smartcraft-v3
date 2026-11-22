@@ -1,4 +1,5 @@
 import { Link, useParams } from "react-router";
+import { Disclaimer } from "../../components/Disclaimer";
 import { ErrorMessage } from "../../components/ErrorMessage";
 import { tradeStyle } from "../../lib/trades";
 import { useAnalysis } from "./api";
@@ -23,6 +24,7 @@ export function AnalysisPage() {
   const detail = analysis.data;
   return (
     <article className="space-y-4" style={tradeStyle(detail.result.trade)}>
+      <Disclaimer />
       <Link
         to={detail.project_id ? `/projects/${detail.project_id}` : "/analyse"}
         className="text-sm font-semibold text-(--accent)"

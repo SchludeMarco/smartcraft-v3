@@ -106,6 +106,8 @@ describe("Start in der Projektübersicht", () => {
     expect(await screen.findByRole("link", { name: /EFH Müller/ })).toHaveAttribute("href", "/projects/p1");
     expect(screen.getByRole("link", { name: "Schnellanalyse ohne Projekt" })).toHaveAttribute("href", "/analyse");
     expect(screen.queryByLabelText("Projektname *")).not.toBeInTheDocument();
+    // Haftungshinweis nur bei Analysen, nicht vor der Projektauswahl
+    expect(screen.queryByText(/HAFTUNGSAUSSCHLUSS/)).not.toBeInTheDocument();
   });
 
   it("öffnet ohne Projekte direkt das Formular für das erste Projekt", async () => {

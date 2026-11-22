@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router";
+import { Disclaimer } from "../../components/Disclaimer";
 import { ErrorMessage } from "../../components/ErrorMessage";
 import { getLocalAnalysis } from "../../lib/localAnalyses";
 import { tradeStyle } from "../../lib/trades";
@@ -25,6 +26,7 @@ export function LocalAnalysisPage() {
   const { detail, photos, tools } = entry.data;
   return (
     <article className="space-y-4" style={tradeStyle(detail.result.trade)}>
+      <Disclaimer />
       <Link to="/" className="text-sm font-semibold text-(--accent)">
         ← Zur Startseite
       </Link>
