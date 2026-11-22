@@ -7,7 +7,7 @@ from typing import Any
 from sqlalchemy import DateTime, Engine, create_engine, event
 from sqlalchemy.engine.interfaces import Dialect
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
-from sqlalchemy.pool import StaticPool
+from sqlalchemy.pool import NullPool, StaticPool
 from sqlalchemy.types import TypeDecorator
 
 
@@ -37,7 +37,14 @@ def utcnow() -> datetime:
 
 
 def make_engine(database_url: str) -> Engine:
+    from smartcraft_api.config import normalize_database_url
+
+    database_url = normalize_database_url(database_url)
     kwargs: dict[str, Any] = {}
+    if database_url.startswith("postgresql"):
+        # Serverless (Vercel): keine Verbindungen zwischen Aufrufen halten; Neon poolt selbst.
+        kwargs["poolclass"] = NullPool
+        kwargs["pool_pre_ping"] = True
     if database_url.startswith("sqlite"):
         kwargs["connect_args"] = {"check_same_thread": False}
         if ":memory:" in database_url or database_url in ("sqlite://", "sqlite:///"):

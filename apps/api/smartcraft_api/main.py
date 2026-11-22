@@ -5,7 +5,7 @@ from smartcraft_api import __version__
 from smartcraft_api.ai.registry import get_provider
 from smartcraft_api.api.routes import analyses, health, meta, projects, tools
 from smartcraft_api.config import Settings, get_settings
-from smartcraft_api.media.storage import LocalStorage
+from smartcraft_api.media.storage import DatabaseStorage, LocalStorage, Storage
 from smartcraft_api.persistence.db import init_db, make_engine, make_sessionmaker
 from smartcraft_api.security.middleware import GuardMiddleware, unexpected_error_handler
 from smartcraft_api.security.rate_limit import RateLimiter
@@ -28,7 +28,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.engine = engine
     app.state.sessionmaker = make_sessionmaker(engine)
     app.state.settings = settings
-    app.state.storage = LocalStorage(settings.storage_dir)
+    storage: Storage = (
+        DatabaseStorage(app.state.sessionmaker)
+        if settings.storage_backend == "database"
+        else LocalStorage(settings.storage_dir)
+    )
+    app.state.storage = storage
     app.state.provider = get_provider(settings)
     app.include_router(health.router)
     app.include_router(projects.router)
