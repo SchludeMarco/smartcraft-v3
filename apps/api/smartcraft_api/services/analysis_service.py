@@ -41,7 +41,7 @@ def validate_request(request: AnalysisRequest) -> None:
         raise InvalidAnalysisRequestError(f"Notiz zu lang (max. {MAX_NOTE_LENGTH} Zeichen).")
 
 
-DEFAULT_TIMEOUT_SECONDS = 25.0
+DEFAULT_TIMEOUT_SECONDS = 45.0
 
 
 async def run_analysis(

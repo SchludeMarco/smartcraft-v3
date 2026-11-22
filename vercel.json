@@ -9,7 +9,7 @@
   ],
   "functions": {
     "api/index.py": {
-      "maxDuration": 30,
+      "maxDuration": 60,
       "includeFiles": "apps/api/smartcraft_api/**"
     }
   },

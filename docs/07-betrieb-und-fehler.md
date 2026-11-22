@@ -28,7 +28,7 @@ eine `X-Request-ID`; bei unerwarteten Fehlern steht sie zusätzlich als `error_i
 | `SMARTCRAFT_RATE_ANALYSES_PER_DAY` | 200 | Analysen pro Client und Tag |
 | `SMARTCRAFT_MAX_ANALYSES_PER_DAY` | 500 | Kostenbremse: Analysen pro Tag insgesamt |
 | `SMARTCRAFT_RATE_WRITES_PER_MINUTE` | 120 | Übrige schreibende Anfragen pro Client |
-| `SMARTCRAFT_AI_TIMEOUT_SECONDS` | 25 | Maximale Dauer eines KI-Aufrufs |
+| `SMARTCRAFT_AI_TIMEOUT_SECONDS` | 45 | Maximale Dauer eines KI-Aufrufs inkl. Wiederholungen (Vercel-Limit 60 s) |
 | `SMARTCRAFT_MAX_UPLOAD_MB` | 15 (Vercel: 4) | Maximale Dateigröße je Foto |
 
 Lesende Anfragen sind nicht begrenzt. Client = erste IP in `X-Forwarded-For` (von Vercel

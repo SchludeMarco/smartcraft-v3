@@ -49,8 +49,12 @@ class Recorder:
         return httpx.Response(self.status, json=self.payload)
 
 
-def provider(rec: Recorder) -> GeminiProvider:
-    return GeminiProvider(KEY, transport=httpx.MockTransport(rec))
+async def no_sleep(_: float) -> None:
+    return None
+
+
+def provider(rec: Recorder, **kwargs: Any) -> GeminiProvider:
+    return GeminiProvider(KEY, transport=httpx.MockTransport(rec), sleep=no_sleep, **kwargs)
 
 
 def req(trade: Trade = Trade.ELEKTRIKER, note: str | None = None) -> AnalysisRequest:
@@ -143,6 +147,101 @@ def test_http_errors_raise_provider_error_without_key(status: int) -> None:
     assert str(status) in str(exc.value)
 
 
+class Sequence:
+    """Antwortet der Reihe nach mit den angegebenen Statuscodes (200 = gültige Analyse)."""
+
+    def __init__(self, *statuses: int) -> None:
+        self.statuses = list(statuses)
+        self.requests: list[httpx.Request] = []
+
+    def __call__(self, request: httpx.Request) -> httpx.Response:
+        self.requests.append(request)
+        status = self.statuses.pop(0)
+        if status == 200:
+            return httpx.Response(200, json=gemini_reply(draft_json()))
+        return httpx.Response(status, json={"error": {"status": "UNAVAILABLE", "key": KEY}})
+
+
+@pytest.mark.parametrize("status", [500, 502, 503, 504])
+def test_temporary_overload_is_retried(status: int) -> None:
+    seq = Sequence(status, status, 200)
+    waits: list[float] = []
+
+    async def record_sleep(seconds: float) -> None:
+        waits.append(seconds)
+
+    p = GeminiProvider(KEY, transport=httpx.MockTransport(seq), sleep=record_sleep)
+    draft = asyncio.run(p.analyze(req()))
+    assert draft.summary
+    assert len(seq.requests) == 3
+    assert waits == [1.0, 2.0]
+
+
+def test_persistent_overload_gives_friendly_message_without_key() -> None:
+    seq = Sequence(503, 503, 503, 503)
+    with pytest.raises(ProviderError) as exc:
+        p = GeminiProvider(KEY, transport=httpx.MockTransport(seq), sleep=no_sleep)
+        asyncio.run(p.analyze(req()))
+    message = str(exc.value)
+    assert len(seq.requests) == 4
+    assert "überlastet" in message and "503" in message
+    assert KEY not in message
+    assert not isinstance(exc.value, ProviderOutputError)
+
+
+@pytest.mark.parametrize("status", [400, 403, 429])
+def test_client_errors_and_quota_are_not_retried(status: int) -> None:
+    rec = Recorder(status=status, payload={})
+    with pytest.raises(ProviderError):
+        asyncio.run(provider(rec).analyze(req()))
+    assert len(rec.requests) == 1
+
+
+def test_timeout_is_not_retried() -> None:
+    calls: list[httpx.Request] = []
+
+    def slow(request: httpx.Request) -> httpx.Response:
+        calls.append(request)
+        raise httpx.ReadTimeout("zu langsam")
+
+    p = GeminiProvider(KEY, transport=httpx.MockTransport(slow), sleep=no_sleep)
+    with pytest.raises(ProviderError, match="Zeitüberschreitung"):
+        asyncio.run(p.analyze(req()))
+    assert len(calls) == 1
+
+
+def test_connection_error_is_retried() -> None:
+    calls: list[httpx.Request] = []
+
+    def flaky(request: httpx.Request) -> httpx.Response:
+        calls.append(request)
+        if len(calls) == 1:
+            raise httpx.ConnectError("kurz weg")
+        return httpx.Response(200, json=gemini_reply(draft_json()))
+
+    p = GeminiProvider(KEY, transport=httpx.MockTransport(flaky), sleep=no_sleep)
+    assert asyncio.run(p.analyze(req())).summary
+    assert len(calls) == 2
+
+
+def test_optional_fallback_model_only_in_last_attempt() -> None:
+    seq = Sequence(503, 503, 503, 200)
+    p = GeminiProvider(
+        KEY, transport=httpx.MockTransport(seq), sleep=no_sleep, fallback_model="ausweich"
+    )
+    asyncio.run(p.analyze(req()))
+    paths = [r.url.path for r in seq.requests]
+    assert all("gemini-flash-lite-latest" in path for path in paths[:3])
+    assert "ausweich" in paths[3]
+
+
+def test_tools_complete_also_retries() -> None:
+    seq = Sequence(503, 200)
+    p = GeminiProvider(KEY, transport=httpx.MockTransport(seq), sleep=no_sleep)
+    assert asyncio.run(p.complete("system", "user"))
+    assert len(seq.requests) == 2
+
+
 def test_network_error_and_timeout() -> None:
     def boom(_: httpx.Request) -> httpx.Response:
         raise httpx.ConnectError("weg")
@@ -151,7 +250,7 @@ def test_network_error_and_timeout() -> None:
         raise httpx.ReadTimeout("zu langsam")
 
     for handler in (boom, slow):
-        p = GeminiProvider(KEY, transport=httpx.MockTransport(handler))
+        p = GeminiProvider(KEY, transport=httpx.MockTransport(handler), sleep=no_sleep)
         with pytest.raises(ProviderError):
             asyncio.run(p.analyze(req()))
 
