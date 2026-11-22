@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.18.0] – 2026-11-22
+
+### Hinzugefügt (ADR 0013)
+- **Dauerhafter Speicher:** Postgres (Neon über Vercel) für Projekte, Analysen und Fotos.
+  Behebt „Projekt nicht gefunden“ auf Vercel (flüchtiger Speicher je Instanz).
+- Fotos können in der Datenbank liegen (`SMARTCRAFT_STORAGE_BACKEND=database`).
+- `DATABASE_URL`/`POSTGRES_URL` werden erkannt; Vercel schaltet automatisch um.
+- CI: alle API-Tests zusätzlich gegen Postgres 16.
+
+### Behoben
+- Kopfleiste: „3.0“ überlappte auf schmalen Handys die Knöpfe.
+
 ## [0.17.0] – 2026-11-22
 
 ### Hinzugefügt (Teil 4 der V2-Weiterentwicklung, ADR 0012)

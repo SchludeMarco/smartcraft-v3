@@ -21,9 +21,13 @@ class Settings(BaseSettings):
     )
     gemini_model: str = "gemini-flash-lite-latest"
     cors_origins: list[str] = ["http://localhost:5173"]
-    # Lokale SQLite-Datei; später z. B. postgresql+psycopg://…
-    database_url: str = "sqlite:///./smartcraft.db"
-    # Ablage der bereinigten Fotos (lokal)
+    # Lokal SQLite; dauerhaft Postgres (z. B. Neon über Vercel: DATABASE_URL / POSTGRES_URL)
+    database_url: str = Field(
+        default="sqlite:///./smartcraft.db",
+        validation_alias=AliasChoices("SMARTCRAFT_DATABASE_URL", "DATABASE_URL", "POSTGRES_URL"),
+    )
+    # Ablage der bereinigten Fotos: "local" = Dateien in storage_dir, "database" = in der DB
+    storage_backend: Literal["local", "database"] = "local"
     storage_dir: Path = Path("./storage")
     max_upload_mb: int = Field(default=15, ge=1, le=50)
     max_image_megapixels: int = Field(default=50, ge=1, le=200)
@@ -43,6 +47,14 @@ class Settings(BaseSettings):
     rate_writes_per_minute: int = Field(default=120, ge=1)
     # Maximale Dauer eines KI-Aufrufs (Vercel-Funktion: 30 s)
     ai_timeout_seconds: float = Field(default=25, gt=0, le=120)
+
+
+def normalize_database_url(url: str) -> str:
+    """Neon/Vercel liefern `postgres://…` oder `postgresql://…`; SQLAlchemy braucht den Treiber."""
+    for prefix in ("postgres://", "postgresql://"):
+        if url.startswith(prefix):
+            return "postgresql+psycopg://" + url[len(prefix) :]
+    return url
 
 
 @lru_cache

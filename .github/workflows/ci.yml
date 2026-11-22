@@ -37,6 +37,31 @@ jobs:
             exit 1
           }
 
+  api-postgres:
+    # Gleiche Tests gegen echtes Postgres (wie Neon im dauerhaften Betrieb, ADR 0013)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: smartcraft_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    defaults:
+      run:
+        working-directory: apps/api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv python install 3.12
+      - run: uv sync --python 3.12
+      - name: Tests gegen Postgres
+        env:
+          SMARTCRAFT_TEST_DATABASE_URL: postgresql://postgres:test@localhost:5432/smartcraft_test
+        run: uv run pytest
+
   web:
     runs-on: ubuntu-latest
     defaults:

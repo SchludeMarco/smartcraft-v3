@@ -13,7 +13,7 @@ import uuid
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import JSON, Boolean, ForeignKey, Integer, String, Text
+from sqlalchemy import JSON, Boolean, ForeignKey, Integer, LargeBinary, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from smartcraft_api.persistence.db import Base, UTCDateTime, utcnow
@@ -136,4 +136,14 @@ class ProjectNoteRow(Base):
     )
     text: Mapped[str] = mapped_column(Text)
     author: Mapped[str | None] = mapped_column(String(200))
+    created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)
+
+
+class PhotoBlobRow(Base):
+    """Bereinigtes Foto als Bytes (nur bei `storage_backend=database`)."""
+
+    __tablename__ = "photo_blobs"
+
+    key: Mapped[str] = mapped_column(String(64), primary_key=True)
+    data: Mapped[bytes] = mapped_column(LargeBinary)
     created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)

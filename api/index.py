@@ -1,9 +1,8 @@
 """Vercel-Einstiegspunkt: stellt das FastAPI-Backend unter /api bereit.
 
-Demo-Betrieb (Entscheidung Marco, 21.11.2026): Vercel-Funktionen haben keinen dauerhaften
-Speicher. Datenbank und Fotos liegen daher in /tmp und können jederzeit verschwinden;
-`SMARTCRAFT_PERSISTENT_STORAGE=false` lässt die Oberfläche das deutlich anzeigen.
-Siehe docs/adr/0007-vercel-demo-deployment.md.
+Dauerhaft (ADR 0013): Ist eine Postgres-Datenbank verbunden (Neon über den Vercel-Marketplace
+setzt `DATABASE_URL`/`POSTGRES_URL`), liegen Projekte, Analysen und Fotos dort.
+Ohne Datenbank bleibt der Demo-Betrieb aus ADR 0007: /tmp, flüchtig, mit Hinweis.
 """
 
 import os
@@ -15,9 +14,17 @@ sys.path.insert(0, str(ROOT / "apps" / "api"))
 
 # Nur Standardwerte – im Vercel-Dashboard gesetzte Variablen haben Vorrang.
 os.environ.setdefault("SMARTCRAFT_ENVIRONMENT", "production")
-os.environ.setdefault("SMARTCRAFT_DATABASE_URL", "sqlite:////tmp/smartcraft.db")
-os.environ.setdefault("SMARTCRAFT_STORAGE_DIR", "/tmp/smartcraft-storage")
-os.environ.setdefault("SMARTCRAFT_PERSISTENT_STORAGE", "false")
+HAS_DATABASE = any(
+    os.environ.get(k, "").startswith("postgres")
+    for k in ("SMARTCRAFT_DATABASE_URL", "DATABASE_URL", "POSTGRES_URL")
+)
+if HAS_DATABASE:
+    os.environ.setdefault("SMARTCRAFT_STORAGE_BACKEND", "database")
+    os.environ.setdefault("SMARTCRAFT_PERSISTENT_STORAGE", "true")
+else:
+    os.environ.setdefault("SMARTCRAFT_DATABASE_URL", "sqlite:////tmp/smartcraft.db")
+    os.environ.setdefault("SMARTCRAFT_STORAGE_DIR", "/tmp/smartcraft-storage")
+    os.environ.setdefault("SMARTCRAFT_PERSISTENT_STORAGE", "false")
 # Vercel nimmt pro Anfrage höchstens 4,5 MB an
 os.environ.setdefault("SMARTCRAFT_MAX_UPLOAD_MB", "4")
 os.environ.setdefault("SMARTCRAFT_AI_PROVIDER", "mock")
