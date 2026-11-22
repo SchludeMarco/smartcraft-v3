@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.16.0] – 2026-11-22
+
+### Hinzugefügt (Teil 3 der V2-Weiterentwicklung, ADR 0012)
+- **Als PDF exportieren** wie V2: druckfertiger Bericht (Sicherheit zuerst, Diagnose, Lösung,
+  Prüfschritte, Unsicherheiten, Fotos, KI-Werkzeuge, Haftungshinweis) über den Druckdialog.
+- **Teilen** wie V2: WhatsApp, Telegram, E-Mail, Text kopieren, natives Teilen mit Fotos,
+  Fotos zum Anhängen herunterladen. Der Text enthält immer den Sicherheitsblock.
+- **Lokal speichern** wie V2: Analyse inkl. Fotos und Werkzeug-Ergebnissen nur auf dem Gerät
+  (IndexedDB) – bleibt auch, wenn der Demo-Server neu startet.
+- **Verlauf** wie V2 (Knopf in der Kopfleiste): Reiter „Gespeichert“ (Server, letzte 20) und
+  „Lokal“ (Gerät, einzeln löschbar); lokale Analysen lassen sich ohne Server ansehen.
+- Alle Berichte werden ohne Modell-HTML erzeugt (alles escaped).
+
 ## [0.15.0] – 2026-11-22
 
 ### Hinzugefügt (Teil 2 der V2-Weiterentwicklung, ADR 0012)

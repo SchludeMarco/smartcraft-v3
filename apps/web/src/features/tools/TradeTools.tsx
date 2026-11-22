@@ -1,7 +1,8 @@
 import { Loader2, Sparkles } from "lucide-react";
 import { useState } from "react";
-import type { ToolResult, Trade } from "../../api/types";
+import type { Trade } from "../../api/types";
 import { ErrorMessage } from "../../components/ErrorMessage";
+import { SPECIAL_SCOPE, toolResults, useToolResults } from "../../lib/toolResultsStore";
 import { useTrades } from "../analysis/api";
 import { useRunTool, useTools } from "./api";
 import { ToolIcon } from "./icons";
@@ -24,7 +25,7 @@ export function TradeTools({
   const tools = useTools();
   const trades = useTrades();
   const run = useRunTool();
-  const [results, setResults] = useState<ToolResult[]>([]);
+  const results = useToolResults(SPECIAL_SCOPE);
   const [loading, setLoading] = useState<Record<string, boolean>>({});
 
   const current = (tools.data ?? []).filter(
@@ -38,7 +39,7 @@ export function TradeTools({
     run.mutate(
       { toolId, trade: toolTrade, analysisId, note },
       {
-        onSuccess: (r) => setResults((all) => [r, ...all.filter((x) => x.tool_id !== r.tool_id)]),
+        onSuccess: (r) => toolResults.put(SPECIAL_SCOPE, r),
         onSettled: () => setLoading((l) => ({ ...l, [toolId]: false })),
       },
     );
@@ -87,7 +88,7 @@ export function TradeTools({
                 key={r.tool_id}
                 result={r}
                 tradeLabel={r.trade !== trade ? tradeLabel(r.trade) : undefined}
-                onClose={() => setResults((all) => all.filter((x) => x.tool_id !== r.tool_id))}
+                onClose={() => toolResults.remove(SPECIAL_SCOPE, r.tool_id)}
               />
             ))}
           </div>

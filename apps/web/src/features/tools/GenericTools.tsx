@@ -1,7 +1,8 @@
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import type { AnalysisDetail, ToolResult } from "../../api/types";
+import type { AnalysisDetail } from "../../api/types";
 import { ErrorMessage } from "../../components/ErrorMessage";
+import { toolResults, useToolResults } from "../../lib/toolResultsStore";
 import { useRunTool, useTools } from "./api";
 import { GENERIC_TOOL_COLORS, ToolIcon } from "./icons";
 import { ToolResultCard } from "./ToolResultCard";
@@ -10,7 +11,7 @@ import { ToolResultCard } from "./ToolResultCard";
 export function GenericTools({ detail }: { detail: AnalysisDetail }) {
   const tools = useTools();
   const run = useRunTool();
-  const [results, setResults] = useState<Record<string, ToolResult>>({});
+  const results = useToolResults(detail.id);
   const [loading, setLoading] = useState<Record<string, boolean>>({});
   const generic = tools.data?.filter((t) => t.requires_analysis) ?? [];
   if (generic.length === 0) return null;
@@ -20,7 +21,7 @@ export function GenericTools({ detail }: { detail: AnalysisDetail }) {
     run.mutate(
       { toolId, trade: detail.result.trade, analysisId: detail.id },
       {
-        onSuccess: (r) => setResults((all) => ({ ...all, [toolId]: r })),
+        onSuccess: (r) => toolResults.put(detail.id, r),
         onSettled: () => setLoading((l) => ({ ...l, [toolId]: false })),
       },
     );
@@ -48,18 +49,17 @@ export function GenericTools({ detail }: { detail: AnalysisDetail }) {
         })}
       </div>
       {run.isError && <ErrorMessage error={run.error} />}
-      {generic
-        .filter((t) => results[t.id])
-        .map((t) => (
+      {generic.map((t) => {
+        const result = results.find((r) => r.tool_id === t.id);
+        return result ? (
           <ToolResultCard
             key={t.id}
-            result={results[t.id] as ToolResult}
+            result={result}
             color={GENERIC_TOOL_COLORS[t.id]}
-            onClose={() =>
-              setResults((all) => Object.fromEntries(Object.entries(all).filter(([id]) => id !== t.id)))
-            }
+            onClose={() => toolResults.remove(detail.id, t.id)}
           />
-        ))}
+        ) : null;
+      })}
     </div>
   );
 }

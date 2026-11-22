@@ -348,7 +348,7 @@ export function HomePage() {
             </div>
           </div>
         ) : result ? (
-          <ResultDisplay detail={result} />
+          <ResultDisplay detail={result} includeSpecialTools />
         ) : (
           <div className="panel-parchment rounded-xl border-4 border-dashed border-(--accent-soft) p-8 text-center text-gray-500 transition-colors duration-700 ease-in-out">
             <Smartphone className="mx-auto mb-3 h-8 w-8 text-(--accent)" aria-hidden="true" />

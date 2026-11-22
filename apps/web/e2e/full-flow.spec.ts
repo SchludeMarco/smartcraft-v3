@@ -88,4 +88,13 @@ test("Analyse nur mit Beschreibung, ohne Foto (wie V2)", async ({ page }) => {
   await page.getByRole("button", { name: /Statik-Hinweise/ }).click();
   const statik = page.getByRole("region", { name: "Statik-Hinweise" });
   await expect(statik).toContainText("Ausführung nur durch eine qualifizierte Fachkraft");
+
+  // Lokal speichern und über den Verlauf wieder öffnen
+  await page.getByRole("button", { name: "Lokal speichern" }).click();
+  await expect(page.getByText("Gespeichert!")).toBeVisible();
+  await page.getByRole("button", { name: "Verlauf" }).click();
+  await page.getByRole("tab", { name: "Lokal" }).click();
+  await page.getByRole("dialog").getByRole("link").first().click();
+  await expect(page.getByText("Lokal gespeicherte Analyse")).toBeVisible();
+  await expect(page.getByRole("region", { name: "Kostenschätzung" })).toBeVisible();
 });
