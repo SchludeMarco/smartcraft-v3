@@ -26,7 +26,7 @@ class ProjectOut(_Out):
 
 class AnalysisSummaryOut(_Out):
     id: str
-    project_id: str
+    project_id: str | None
     created_at: datetime
     trade: Trade
     risk_level: RiskLevel
@@ -34,6 +34,9 @@ class AnalysisSummaryOut(_Out):
     is_test_data: bool
     capture_count: int
     open_check_count: int
+    # Kurztitel für Verlauf/Listen: Diagnose, sonst Zusammenfassung (gekürzt)
+    title: str = ""
+    note: str | None = None
 
 
 class CheckItemOut(_Out):
@@ -63,7 +66,7 @@ class CaptureOut(_Out):
 
 class AnalysisDetailOut(_Out):
     id: str
-    project_id: str
+    project_id: str | None
     created_at: datetime
     note: str | None
     result: AnalysisResult

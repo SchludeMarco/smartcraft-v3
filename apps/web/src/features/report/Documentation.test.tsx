@@ -37,6 +37,7 @@ function analysisApi(patchReply: (body: Record<string, unknown>) => { status?: n
   return mockApi((req) => {
     const p = path(req);
     if (p === "/health") return { body: health };
+    if (p === "/projects") return { body: [] };
     if (p === `/analyses/${detail.id}`) return { body: detail };
     if (p === `/analyses/${detail.id}/overlay`) return { body: overlay };
     if (p.startsWith(`/analyses/${detail.id}/checks/`) && req.method === "PATCH") {

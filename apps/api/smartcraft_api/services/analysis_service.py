@@ -27,8 +27,9 @@ class InvalidAnalysisRequestError(ValueError):
 
 
 def validate_request(request: AnalysisRequest) -> None:
-    if not request.images:
-        raise InvalidAnalysisRequestError("Mindestens ein Foto erforderlich.")
+    # Wie V2: Foto ODER Beschreibung reicht.
+    if not request.images and not (request.note and request.note.strip()):
+        raise InvalidAnalysisRequestError("Bitte ein Foto aufnehmen oder das Problem beschreiben.")
     if len(request.images) > MAX_IMAGES:
         raise InvalidAnalysisRequestError(f"Höchstens {MAX_IMAGES} Fotos pro Analyse.")
     for image in request.images:
@@ -62,6 +63,11 @@ async def run_analysis(
         draft = AnalysisDraft.model_validate(draft.model_dump())
     except ValidationError as exc:
         raise ProviderOutputError(str(exc)) from exc
+    if not request.images and any(c.region for c in draft.components):
+        # Ohne Foto gibt es keine Bildposition – erfundene Markierungen verwerfen.
+        draft = draft.model_copy(
+            update={"components": [c.model_copy(update={"region": None}) for c in draft.components]}
+        )
     for component in draft.components:
         if component.region and component.region.capture_index >= len(request.images):
             raise ProviderOutputError(
@@ -72,4 +78,4 @@ async def run_analysis(
     source = AnalysisSource(
         provider_id=info.provider_id, model_id=info.model_id, is_test_data=info.is_test_data
     )
-    return apply_safety_policy(draft, request.trade, source)
+    return apply_safety_policy(draft, request.trade, source, image_count=len(request.images))

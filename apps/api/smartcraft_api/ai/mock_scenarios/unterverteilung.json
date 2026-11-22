@@ -1,5 +1,11 @@
 {
   "summary": "Mock-Szenario 'Unterverteilung mit FI': Aufputz-Unterverteilung mit einem FI-Schutzschalter und sechs Leitungsschutzschaltern. Die Belegung wirkt einwandfrei.",
+  "diagnosis": "Unvollständig abgedeckte Unterverteilung: Die offene Teilungseinheit lässt einen Berührungsschutz vermissen, die Stromkreise sind nicht beschriftet.",
+  "solution_steps": [
+    "Blindabdeckung passend zum Verteiler-Hersteller besorgen und die offene Teilungseinheit verschließen.",
+    "Stromkreise ermitteln und die Beschriftung im Verteiler ergänzen.",
+    "Bei der Gelegenheit FI-Prüftaste betätigen und das Ergebnis notieren."
+  ],
   "image_quality": {
     "usable": true,
     "issues": []

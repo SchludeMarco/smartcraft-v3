@@ -19,6 +19,7 @@ export function useProjects() {
 
 export function useProject(projectId: string) {
   return useQuery({
+    enabled: projectId !== "",
     queryKey: projectKeys.detail(projectId),
     queryFn: async () =>
       unwrap(await api.GET("/projects/{project_id}", { params: { path: { project_id: projectId } } })),

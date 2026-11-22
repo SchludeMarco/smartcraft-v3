@@ -10,7 +10,8 @@ nachweisbar greift.
 
 Szenario-Wahl (reproduzierbar):
 1. Notiz enthält `[mock:<id>]` → dieses Szenario.
-2. Sonst: SHA-256 des ersten Fotos bestimmt das Szenario – gleiches Foto, gleiches Ergebnis.
+2. Sonst: SHA-256 des ersten Fotos (ohne Foto: der Beschreibung) bestimmt das Szenario –
+   gleiche Eingabe, gleiches Ergebnis.
 """
 
 import hashlib
@@ -46,9 +47,13 @@ def select_scenario(request: AnalysisRequest) -> MockScenario:
             return MockScenario(match.group(1))
         except ValueError as exc:
             raise ProviderError(f"Unbekanntes Mock-Szenario: {match.group(1)}") from exc
-    if not request.images:
-        raise ProviderError("Mindestens ein Foto erforderlich")
-    digest = hashlib.sha256(request.images[0].data).digest()
+    if request.images:
+        seed = request.images[0].data
+    elif request.note:
+        seed = request.note.encode("utf-8")
+    else:
+        raise ProviderError("Foto oder Beschreibung erforderlich")
+    digest = hashlib.sha256(seed).digest()
     scenarios = list(MockScenario)
     return scenarios[digest[0] % len(scenarios)]
 

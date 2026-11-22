@@ -4,6 +4,33 @@
  */
 
 export interface paths {
+    "/analyses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Recent
+         * @description Verlauf: die letzten Analysen (mit und ohne Projekt), neueste zuerst.
+         */
+        get: operations["list_recent_analyses_get"];
+        put?: never;
+        /**
+         * Create Analysis
+         * @description Analyse wie in V2: Foto(s) und/oder Beschreibung, ohne Projekt.
+         *
+         *     Ergebnis ist immer durch die Safety-Policy geprüft. Einem Projekt zuordnen geht danach
+         *     mit `PATCH /analyses/{id}`.
+         */
+        post: operations["create_analysis_analyses_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/analyses/{analysis_id}": {
         parameters: {
             query?: never;
@@ -18,7 +45,11 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Assign Analysis
+         * @description Analyse einem Projekt zuordnen (oder mit `null` wieder lösen).
+         */
+        patch: operations["assign_analysis_analyses__analysis_id__patch"];
         trace?: never;
     };
     "/analyses/{analysis_id}/captures/{capture_id}/image": {
@@ -256,6 +287,11 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AnalysisAssign */
+        AnalysisAssign: {
+            /** Project Id */
+            project_id: string | null;
+        };
         /** AnalysisDetailOut */
         AnalysisDetailOut: {
             /** Captures */
@@ -272,7 +308,7 @@ export interface components {
             /** Note */
             note: string | null;
             /** Project Id */
-            project_id: string;
+            project_id: string | null;
             result: components["schemas"]["AnalysisResult"];
         };
         /** AnalysisLimitsOut */
@@ -305,6 +341,11 @@ export interface components {
         AnalysisResult: {
             /** Components */
             components: components["schemas"]["Component"][];
+            /**
+             * Diagnosis
+             * @default
+             */
+            diagnosis: string;
             /** Findings */
             findings: components["schemas"]["Finding"][];
             image_quality: components["schemas"]["ImageQuality"];
@@ -316,9 +357,14 @@ export interface components {
             safety: components["schemas"]["Safety"];
             /**
              * Schema Version
-             * @default 1.2.0
+             * @default 1.3.0
              */
             schema_version: string;
+            /**
+             * Solution Steps
+             * @default []
+             */
+            solution_steps: string[];
             source: components["schemas"]["AnalysisSource"];
             /** Summary */
             summary: string;
@@ -351,20 +397,38 @@ export interface components {
             id: string;
             /** Is Test Data */
             is_test_data: boolean;
+            /** Note */
+            note?: string | null;
             /** Open Check Count */
             open_check_count: number;
             /** Project Id */
-            project_id: string;
+            project_id: string | null;
             /** Qualified Person Required */
             qualified_person_required: boolean;
             risk_level: components["schemas"]["RiskLevel"];
+            /**
+             * Title
+             * @default
+             */
+            title: string;
+            trade: components["schemas"]["Trade"];
+        };
+        /** Body_create_analysis_analyses_post */
+        Body_create_analysis_analyses_post: {
+            /**
+             * Files
+             * @description 0–5 Fotos
+             */
+            files?: string[] | null;
+            /** Note */
+            note?: string | null;
             trade: components["schemas"]["Trade"];
         };
         /** Body_create_analysis_projects__project_id__analyses_post */
         Body_create_analysis_projects__project_id__analyses_post: {
             /**
              * Files
-             * @description 1–5 Fotos
+             * @description 0–5 Fotos
              */
             files: string[];
             /** Note */
@@ -848,6 +912,75 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    list_recent_analyses_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisSummaryOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_analysis_analyses_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_create_analysis_analyses_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisDetailOut"];
+                };
+            };
+            /** @description Ungültige Eingabe oder ungültiges Bild */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description KI-Provider fehlgeschlagen */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     get_analysis_analyses__analysis_id__get: {
         parameters: {
             query?: never;
@@ -858,6 +991,41 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    assign_analysis_analyses__analysis_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                analysis_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnalysisAssign"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {

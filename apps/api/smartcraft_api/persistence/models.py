@@ -53,8 +53,9 @@ class AnalysisRow(Base):
     __tablename__ = "analyses"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
-    project_id: Mapped[str] = mapped_column(
-        ForeignKey("projects.id", ondelete="CASCADE"), index=True
+    # Optional wie in V2: eine Analyse braucht kein Projekt, kann aber einem zugeordnet werden.
+    project_id: Mapped[str | None] = mapped_column(
+        ForeignKey("projects.id", ondelete="CASCADE"), index=True, nullable=True
     )
     created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)
     trade: Mapped[str] = mapped_column(String(32))
@@ -70,7 +71,7 @@ class AnalysisRow(Base):
     risk_level: Mapped[str] = mapped_column(String(16))
     qualified_person_required: Mapped[bool] = mapped_column(Boolean)
 
-    project: Mapped[ProjectRow] = relationship(back_populates="analyses")
+    project: Mapped[ProjectRow | None] = relationship(back_populates="analyses")
     captures: Mapped[list["CaptureRow"]] = relationship(
         cascade="all, delete-orphan", passive_deletes=True, order_by="CaptureRow.position"
     )

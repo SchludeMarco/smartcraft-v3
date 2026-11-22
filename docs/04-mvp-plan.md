@@ -20,6 +20,17 @@ Jeder Schritt ist ein eigener, kleiner Pull Request mit Tests.
 | 9 | **Echter KI-Provider** *(Gemini wie V2, freigegeben 21.11.2026; Eval-Set offen)* | Provider hinter Feature-Flag, Eval-Set mit 10–20 eigenen Fotos, Messung: Schemaquote, Policy-Eingriffe, Halluzinationen bei Beschriftungen |
 | 10 | **Härtung** | Rate-Limit, Fehlerbilder, E2E-Test (Playwright), README-Setup in 5 Minuten nachvollziehbar ✅ |
 
+## Weiterentwicklung von V2 (ADR 0012, ab 22.11.2026)
+
+V3 übernimmt Ablauf, Bedienung und Optik von V2; der V3-Unterbau bleibt.
+
+| # | Schritt | Ergebnis / Abnahme |
+|---|---|---|
+| A | **Oberfläche und Ablauf wie V2** | Startseite 1→2→3, V2-Optik, Lösung und Diagnose, Analyse ohne Foto, Projekte optional ✅ |
+| B | **KI-Werkzeuge aus V2** | Materialliste, Sicherheits-Check, Kostenschätzung, Kundenbericht, Berufs-Spezial-Tools – serverseitig, Text-Policy |
+| C | **Weitergeben und Verlauf** | PDF-Export, Teilen, Lokal speichern, Verlauf |
+| D | **Unterwegs** | Vorlesen (Browser-Stimme), Offline-Warteschlange, PWA |
+
 ## Definition of Done (MVP)
 
 - Kompletter Ablauf Foto → Analyse → Projektablage funktioniert lokal mit Mock-KI.

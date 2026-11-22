@@ -18,7 +18,7 @@ export function ProjectPage() {
     return (
       <div className="space-y-3">
         <ErrorMessage error={project.error} />
-        <Link to="/" className="font-semibold text-brand underline">
+        <Link to="/projects" className="font-semibold text-brand underline">
           Zur Projektübersicht
         </Link>
       </div>
@@ -28,7 +28,7 @@ export function ProjectPage() {
   const p = project.data;
   return (
     <div className="space-y-5">
-      <Link to="/" className="text-sm font-semibold text-brand">
+      <Link to="/projects" className="text-sm font-semibold text-brand">
         ← Alle Projekte
       </Link>
       <section className="space-y-1">
@@ -47,11 +47,11 @@ export function ProjectPage() {
           <span className="step-badge">Analysen</span>
         </h2>
         <Link
-          to={`/projects/${p.id}/analyses/new`}
-          className="btn-primary flex items-center justify-center gap-2 px-4 py-3"
+          to={`/?projekt=${encodeURIComponent(p.id)}`}
+          className="btn-quest flex items-center justify-center gap-2 px-4 py-3"
         >
           <Camera className="h-5 w-5" aria-hidden="true" />
-          Neue Analyse per Foto
+          Neue Analyse für dieses Projekt
         </Link>
         {analyses.isError && <ErrorMessage error={analyses.error} />}
         {analyses.data?.length === 0 && <p className="text-slate-600">Noch keine Analysen.</p>}

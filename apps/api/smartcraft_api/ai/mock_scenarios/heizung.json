@@ -1,5 +1,13 @@
 {
   "summary": "Mock-Szenario 'Heizungsanlage': Wandhängende Gastherme mit Abgasrohr, darunter Heizkreisverteilung mit Ausdehnungsgefäß.",
+  "diagnosis": "Vermutlich zu niedriger Anlagendruck, möglicherweise durch eine leicht undichte Verschraubung am Ausdehnungsgefäß (Kalkspuren).",
+  "solution_steps": [
+    "Anlagendruck bei kalter Anlage am Manometer ablesen und mit dem Sollwert auf dem Typenschild vergleichen.",
+    "Verschraubung am Ausdehnungsgefäß trocken wischen und nach einigen Stunden erneut auf Feuchtigkeit prüfen.",
+    "Bei Druckverlust Heizungswasser über den Füllschlauch langsam nachfüllen, bis der Sollwert erreicht ist.",
+    "Undichte Verschraubung nachziehen bzw. Dichtung tauschen; Vordruck des Ausdehnungsgefäßes prüfen.",
+    "Verfärbung am Abgasrohr beim nächsten Termin vom Fachbetrieb bzw. Schornsteinfeger ansehen lassen."
+  ],
   "image_quality": {
     "usable": true,
     "issues": []

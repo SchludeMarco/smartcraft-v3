@@ -24,9 +24,9 @@ export function TestModeBanner() {
   return (
     <div
       role="status"
-      className="flex gap-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-900 shadow-sm"
+      className="flex items-start gap-3 rounded-xl border-l-4 border-amber-400 bg-amber-50 p-3 text-sm font-medium text-amber-800 shadow-md"
     >
-      <FlaskConical className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+      <FlaskConical className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" aria-hidden="true" />
       <div className="space-y-1">
         {notices.map((notice) => (
           <p key={notice}>{notice}</p>

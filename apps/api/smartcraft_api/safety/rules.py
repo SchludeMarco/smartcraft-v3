@@ -33,6 +33,25 @@ UNUSABLE_IMAGE_CHECK = NextCheck(
     source="policy",
 )
 
+# Steht vor der Lösung, sobald eine Fachkraft nötig ist (V2-Lösungsschritte bleiben sichtbar,
+# aber niemand soll sie als Anleitung für Laien missverstehen).
+QUALIFIED_SOLUTION_STEP = (
+    "Achtung: Die folgenden Schritte nur durch eine qualifizierte Fachkraft ausführen lassen "
+    "– siehe Sicherheitshinweise."
+)
+
+NO_PHOTO_UNCERTAINTY = (
+    "Kein Foto: Die Einschätzung beruht nur auf der Beschreibung. Ein Foto der Problemstelle "
+    "macht sie belastbarer."
+)
+
+NO_PHOTO_CHECK = NextCheck(
+    action="Foto der Problemstelle aufnehmen und die Analyse wiederholen",
+    reason="Ohne Foto kann nichts am tatsächlichen Zustand geprüft werden.",
+    requires_qualified_person=False,
+    source="policy",
+)
+
 TEST_DATA_PREFIX = "[TESTDATEN]"
 TEST_DATA_NOTICE = (
     "TESTDATEN: Dieses Ergebnis stammt aus einem festen Beispielszenario der Mock-KI. "

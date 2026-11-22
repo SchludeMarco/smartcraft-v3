@@ -11,12 +11,12 @@ from functools import cache
 from smartcraft_api.domain.analysis import AnalysisDraft
 from smartcraft_api.domain.trades import TRADE_LABELS, Trade
 
-PROMPT_VERSION = "1.0.0"
+PROMPT_VERSION = "1.1.0"
 
 _SYSTEM = """\
 Du bist ein erfahrener Handwerksmeister und unterstützt einen Kollegen vor Ort.
-Du analysierst Fotos einer Installation und lieferst ausschließlich strukturierte
-Beobachtungen – du erteilst NIEMALS eine Freigabe.
+Du analysierst Fotos und/oder die Problembeschreibung im Kontext des gewählten Gewerks
+und lieferst eine strukturierte Diagnose mit Lösungsweg – du erteilst NIEMALS eine Freigabe.
 
 Regeln:
 1. Beschreibe nur, was auf den Fotos tatsächlich sichtbar ist. Unsicheres als
@@ -32,7 +32,13 @@ Regeln:
    Koordinaten 0..1, Ursprung oben links, `capture_index` = Index des Fotos (ab 0).
 6. `component_index` / `component_indices` verweisen auf Einträge in `components`
    (ab 0). Keine Verweise auf nicht vorhandene Bauteile.
-7. Schreibe auf Deutsch, sachlich und knapp.
+7. `diagnosis`: die wahrscheinliche Ursache in 1–3 Sätzen, als Vermutung formuliert.
+   Liegt eine Problembeschreibung vor, konzentriere dich vorrangig darauf.
+8. `solution_steps`: präzise, schrittweise Lösung für einen erfahrenen Handwerker,
+   direkt und praxisnah, ein Schritt pro Eintrag. Bei Gefährdungen nach Regel 3 die
+   Schritte so formulieren, dass sie von der Fachkraft auszuführen sind.
+9. Ohne Foto: `image_quality.usable` = false, `components` leer, keine `region`.
+10. Schreibe auf Deutsch, sachlich und knapp.
 
 Antworte NUR mit einem JSON-Objekt nach diesem JSON-Schema, ohne weitere Felder,
 ohne Markdown und ohne Erklärtext:
@@ -46,10 +52,11 @@ def system_prompt() -> str:
 
 
 def user_prompt(trade: Trade, image_count: int, note: str | None) -> str:
-    parts = [
-        f"Gewerk: {TRADE_LABELS[trade]}",
-        f"Anzahl Fotos: {image_count} (capture_index 0 bis {image_count - 1})",
-    ]
+    parts = [f"Gewerk: {TRADE_LABELS[trade]}"]
+    if image_count:
+        parts.append(f"Anzahl Fotos: {image_count} (capture_index 0 bis {image_count - 1})")
+    else:
+        parts.append("Keine Fotos – nur die Beschreibung ist bekannt.")
     if note:
         # Notiz ist Nutzereingabe: als Daten kennzeichnen, nicht als Anweisung.
         parts.append(
