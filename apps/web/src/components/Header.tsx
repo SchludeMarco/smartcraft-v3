@@ -39,23 +39,23 @@ export function Header({ onHistory }: { onHistory: () => void }) {
     <header className="header-ornate relative w-full p-4 sm:p-5 print:hidden">
       <HeaderPlate />
       <div className="relative z-10 flex items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-          <Link
-            to="/"
-            title="Zur Projektübersicht"
-            aria-label="Sm@rtCraft – zur Projektübersicht"
-            className="relative block h-9 w-9 shrink-0 rounded-full sm:h-10 sm:w-10 focus:ring-2 focus:ring-white/70 focus:outline-none"
-          >
+        <Link
+          to="/"
+          title="Zur Projektübersicht"
+          aria-label="Sm@rtCraft – zur Projektübersicht"
+          className="flex min-w-0 items-center gap-2 rounded-full focus:ring-2 focus:ring-white/70 focus:outline-none sm:gap-3"
+        >
+          <span className="relative block h-9 w-9 shrink-0 sm:h-10 sm:w-10">
             <Hammer className="absolute inset-0 h-full w-full text-white/90" aria-hidden="true" />
             <Zap
               className="absolute right-0 bottom-0 h-5 w-5 translate-x-1 translate-y-1 fill-lavender text-lavender"
               aria-hidden="true"
             />
-          </Link>
+          </span>
           <h1 className="font-display min-w-0 text-lg font-bold tracking-wide whitespace-nowrap text-lavender min-[400px]:text-xl sm:text-2xl">
             Sm@rt<span className="text-white">Craft</span>!
           </h1>
-        </div>
+        </Link>
         <div className="flex shrink-0 gap-2 sm:gap-3">
           <div className="relative flex flex-col items-center">
             <span className="mb-0.5 text-[9px] tracking-wide text-white/70 uppercase sm:text-[10px]">Verlauf:</span>

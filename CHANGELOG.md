@@ -5,6 +5,12 @@ Alle Änderungen an Sm@rtCraft 3.0, neueste zuerst. Jeder Eintrag trägt einen Z
 der App unter „Änderungsprotokoll“ (Fußzeile) zu sehen; die CI prüft, dass jeder PR hier
 einen Eintrag mit Zeitstempel ergänzt.
 
+## [0.21.1] – 2026-11-22 14:27
+
+### Behoben (Wunsch Marco)
+- Tipp auf das Sm@rtCraft-Logo **oder den Schriftzug** führt zurück zur Projektübersicht
+  (vorher reagierte nur das kleine Hammer-Symbol).
+
 ## [0.21.0] – 2026-11-22 14:14
 
 ### Hinzugefügt (Wunsch Marco)
