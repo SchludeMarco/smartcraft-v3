@@ -1,4 +1,4 @@
-import { Hammer, History, Zap } from "lucide-react";
+import { Glasses, Hammer, History, Zap } from "lucide-react";
 import { Link } from "react-router";
 
 /** Glanzstreifen und Akzentlinie der V2-Kopfleiste (reines Deko-Overlay). */
@@ -77,10 +77,17 @@ export function Header({ onHistory }: { onHistory: () => void }) {
           </div>
         </div>
       </div>
-      <p className="relative z-10 mt-1 flex items-center gap-2 text-sm text-white/80 italic">
-        Der Kollege in der Hosentasche.
+      <p className="relative z-10 mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-white/80 italic">
+        <span className="whitespace-nowrap">Der Kollege in der Hosentasche.</span>
         <span className="rounded-full bg-white/15 px-1.5 py-0.5 text-[10px] font-semibold not-italic text-white/90">
           3.0
+        </span>
+        <span
+          className="inline-flex items-center gap-1 rounded-full bg-white/15 px-1.5 py-0.5 text-[10px] font-semibold whitespace-nowrap not-italic text-white/90"
+          title="Für AR-Brillen vorbereitet – die Brillen-Anzeige folgt in einer späteren Ausbaustufe"
+        >
+          <Glasses className="h-3 w-3" aria-hidden="true" />
+          AR-vorbereitet
         </span>
       </p>
     </header>

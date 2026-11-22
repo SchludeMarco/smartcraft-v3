@@ -47,6 +47,7 @@ describe("Projektübersicht", () => {
     const user = userEvent.setup();
     renderWithProviders(<App />, { route: "/aenderungen" });
 
+    expect(await screen.findByText("AR-vorbereitet")).toBeInTheDocument();
     await user.click(await screen.findByText("Craft"));
     expect(await screen.findByText("EFH Müller")).toBeInTheDocument();
   });
