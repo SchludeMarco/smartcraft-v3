@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, Navigate, Route, Routes } from "react-router";
 import { Header } from "../components/Header";
 import { StorageHint, TestModeBanner } from "../components/TestModeBanner";
+import { APP_VERSION } from "../features/changelog/changelog";
+import { ChangelogPage } from "../features/changelog/ChangelogPage";
 import { AnalysisPage } from "../features/analysis/AnalysisPage";
 import { HomePage } from "../features/analysis/HomePage";
 import { HistoryModal } from "../features/history/HistoryModal";
@@ -50,12 +52,18 @@ function Shell() {
             <Route path="/projects/:projectId/report" element={<ReportPage />} />
             <Route path="/analyses/:analysisId" element={<AnalysisPage />} />
             <Route path="/lokal/:localId" element={<LocalAnalysisPage />} />
+            <Route path="/aenderungen" element={<ChangelogPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
         <footer className="w-full space-y-1 py-3 text-center text-[11px] text-white/60 print:hidden">
           <p>KI-gestützte Ersteinschätzung – keine Sicherheitsfreigabe.</p>
           <StorageHint />
+          <p>
+            <Link to="/aenderungen" className="underline hover:text-white">
+              Änderungsprotokoll · Version {APP_VERSION}
+            </Link>
+          </p>
         </footer>
       </div>
     </div>

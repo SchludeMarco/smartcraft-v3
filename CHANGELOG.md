@@ -1,6 +1,22 @@
 # Changelog
 
-## [0.20.0] – 2026-11-22
+Alle Änderungen an Sm@rtCraft 3.0, neueste zuerst. Jeder Eintrag trägt einen Zeitstempel
+(Datum und Uhrzeit, deutsche Zeit) – den Zeitpunkt der Änderung. Dasselbe Protokoll ist in
+der App unter „Änderungsprotokoll“ (Fußzeile) zu sehen; die CI prüft, dass jeder PR hier
+einen Eintrag mit Zeitstempel ergänzt.
+
+## [0.21.0] – 2026-11-22 14:14
+
+### Hinzugefügt (Wunsch Marco)
+- **Änderungsprotokoll in der App:** neue Seite „Änderungsprotokoll“ (Link in der Fußzeile
+  mit aktueller Version), alle Versionen mit Datum und Uhrzeit, neueste zuerst. Quelle ist
+  die CHANGELOG.md im Projekt; sie wird beim Bauen eingebunden.
+- **Zeitstempel für jede Version:** alle bisherigen Einträge tragen jetzt Datum und Uhrzeit.
+- **CI-Prüfung:** Jeder PR muss CHANGELOG.md mit einem Eintrag „JJJJ-MM-TT HH:MM“ ergänzen.
+- **README:** vollständige Entstehungsgeschichte von der Idee über V1 und V2 bis zur
+  Zeitleiste von V3.
+
+## [0.20.0] – 2026-11-22 14:08
 
 ### Behoben
 - **„Gemini-API antwortete mit Status 503“:** Bei kurzzeitiger Überlastung der Google-Server
@@ -8,7 +24,7 @@
   erscheint eine verständliche Meldung („Die Gemini-KI ist gerade überlastet …“).
   KI-Zeitlimit 45 s, Vercel-Funktion 60 s (ADR 0011, Nachtrag).
 
-## [0.19.0] – 2026-11-22
+## [0.19.0] – 2026-11-22 13:23
 
 - Haftungshinweis (EU AI Act) nur noch bei Analysen und Ergebnissen, nicht mehr vor der
   Projektauswahl beim Start.
@@ -21,7 +37,7 @@
 - **App-Symbol in V3-Farben:** Lila-Blau mit Lavendel-Ring und -Blitz (Favicon,
   Homescreen- und PWA-Icons, erzeugt mit `npm run icons`).
 
-## [0.18.0] – 2026-11-22
+## [0.18.0] – 2026-11-22 12:13
 
 - Neon-Datenbank in Vercel verbunden; Production speichert ab jetzt dauerhaft.
 
@@ -35,7 +51,7 @@
 ### Behoben
 - Kopfleiste: „3.0“ überlappte auf schmalen Handys die Knöpfe.
 
-## [0.17.0] – 2026-11-22
+## [0.17.0] – 2026-11-22 11:37
 
 ### Hinzugefügt (Teil 4 der V2-Weiterentwicklung, ADR 0012)
 - **Diagnose vorlesen** wie V2 (Kurz/Vollständig, Weiblich/Männlich) mit der kostenlosen
@@ -46,7 +62,7 @@
 - **Als App installierbar (PWA)** wie V2: App-Hülle wird gecacht, Start ohne Empfang;
   `/api` läuft nie über den Service Worker.
 
-## [0.16.0] – 2026-11-22
+## [0.16.0] – 2026-11-22 11:30
 
 ### Hinzugefügt (Teil 3 der V2-Weiterentwicklung, ADR 0012)
 - **Als PDF exportieren** wie V2: druckfertiger Bericht (Sicherheit zuerst, Diagnose, Lösung,
@@ -59,7 +75,7 @@
   „Lokal“ (Gerät, einzeln löschbar); lokale Analysen lassen sich ohne Server ansehen.
 - Alle Berichte werden ohne Modell-HTML erzeugt (alles escaped).
 
-## [0.15.0] – 2026-11-22
+## [0.15.0] – 2026-11-22 11:21
 
 ### Hinzugefügt (Teil 2 der V2-Weiterentwicklung, ADR 0012)
 - **KI-Werkzeuge aus V2**, serverseitig und durch eine Text-Policy geprüft:
@@ -79,7 +95,7 @@
 - `POST /analyses` (ohne Projekt) zählte nicht gegen das Analyse-Limit; jetzt zählen alle
   KI-Aufrufe (Analysen und Werkzeuge) gegen dasselbe Limit.
 
-## [0.14.0] – 2026-11-22
+## [0.14.0] – 2026-11-22 11:12
 
 ### Geändert (ADR 0012: V2-Konzept beibehalten)
 - **Startseite ist wieder der V2-Ablauf:** „1. Beruf auswählen → 2. Problem dokumentieren &
@@ -106,13 +122,13 @@
 ### Hinweis
 - Bestehende lokale SQLite-Dateien bitte neu anlegen (Spalte `project_id` jetzt nullable).
 
-## [0.13.1] – 2026-11-21
+## [0.13.1] – 2026-11-21 22:25
 
 ### Geändert
 - Demo-Hinweis zum flüchtigen Speicher ist kein Banner mehr, sondern eine dezente Zeile
   in der Fußzeile. Der Testmodus-Hinweis der Mock-KI bleibt unverändert auffällig.
 
-## [0.13.0] – 2026-11-21
+## [0.13.0] – 2026-11-21 22:06
 
 ### Hinzugefügt (ADR 0011)
 - **Echte KI wie in V2:** Google-Gemini-Provider (`gemini-flash-lite-latest`) hinter
@@ -124,7 +140,7 @@
   Fehler 502) und laufen wie bisher durch die Safety-Policy.
 - Standard bleibt die kostenlose Mock-KI; ohne Schlüssel startet `gemini` nicht.
 
-## [0.12.0] – 2026-11-21
+## [0.12.0] – 2026-11-21 21:32
 
 ### Geändert (ADR 0010)
 - **Gestaltung als Weiterentwicklung von V2:** Kopfleiste mit Logo und Schriftzug
@@ -134,7 +150,7 @@
 - **Farbgebung professionell und schlicht:** Kopfleiste in Lila-Blau, Indigo-Hintergrund,
   helle Fensterflächen mit feinem Rahmen, polierte Buttons, neutrale Grautöne.
 
-## [0.11.0] – 2026-11-21
+## [0.11.0] – 2026-11-21 19:58
 
 ### Hinzugefügt (Härtung, ADR 0009)
 - Rate-Limit: Analysen pro Client (10/Minute, 200/Tag), globale Tages-Kostenbremse (500),
@@ -147,7 +163,7 @@
 - Fehlerübersicht und Betriebshinweise: `docs/07-betrieb-und-fehler.md`.
 - 13 neue Backend-Tests (264), 1 neuer Frontend-Test (30), 2 Browser-Tests.
 
-## [0.10.0] – 2026-11-21
+## [0.10.0] – 2026-11-21 19:23
 
 ### Hinzugefügt
 - **Prüfschritte dokumentieren** (`PATCH /analyses/{id}/checks/{check_id}`): erledigt / nicht
@@ -164,7 +180,7 @@
 - Neue Tabelle `project_notes` und Spalte `check_items.qualified_person_confirmed`: eine
   vorhandene lokale `smartcraft.db` bitte löschen.
 
-## [0.9.0] – 2026-11-21
+## [0.9.0] – 2026-11-21 19:12
 
 ### Hinzugefügt
 - **Neue Analyse per Foto** in der Web-App: Gewerk wählen, bis zu 5 Fotos aufnehmen oder
@@ -180,7 +196,7 @@
 - Frontend-Testdaten aus echten Backend-Antworten (`apps/api/scripts/export_web_fixtures.py`);
   21 Frontend-Tests, 230 Backend-Tests.
 
-## [0.8.0] – 2026-11-21
+## [0.8.0] – 2026-11-21 18:52
 
 ### Hinzugefügt
 - Vercel-Demo-Deployment (ADR 0007): `vercel.json`, Einstiegspunkt `api/index.py`
@@ -190,7 +206,7 @@
 - Upload-Limit auf Vercel 4 MB (Vercel-Grenze 4,5 MB pro Anfrage).
 - Tests für den Vercel-Einstiegspunkt.
 
-## [0.7.0] – 2026-11-21
+## [0.7.0] – 2026-11-21 18:25
 
 ### Hinzugefügt
 - **AR-Ausbaustufe in Vision, Architektur und Roadmap** (`docs/06-ar-ausbaustufe.md`,
@@ -209,7 +225,7 @@
 - Neue Spalte `check_items.component_indices`: eine vorhandene lokale `smartcraft.db`
   bitte löschen (Migrationen folgen).
 
-## [0.6.0] – 2026-11-21
+## [0.6.0] – 2026-11-21 18:21
 
 ### Hinzugefügt
 - Web-App `apps/web`: React 19, TypeScript (strict), Vite, Tailwind, TanStack Query,
@@ -221,7 +237,7 @@
   CI prüft, dass Backend-Vertrag und Frontend-Typen übereinstimmen.
 - CI-Job für das Web (Lint, Typprüfung, Tests, Build); 8 Frontend-Tests.
 
-## [0.5.0] – 2026-11-21
+## [0.5.0] – 2026-11-21 18:03
 
 ### Hinzugefügt
 - Bildpipeline (`media/processing.py`): Formatprüfung nach Inhalt, EXIF-Drehung, Verkleinern
@@ -236,7 +252,7 @@
   `SMARTCRAFT_MAX_IMAGE_MEGAPIXELS`, `SMARTCRAFT_MAX_IMAGE_EDGE`.
 - ADR 0005, 38 neue Tests (202 gesamt).
 
-## [0.4.0] – 2026-11-21
+## [0.4.0] – 2026-11-21 17:57
 
 ### Hinzugefügt
 - Persistenz mit SQLAlchemy 2 und SQLite (`persistence/`): Tabellen `projects`,
@@ -248,7 +264,7 @@
 - `SMARTCRAFT_DATABASE_URL`; Start per App-Factory (`uvicorn --factory`).
 - ADR 0004, 26 neue Tests (164 gesamt).
 
-## [0.3.0] – 2026-11-21
+## [0.3.0] – 2026-11-21 17:47
 
 ### Hinzugefügt
 - Provider-Schnittstelle `AnalysisProvider` mit `parse_draft()` (`ai/provider.py`) und
@@ -265,7 +281,7 @@
 ### Behoben
 - Fehlalarm: „Heizkreisverteilung“ wurde als elektrische Anlage erkannt.
 
-## [0.2.0] – 2026-11-21
+## [0.2.0] – 2026-11-21 17:43
 
 ### Hinzugefügt
 - Ergebnisschema v1.0.0 (`domain/analysis.py`): `AnalysisDraft` (Provider-Ausgabe,
@@ -275,13 +291,13 @@
   Freigabe-Formulierungen, Umgang mit unbrauchbaren Fotos, Eingriffsprotokoll.
 - 104 Tests für Schema und Policy, ADR 0002.
 
-## [0.1.0] – 2026-11-21
+## [0.1.0] – 2026-11-21 17:33
 
 ### Hinzugefügt
 - Backend-Gerüst `apps/api`: FastAPI-App-Factory, Settings (`SMARTCRAFT_*`), `GET /health`,
   ruff, mypy (strict), pytest, GitHub-Actions-CI.
 
-## [0.0.1] – 2026-11-21
+## [0.0.1] – 2026-11-21 17:24
 
 ### Hinzugefügt
 - Bestandsaufnahme von V2, Architektur, Projektstruktur, MVP-Plan, Entscheidungen und Risiken

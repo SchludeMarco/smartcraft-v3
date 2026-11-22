@@ -11,6 +11,107 @@ Sicherheitslogik sind von Anfang an geräteunabhängig (siehe
 V3 ist eine **Weiterentwicklung von Sm@rtCraft V2**: gleicher Ablauf, gleiche Bedienung und
 Optik, neuer Unterbau (siehe [ADR 0012](docs/adr/0012-v2-konzept-beibehalten.md)).
 
+## Entstehungsgeschichte
+
+### Die Idee
+
+Bevor Marco Schlude in die KI-Anwendungsentwicklung gewechselt ist, hat er als Zimmermann
+gearbeitet. Auf der Baustelle steht man ständig vor Problemen ohne offensichtliche Lösung:
+ein Wasserschaden am Balken, ein Riss im Mauerwerk, eine Elektroinstallation, die nicht ins
+Konzept passt. Dann ruft man einen Kollegen an, blättert im Fachbuch oder hofft auf den
+Verkäufer im Baumarkt. Der Wunsch nach einem Kollegen, der immer dabei ist, besteht seit den
+Anfängen des Smartphones – erst leistungsfähige KI-Modelle haben ihn realistisch gemacht.
+Sm@rtCraft entstand während der Schulung zum KI-Anwendungsspezialisten.
+
+### V1 – vom Prototyp zur eigenen App (August 2026)
+
+- Der erste Prototyp war ein Export aus Google AI Studio (Canvas): funktional, aber nicht
+  eigenständig lauffähig, der API-Schlüssel stand im Browser-Code.
+- **10.08.2026 (V1.7.1):** Umzug in ein eigenes Vite/React-Projekt. Gemini läuft seitdem über
+  einen Vercel-Proxy, der Schlüssel bleibt auf dem Server; Anmeldung und Daten über Firebase.
+- Bis **V1.37.1 (22.08.2026)** wuchs die App um Gewerk-Auswahl, Diagnose, Materialliste,
+  Sicherheits-Check, Kundenbericht, PDF-Export und Verlauf.
+
+### V2 – der Kollege in der Hosentasche (22.08.–24.10.2026)
+
+- **22.08.2026 (V2.0.0):** V2 startet als eigenständige Kopie; Berufs-Spezial-Tools sind
+  sofort nach der Berufswahl nutzbar, auch ohne Diagnose.
+- **27.08.2026 (V2.10.0):** bis zu fünf Fotos pro Analyse.
+- **28.08.2026 (V2.18–V2.22):** Offline-Warteschlange (ansehen, bearbeiten, nachholen) und
+  Standortabfrage beim ersten Start.
+- Absicherung im Betrieb gelernt: Origin-Prüfung, Firebase App Check, Rate-Limit und ein
+  Demo-Limit gegen Kostenexplosion durch Missbrauch.
+- **22.10.2026 (V2.24.0):** Gästeliste – nur für Familie und Freunde.
+- **24.10.2026 (V2.25.0):** versteckter Admin-Zugang; das ist der letzte Stand von V2.
+
+Mit über 130 Versionen von V1.7.1 bis V2.25.0 in elf Wochen war V2 ausgereift in Bedienung und Ablauf. Die Bestandsaufnahme
+([docs/01](docs/01-v2-analyse.md)) zeigte aber die Grenzen des Unterbaus: eine einzige
+Datei mit rund 4.000 Zeilen, Prompts im Browser, eine Diagnose als reiner Freitext, kein
+Projekt- oder Baustellenobjekt und kaum Tests.
+
+### Sm@rtCraft 3.0 – gleiche App, neuer Unterbau (ab 21.11.2026)
+
+Ziel von V3: der bewährte Ablauf von V2 auf einem Fundament, das wachsen kann – bis hin zu
+AR-Brillen. Am 21.11.2026 wurde in einem Abend das neue Backend aufgebaut (Schritte 1–10 des
+[MVP-Plans](docs/04-mvp-plan.md)). Am 22.11.2026 kam die wichtigste Kurskorrektur: Die
+Oberfläche hatte sich zu weit von V2 entfernt. Marcos Vorgabe – „eine Weiterentwicklung von V2
+und keine neue App“ – führte zurück zum V2-Konzept ([ADR 0012](docs/adr/0012-v2-konzept-beibehalten.md)):
+gleicher Ablauf, gleiche Optik, nur das edlere Lila-Blau zeigt die neue Version.
+
+Was V3 gegenüber V2 grundlegend anders macht:
+
+- **Backend mit Regeln:** Prompts, Ergebnisschema und Sicherheits-Policy liegen versioniert
+  auf dem Server, nicht mehr im Browser.
+- **Keine Sicherheitsfreigaben:** Jede KI-Antwort läuft durch die Safety-Policy; bei Elektro
+  ist immer eine Fachkraft vorgeschrieben, Risiken und Prüfschritte werden ausgewiesen.
+- **Projekte und Dokumentation:** Analysen gehören zu Projekten, Prüfschritte sind abhakbar,
+  dazu Notizen und Projektbericht; dauerhaft gespeichert in Postgres (Neon).
+- **Geprüft:** Hunderte automatische Tests für Backend, Oberfläche und den kompletten Ablauf im
+  Browser; jede Änderung läuft durch die CI, bevor sie live geht.
+- **Vorbereitet für AR:** Analyse und Sicherheitslogik sind geräteunabhängig, Bauteile werden
+  mit Positionsdaten markiert ([docs/06](docs/06-ar-ausbaustufe.md)).
+
+### Zeitleiste von V3
+
+Jede Zeile ist eine übernommene Änderung (Zeit = deutsche Zeit). Einzelheiten zu jeder Version
+stehen im [CHANGELOG](CHANGELOG.md) und in der App unter **Änderungsprotokoll** (Fußzeile).
+
+| Zeitpunkt | Änderung |
+|---|---|
+| 21.11.2026 17:24 | Doku: Bestandsaufnahme V2, Architektur und MVP-Plan für V3 |
+| 21.11.2026 17:33 | Neu: Backend-Gerüst mit FastAPI, Health-Endpunkt und CI (#1) |
+| 21.11.2026 17:43 | Neu: Ergebnisschema und Safety-Policy für alle Gewerke (#2) |
+| 21.11.2026 17:47 | Neu: Mock-KI und Provider-Schnittstelle mit Testdaten-Kennzeichnung |
+| 21.11.2026 17:57 | Neu: Persistenz (SQLAlchemy/SQLite) und Projekt-API (#4) |
+| 21.11.2026 18:03 | Neu: Foto-Upload, Bildbereinigung und Analyse-Endpunkt (#5) |
+| 21.11.2026 18:21 | Neu: Web-Gerüst mit Projektübersicht und generierten API-Typen (#6) |
+| 21.11.2026 18:25 | Neu: AR-Ausbaustufe in Architektur und Roadmap, Positionsdaten und Overlay-Schnittstelle (#7) |
+| 21.11.2026 18:52 | Neu: Vercel-Demo-Deployment mit Demo-Hinweis und Upload-Limit (#8) |
+| 21.11.2026 19:12 | Neu: Foto aufnehmen und Ergebnis mit markierten Bauteilen anzeigen (#9) |
+| 21.11.2026 19:23 | Neu: Dokumentation im Projekt – Prüfschritte abhaken, Notizen, Projektbericht (#10) |
+| 21.11.2026 19:58 | Neu: Härtung – Rate-Limit, Fehler-IDs, KI-Zeitlimit, Sicherheits-Header, Browser-Test (#11) |
+| 21.11.2026 21:32 | Neu: Gestaltung als Weiterentwicklung von V2, professionell und schlicht (#12) |
+| 21.11.2026 22:06 | Neu: Echte KI – Gemini wie in V2 (Schritt 9) (#13) |
+| 21.11.2026 22:25 | Behoben: Demo-Hinweis dezent in der Fußzeile (#14) |
+| 22.11.2026 11:12 | Neu: Oberfläche und Ablauf wie V2 (#15) |
+| 22.11.2026 11:21 | Neu: KI-Werkzeuge aus V2 und Fertig-Signal (#16) |
+| 22.11.2026 11:30 | Neu: PDF, Teilen, Lokal speichern, Verlauf wie V2 (#17) |
+| 22.11.2026 11:37 | Neu: Vorlesen, Offline, PWA wie V2 (#18) |
+| 22.11.2026 12:11 | Behoben: Kopfleiste auf schmalen Handys (#19) |
+| 22.11.2026 12:13 | Neu: Dauerhafter Speicher mit Postgres (Neon) (#20) |
+| 22.11.2026 12:55 | Doku: Neon-Datenbank verbunden (#21) |
+| 22.11.2026 12:59 | Technik: Vercel-Funktionen in Frankfurt (#22) |
+| 22.11.2026 13:23 | Neu: Start in der Projektübersicht, App-Symbol in V3-Farben (#23) |
+| 22.11.2026 13:54 | Behoben: Haftungshinweis nur bei Analysen (#24) |
+| 22.11.2026 14:08 | Behoben: Gemini-Überlastung (503) automatisch wiederholen (#25) |
+| 22.11.2026 14:14 | Neu: Entstehungsgeschichte in der README, Änderungsprotokoll in der App (#26) |
+
+### Ausblick
+
+Als Nächstes stehen die AR-Ausbaustufe und – nur mit Marcos ausdrücklicher Zustimmung, weil
+kostenpflichtig – weitere V2-Funktionen wie Vorlesen mit Google-Stimme, Standort und
+Video-Suche an.
+
 ## Ablauf wie in V2
 
 1. **Beruf auswählen** (wird gemerkt, App-Farbe folgt dem Beruf)
@@ -47,10 +148,11 @@ der Demo-Betrieb mit flüchtigem Speicher (ADR 0007).
 - [07 – Betrieb und Fehlerübersicht](docs/07-betrieb-und-fehler.md)
 - [ADRs](docs/adr/)
 
-## Tech-Stack (geplant)
+## Tech-Stack
 
-FastAPI + Pydantic + SQLModel (Backend) · React + TypeScript + Vite + Tailwind (Web) ·
-austauschbarer KI-Provider mit Mock als Standard.
+FastAPI + Pydantic + SQLAlchemy, SQLite lokal / Postgres (Neon) online (Backend) ·
+React + TypeScript + Vite + Tailwind, installierbar als App (Web) · Google Gemini wie in V2,
+lokal und in Tests eine kostenlose Mock-KI.
 
 ## Lokales Setup (Backend)
 

@@ -38,6 +38,21 @@ const health = {
 };
 
 describe("Projektübersicht", () => {
+  it("öffnet das Änderungsprotokoll über die Fußzeile", async () => {
+    mockApi((req) => {
+      if (path(req) === "/health") return { body: health };
+      if (path(req) === "/projects") return { body: [project] };
+      return undefined;
+    });
+    const user = userEvent.setup();
+    renderWithProviders(<App />, { route: "/" });
+
+    await user.click(await screen.findByRole("link", { name: /Änderungsprotokoll · Version/ }));
+    expect(
+      await screen.findByRole("heading", { name: "Änderungsprotokoll" }),
+    ).toBeInTheDocument();
+  });
+
   it("zeigt Projekte und den Testmodus-Hinweis", async () => {
     mockApi((req) => {
       if (path(req) === "/health") return { body: health };
