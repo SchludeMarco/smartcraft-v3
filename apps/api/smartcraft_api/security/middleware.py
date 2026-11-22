@@ -15,7 +15,9 @@ from smartcraft_api.security.rate_limit import RateLimiter, Window
 logger = logging.getLogger("smartcraft")
 
 _REQUEST_ID = re.compile(r"^[A-Za-z0-9-]{8,64}$")
-_ANALYSIS_POST = re.compile(r"^/projects/[^/]+/analyses/?$")
+# Alles, was die KI aufruft (und damit Kosten verursacht), zählt gegen das Analyse-Limit:
+# Analysen mit/ohne Projekt und KI-Werkzeuge.
+_ANALYSIS_POST = re.compile(r"^(?:/projects/[^/]+)?/analyses/?$|^/tools/[^/]+/?$")
 _WRITE_METHODS = {"POST", "PATCH", "PUT", "DELETE"}
 
 

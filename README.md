@@ -17,7 +17,9 @@ Optik, neuer Unterbau (siehe [ADR 0012](docs/adr/0012-v2-konzept-beibehalten.md)
 2. **Problem dokumentieren & analysieren** – bis zu 5 Fotos und/oder eine Beschreibung
 3. **Ergebnis der KI-Analyse** – „Lösung und Diagnose“ mit schrittweiser Lösung, dazu
    Sicherheitsblock, Unsicherheiten, nächste Prüfschritte (abhakbar) und Bauteil-Markierungen
-4. Optional: Analyse einem Projekt zuordnen, Projektbericht
+4. **KI-Werkzeuge** wie V2: Materialliste, Sicherheits-Check, Kostenschätzung, Kundenbericht
+   und je Beruf zwei Spezial-Tools (auch ohne Analyse nutzbar)
+5. Optional: Analyse einem Projekt zuordnen, Projektbericht
 
 > Sm@rtCraft erteilt **keine** Sicherheitsfreigaben. Bei elektrischen Installationen weist
 > jede Analyse Risiken, Unsicherheiten und die Pflicht zur Prüfung durch eine
@@ -75,6 +77,8 @@ API-Überblick (interaktiv unter `/docs`):
 | DELETE | `/projects/{id}/notes/{note_id}` | Notiz löschen |
 | GET | `/projects/{id}/report` | Projektbericht mit Haftungshinweis |
 | GET | `/meta/trades` | Gewerke mit Anzeigenamen |
+| GET | `/tools` | KI-Werkzeuge (allgemeine und Berufs-Spezial-Tools) |
+| POST | `/tools/{id}` | Werkzeug ausführen (`trade`, optional `analysis_id`, `note`); mit Sicherheitsblock |
 | GET | `/analyses/{id}/overlay` | Geräteunabhängige Einblendungs-Sicht (Markierungen, später AR) mit Pflicht-Sicherheitsblock |
 
 Beispiel mit der Mock-KI:

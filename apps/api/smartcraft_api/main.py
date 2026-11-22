@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from smartcraft_api import __version__
 from smartcraft_api.ai.registry import get_provider
-from smartcraft_api.api.routes import analyses, health, meta, projects
+from smartcraft_api.api.routes import analyses, health, meta, projects, tools
 from smartcraft_api.config import Settings, get_settings
 from smartcraft_api.media.storage import LocalStorage
 from smartcraft_api.persistence.db import init_db, make_engine, make_sessionmaker
@@ -34,4 +34,5 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(projects.router)
     app.include_router(analyses.router)
     app.include_router(meta.router)
+    app.include_router(tools.router)
     return app

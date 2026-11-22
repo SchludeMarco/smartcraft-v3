@@ -56,6 +56,19 @@ class AnalysisProvider(Protocol):
     async def analyze(self, request: AnalysisRequest) -> AnalysisDraft: ...
 
 
+@runtime_checkable
+class TextProvider(Protocol):
+    """Freitext/JSON für die KI-Werkzeuge (Materialliste, Kundenbericht …).
+
+    Das Ergebnis ist ungeprüfter Text – es läuft danach immer durch `apply_text_policy`.
+    """
+
+    @property
+    def info(self) -> ProviderInfo: ...
+
+    async def complete(self, system: str, user: str, *, json_mode: bool = False) -> str: ...
+
+
 def parse_draft(raw: str | bytes | dict[str, Any]) -> AnalysisDraft:
     """Modellausgabe (JSON-Text oder dict) streng gegen das Schema validieren."""
     try:

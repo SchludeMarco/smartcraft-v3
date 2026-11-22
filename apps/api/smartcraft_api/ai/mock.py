@@ -15,6 +15,7 @@ Szenario-Wahl (reproduzierbar):
 """
 
 import hashlib
+import json
 import re
 from enum import StrEnum
 from functools import cache
@@ -65,3 +66,31 @@ class MockProvider:
 
     async def analyze(self, request: AnalysisRequest) -> AnalysisDraft:
         return load_scenario(select_scenario(request))
+
+    async def complete(self, system: str, user: str, *, json_mode: bool = False) -> str:
+        return mock_tool_text(system, user, json_mode=json_mode)
+
+
+def mock_tool_text(system: str, user: str, *, json_mode: bool) -> str:
+    """Feste Beispielantwort für KI-Werkzeuge – unabhängig von der Eingabe, klar als Testdaten."""
+    if json_mode:
+        return json.dumps(
+            [
+                {
+                    "category": "Material",
+                    "item": "[TESTDATEN] Beispielartikel",
+                    "quantity": "1 Stk",
+                },
+                {
+                    "category": "Werkzeug",
+                    "item": "[TESTDATEN] Schraubendreher-Set",
+                    "quantity": "1 Set",
+                },
+            ],
+            ensure_ascii=False,
+        )
+    return (
+        "**[TESTDATEN]** Beispielantwort der Mock-KI – die Eingabe wurde nicht ausgewertet.\n\n"
+        "- Erster Beispielpunkt\n- Zweiter Beispielpunkt\n\n"
+        "## Hinweis\nNicht für Entscheidungen verwenden."
+    )

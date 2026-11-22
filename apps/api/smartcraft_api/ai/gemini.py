@@ -77,13 +77,28 @@ class GeminiProvider:
         }
 
     async def analyze(self, request: AnalysisRequest) -> AnalysisDraft:
+        return parse_draft(await self._generate(self.build_body(request)))
+
+    async def complete(self, system: str, user: str, *, json_mode: bool = False) -> str:
+        """Freitext für die KI-Werkzeuge (Ergebnis läuft danach durch die Text-Policy)."""
+        config: dict[str, Any] = {"temperature": 0.3}
+        if json_mode:
+            config["responseMimeType"] = "application/json"
+        body = {
+            "systemInstruction": {"parts": [{"text": system}]},
+            "contents": [{"role": "user", "parts": [{"text": user}]}],
+            "generationConfig": config,
+        }
+        return await self._generate(body)
+
+    async def _generate(self, body: dict[str, Any]) -> str:
         url = f"{API_BASE}/models/{self._model}:generateContent"
         headers = {"x-goog-api-key": self._api_key, "Content-Type": "application/json"}
         try:
             async with httpx.AsyncClient(
                 timeout=self._timeout, transport=self._transport
             ) as client:
-                response = await client.post(url, headers=headers, json=self.build_body(request))
+                response = await client.post(url, headers=headers, json=body)
         except httpx.TimeoutException as exc:
             raise ProviderError("Zeitüberschreitung bei der Gemini-API") from exc
         except httpx.HTTPError as exc:
@@ -93,7 +108,7 @@ class GeminiProvider:
             raise ProviderError("Gemini-Kontingent erschöpft (429) – später erneut versuchen")
         if response.status_code >= 400:
             raise ProviderError(f"Gemini-API antwortete mit Status {response.status_code}")
-        return parse_draft(extract_text(response))
+        return extract_text(response)
 
 
 def extract_text(response: httpx.Response) -> str:

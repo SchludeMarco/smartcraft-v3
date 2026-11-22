@@ -24,7 +24,7 @@ from smartcraft_api.domain.analysis import (
 from smartcraft_api.domain.trades import Trade
 from smartcraft_api.safety import rules
 
-POLICY_VERSION = "1.3.0"
+POLICY_VERSION = "1.4.0"
 
 
 class _Log:
