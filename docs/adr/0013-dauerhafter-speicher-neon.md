@@ -35,3 +35,5 @@ Aufrufe auf mehrere Instanzen; ein frisch angelegtes Projekt war beim nächsten 
 - 22.11.2026: Neon-Datenbank `neon-bistre-canvas` (Free) über den Vercel-Marketplace angelegt und
   mit `smartcraft-v3` verbunden (Production, Preview, Development). Der zusätzlich angelegte
   Blob-Speicher `smartcraft-v3-blob` wird von der App nicht genutzt.
+- Funktionen laufen in `fra1` (Frankfurt, `vercel.json`), direkt neben der Datenbank – vorher
+  `iad1` (USA), jede Abfrage ging über den Atlantik.
