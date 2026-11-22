@@ -19,7 +19,8 @@
 - Kleine, überprüfbare Schritte entlang `docs/04-mvp-plan.md`, je Schritt ein PR.
 - Commit-Stil: `feat:`, `fix:`, `docs:`, `test:`, `chore:`.
 - Vor jedem Commit: Tests, Linter, Typprüfung grün.
-- Architekturentscheidungen als ADR in `docs/adr/`; `CHANGELOG.md` pflegen.
+- Architekturentscheidungen als ADR in `docs/adr/`; `CHANGELOG.md` pflegen: jeder PR ergänzt einen Eintrag
+  `## [x.y.z] – JJJJ-MM-TT HH:MM` (deutsche Zeit) und eine Zeile in der Zeitleiste der README.
 - Keine Prompts oder KI-Logik im Frontend.
 
 ## Mehrere Clients und AR (siehe docs/06-ar-ausbaustufe.md)

@@ -1,11 +1,32 @@
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import type { Plugin } from "vite";
 import { defineConfig } from "vitest/config";
+
+// Das Änderungsprotokoll liegt im Repo-Wurzelverzeichnis (CHANGELOG.md) und wird beim Bauen
+// als Modul `virtual:changelog` in die App eingebunden – ohne das Repo für Vite freizugeben.
+const CHANGELOG = fileURLToPath(new URL("../../CHANGELOG.md", import.meta.url));
+const VIRTUAL_ID = "virtual:changelog";
+
+function changelogPlugin(): Plugin {
+  return {
+    name: "smartcraft-changelog",
+    resolveId: (id) => (id === VIRTUAL_ID ? `\0${VIRTUAL_ID}` : undefined),
+    load(id) {
+      if (id !== `\0${VIRTUAL_ID}`) return undefined;
+      this.addWatchFile(CHANGELOG);
+      return `export default ${JSON.stringify(readFileSync(CHANGELOG, "utf8"))};`;
+    },
+  };
+}
 
 // Im Entwicklungsmodus leitet Vite /api/* an das lokale FastAPI-Backend weiter.
 export default defineConfig({
   plugins: [
+    changelogPlugin(),
     react(),
     tailwindcss(),
     // Installierbar wie V2: App-Hülle wird gecacht, damit die App auch ohne Empfang startet
