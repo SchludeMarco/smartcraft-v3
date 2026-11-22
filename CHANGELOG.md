@@ -5,6 +5,13 @@ Alle Änderungen an Sm@rtCraft 3.0, neueste zuerst. Jeder Eintrag trägt einen Z
 der App unter „Änderungsprotokoll“ (Fußzeile) zu sehen; die CI prüft, dass jeder PR hier
 einen Eintrag mit Zeitstempel ergänzt.
 
+## [0.22.1] – 2026-11-22 15:15
+
+### Geändert (Wunsch Marco)
+- Versions-Abzeichen **„3.0“ steht direkt rechts neben dem Schriftzug Sm@rtCraft!** statt
+  hinter dem Untertitel. Auf sehr schmalen Handys werden Schrift und Abstände der Kopfleiste
+  etwas kleiner, damit nichts überlappt.
+
 ## [0.22.0] – 2026-11-22 14:42
 
 ### Hinzugefügt (Wunsch Marco)
