@@ -111,6 +111,7 @@ stehen im [CHANGELOG](CHANGELOG.md) und in der App unter **Änderungsprotokoll**
 | 22.11.2026 14:42 | Neu: Abzeichen „AR-vorbereitet“ in der Kopfleiste (#28) |
 | 22.11.2026 15:15 | Geändert: „3.0“ direkt neben dem Schriftzug (#29) |
 | 22.11.2026 16:01 | Behoben: „Lokal speichern“ erscheint sofort im Verlauf (#30) |
+| 22.11.2026 16:13 | Neu: Berufsfarbe färbt App und Hintergrund mit weichem Übergang (#31) |
 
 ### Ausblick
 
@@ -120,7 +121,7 @@ Video-Suche an.
 
 ## Ablauf wie in V2
 
-1. **Beruf auswählen** (wird gemerkt, App-Farbe folgt dem Beruf)
+1. **Beruf auswählen** (wird gemerkt; App und Hintergrund gleiten langsam in die Berufsfarbe)
 2. **Problem dokumentieren & analysieren** – bis zu 5 Fotos und/oder eine Beschreibung
 3. **Ergebnis der KI-Analyse** – „Lösung und Diagnose“ mit schrittweiser Lösung, dazu
    Sicherheitsblock, Unsicherheiten, nächste Prüfschritte (abhakbar) und Bauteil-Markierungen

@@ -5,6 +5,14 @@ Alle Änderungen an Sm@rtCraft 3.0, neueste zuerst. Jeder Eintrag trägt einen Z
 der App unter „Änderungsprotokoll“ (Fußzeile) zu sehen; die CI prüft, dass jeder PR hier
 einen Eintrag mit Zeitstempel ergänzt.
 
+## [0.23.0] – 2026-11-22 16:13
+
+### Hinzugefügt (Wunsch Marco)
+- **Berufsfarbe überall, mit weichem Übergang:** Nach der Berufswahl gleitet die ganze App
+  in rund 1,2 Sekunden in die neue Farbe – Hintergrund, Kopfleiste, Pergament-Rahmen,
+  Knöpfe, Symbole. Das Lila-Blau von 3.0 bleibt die Grundfarbe, die Berufsfarbe schimmert
+  durch. Bei „Bewegung reduzieren“ im Betriebssystem wechselt die Farbe ohne Animation.
+
 ## [0.22.2] – 2026-11-22 16:01
 
 ### Behoben (Wunsch Marco)
