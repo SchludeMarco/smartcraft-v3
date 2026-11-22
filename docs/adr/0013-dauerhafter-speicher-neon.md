@@ -29,3 +29,9 @@ Aufrufe auf mehrere Instanzen; ein frisch angelegtes Projekt war beim nächsten 
 - Tabellen werden beim Start angelegt (`create_all`); Schemaänderungen brauchen ab jetzt
   Migrationen (Alembic), sobald sich bestehende Tabellen ändern.
 - Das Rate-Limit bleibt pro Instanz im Speicher (ADR 0009).
+
+## Umsetzung
+
+- 22.11.2026: Neon-Datenbank `neon-bistre-canvas` (Free) über den Vercel-Marketplace angelegt und
+  mit `smartcraft-v3` verbunden (Production, Preview, Development). Der zusätzlich angelegte
+  Blob-Speicher `smartcraft-v3-blob` wird von der App nicht genutzt.
