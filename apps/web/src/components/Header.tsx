@@ -52,11 +52,8 @@ export function Header({ onHistory }: { onHistory: () => void }) {
               aria-hidden="true"
             />
           </Link>
-          <h1 className="font-display text-xl font-bold tracking-wide whitespace-nowrap text-lavender sm:text-2xl">
+          <h1 className="font-display min-w-0 text-lg font-bold tracking-wide whitespace-nowrap text-lavender min-[400px]:text-xl sm:text-2xl">
             Sm@rt<span className="text-white">Craft</span>!
-            <span className="ml-1.5 align-top font-sans text-[10px] font-semibold tracking-normal text-white/70">
-              3.0
-            </span>
           </h1>
         </div>
         <div className="flex shrink-0 gap-2 sm:gap-3">
@@ -80,7 +77,12 @@ export function Header({ onHistory }: { onHistory: () => void }) {
           </div>
         </div>
       </div>
-      <p className="relative z-10 mt-1 text-sm text-white/80 italic">Der Kollege in der Hosentasche.</p>
+      <p className="relative z-10 mt-1 flex items-center gap-2 text-sm text-white/80 italic">
+        Der Kollege in der Hosentasche.
+        <span className="rounded-full bg-white/15 px-1.5 py-0.5 text-[10px] font-semibold not-italic text-white/90">
+          3.0
+        </span>
+      </p>
     </header>
   );
 }
