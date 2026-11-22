@@ -24,7 +24,7 @@ from smartcraft_api.domain.analysis import (
 from smartcraft_api.domain.trades import Trade
 from smartcraft_api.safety import rules
 
-POLICY_VERSION = "1.2.0"
+POLICY_VERSION = "1.3.0"
 
 
 class _Log:
@@ -38,6 +38,8 @@ class _Log:
 
 def _searchable_texts(draft: AnalysisDraft) -> Iterable[str]:
     yield draft.summary
+    yield draft.diagnosis
+    yield from draft.solution_steps
     for c in draft.components:
         yield c.name
         yield c.category
@@ -91,8 +93,13 @@ def _append_unique(items: list[str], value: str) -> None:
 
 
 def apply_safety_policy(
-    draft: AnalysisDraft, trade: Trade, source: AnalysisSource
+    draft: AnalysisDraft,
+    trade: Trade,
+    source: AnalysisSource,
+    *,
+    image_count: int | None = None,
 ) -> AnalysisResult:
+    """`image_count=0` = Analyse nur anhand der Beschreibung (wie in V2 erlaubt)."""
     log = _Log()
 
     # 1. Freigabe-Formulierungen neutralisieren
@@ -103,6 +110,8 @@ def apply_safety_policy(
         return cleaned
 
     summary = clean(draft.summary, "Zusammenfassung")
+    diagnosis = clean(draft.diagnosis, "Diagnose")
+    solution_steps = [clean(step, "Lösungsschritt") for step in draft.solution_steps]
     observations = [
         Observation(
             text=clean(o.text, "Beobachtung"),
@@ -171,7 +180,7 @@ def apply_safety_policy(
         risk = RiskLevel.HIGH
 
     # 4. Bildqualität: Unbrauchbare Fotos senken die Konfidenz und verlangen ein neues Foto
-    if not draft.image_quality.usable:
+    if not draft.image_quality.usable and image_count != 0:
         if any(o.confidence != "low" for o in observations) or any(
             f.confidence != "low" for f in findings
         ):
@@ -183,6 +192,25 @@ def apply_safety_policy(
             log.add("image-quality", "Prüfschritt 'neues Foto' ergänzt")
         for issue in draft.image_quality.issues:
             _append_unique(uncertainties, f"Bildqualität: {issue}")
+
+    # 4b. Ohne Foto: nur Beschreibung – niedrige Konfidenz, Foto als erster Prüfschritt
+    if image_count == 0:
+        if any(o.confidence != "low" for o in observations) or any(
+            f.confidence != "low" for f in findings
+        ):
+            log.add("no-photo", "Konfidenz ohne Foto auf 'low' gesenkt")
+        observations = [o.model_copy(update={"confidence": "low"}) for o in observations]
+        findings = [f.model_copy(update={"confidence": "low"}) for f in findings]
+        _append_unique(uncertainties, rules.NO_PHOTO_UNCERTAINTY)
+        if rules.NO_PHOTO_CHECK.action not in existing_actions:
+            next_checks.insert(0, rules.NO_PHOTO_CHECK)
+            existing_actions.add(rules.NO_PHOTO_CHECK.action)
+            log.add("no-photo", "Prüfschritt 'Foto aufnehmen' ergänzt")
+
+    # 4c. Lösungsschritte bei Fachkraft-Pflicht klar als Fachkraft-Arbeit kennzeichnen
+    if qualified and solution_steps and solution_steps[0] != rules.QUALIFIED_SOLUTION_STEP:
+        solution_steps.insert(0, rules.QUALIFIED_SOLUTION_STEP)
+        log.add("qualified-solution", "Lösungsschritte als Fachkraft-Arbeit gekennzeichnet")
 
     # 5. Unsicherheiten sind nie leer
     _append_unique(uncertainties, rules.BASELINE_UNCERTAINTY)
@@ -205,6 +233,8 @@ def apply_safety_policy(
         trade=trade,
         source=source,
         summary=summary,
+        diagnosis=diagnosis,
+        solution_steps=solution_steps,
         image_quality=draft.image_quality,
         components=draft.components,
         observations=observations,

@@ -26,6 +26,7 @@ const analysis: AnalysisSummary = {
   is_test_data: true,
   capture_count: 1,
   open_check_count: 3,
+  title: "Unterverteilung ohne Blindabdeckung",
 };
 
 const health = {
@@ -44,7 +45,7 @@ describe("Projektübersicht", () => {
       return undefined;
     });
 
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/projects" });
 
     expect(await screen.findByText("EFH Müller")).toBeInTheDocument();
     expect(screen.getByText("Hauptstraße 5")).toBeInTheDocument();
@@ -61,7 +62,7 @@ describe("Projektübersicht", () => {
       return undefined;
     });
 
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/projects" });
 
     expect(await screen.findByText(/Demo-Speicher/)).toBeInTheDocument();
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
@@ -74,7 +75,7 @@ describe("Projektübersicht", () => {
       return undefined;
     });
 
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/projects" });
 
     expect(await screen.findByText(/Noch keine Projekte/)).toBeInTheDocument();
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
@@ -87,7 +88,7 @@ describe("Projektübersicht", () => {
       return undefined;
     });
 
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/projects" });
 
     expect(await screen.findByRole("alert")).toHaveTextContent(/Server/);
   });
@@ -107,7 +108,7 @@ describe("Projekt anlegen", () => {
       return undefined;
     });
     const user = userEvent.setup();
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/projects" });
 
     await user.click(await screen.findByRole("button", { name: "Neues Projekt" }));
     await user.type(screen.getByLabelText("Projektname *"), "  Neubau Schmidt ");
@@ -131,7 +132,7 @@ describe("Projekt anlegen", () => {
       return undefined;
     });
     const user = userEvent.setup();
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/projects" });
 
     await user.click(await screen.findByRole("button", { name: "Neues Projekt" }));
     await user.type(screen.getByLabelText("Projektname *"), "   ");
@@ -151,7 +152,7 @@ describe("Projekt anlegen", () => {
       return undefined;
     });
     const user = userEvent.setup();
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/projects" });
 
     await user.click(await screen.findByRole("button", { name: "Neues Projekt" }));
     await user.type(screen.getByLabelText("Projektname *"), "X");
@@ -175,7 +176,7 @@ describe("Rate-Limit", () => {
       return undefined;
     });
     const user = userEvent.setup();
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/projects" });
 
     await user.click(await screen.findByRole("button", { name: "Neues Projekt" }));
     await user.type(screen.getByLabelText("Projektname *"), "X");

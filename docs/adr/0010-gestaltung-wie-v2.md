@@ -1,6 +1,6 @@
 # ADR 0010 – Gestaltung als Weiterentwicklung von V2
 
-- Status: angenommen
+- Status: abgelöst durch ADR 0012 (2026-11-22)
 - Datum: 2026-11-21
 
 ## Kontext

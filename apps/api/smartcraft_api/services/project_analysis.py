@@ -1,4 +1,4 @@
-"""Neue Analyse in einem Projekt: Fotos bereinigen → KI → Policy → Dateien + DB speichern.
+"""Neue Analyse (Projekt optional): Fotos bereinigen → KI → Policy → Dateien + DB speichern.
 
 Garantien:
 - Originaldateien werden nie gespeichert und nie an einen Provider gegeben – nur die
@@ -55,15 +55,13 @@ async def create_project_analysis(
     session: Session,
     storage: Storage,
     provider: AnalysisProvider,
-    project: ProjectRow,
+    project: ProjectRow | None,
     trade: Trade,
     note: str | None,
     uploads: Sequence[bytes],
     limits: ImageLimits,
     timeout_seconds: float = 25.0,
 ) -> AnalysisRow:
-    if not uploads:
-        raise InvalidAnalysisRequestError("Mindestens ein Foto erforderlich.")
     if len(uploads) > MAX_IMAGES:
         raise InvalidAnalysisRequestError(f"Höchstens {MAX_IMAGES} Fotos pro Analyse.")
 

@@ -1,6 +1,33 @@
 # Changelog
 
-## [Unveröffentlicht]
+## [0.14.0] – 2026-11-22
+
+### Geändert (ADR 0012: V2-Konzept beibehalten)
+- **Startseite ist wieder der V2-Ablauf:** „1. Beruf auswählen → 2. Problem dokumentieren &
+  analysieren → 3. Ergebnis der KI-Analyse“ auf einer Seite, Ergebnis direkt darunter.
+- **Optik und Bedienung wie V2:** Pergament-Fenster, grüne Abschnitts-Pillen, grüner
+  „Problem analysieren“-Button, Pergament-„Zurücksetzen“, Berufskacheln im 5er-Raster,
+  App-Farbe folgt dem Beruf (gemerkt), roter Haftungshinweis (EU AI Act, pro Sitzung
+  wegklickbar), Startkarte „Starten Sie Ihre Bauanalyse“, Ladeanzeige und Fehlerbox wie V2.
+  Lila-Blau nur in Kopfleiste und Hintergrund als Zeichen für 3.0.
+- **Ergebnis „Lösung und Diagnose“** mit Diagnose und schrittweiser Lösung (neu im Schema),
+  ergänzt um Sicherheitsblock, Prüfschritte, Unsicherheiten und Foto-Markierungen.
+- Projekte sind optional: Kopfleisten-Knopf „Projekte“, Analyse nachträglich zuordnen oder
+  von der Projektseite aus direkt für ein Projekt starten.
+
+### Hinzugefügt
+- Analyse **ohne Foto, nur mit Beschreibung** (wie V2). Die Policy senkt dann die Konfidenz,
+  ergänzt „Foto aufnehmen“ als ersten Prüfschritt und eine Unsicherheit.
+- Schema 1.3.0: `diagnosis`, `solution_steps`. Policy 1.3.0: neutralisiert Freigabe-Sprache
+  auch dort, erkennt Gefahren in Diagnose/Schritten, stellt bei Fachkraft-Pflicht einen
+  Warnschritt voran. Prompt 1.1.0.
+- API: `POST /analyses` (ohne Projekt), `GET /analyses` (Verlauf), `PATCH /analyses/{id}`
+  (Projekt zuordnen). `project_id` einer Analyse ist jetzt optional.
+
+### Hinweis
+- Bestehende lokale SQLite-Dateien bitte neu anlegen (Spalte `project_id` jetzt nullable).
+
+## [0.13.1] – 2026-11-21
 
 ### Geändert
 - Demo-Hinweis zum flüchtigen Speicher ist kein Banner mehr, sondern eine dezente Zeile

@@ -91,7 +91,7 @@ def delete_project(session: Session, row: ProjectRow) -> list[str]:
 
 def save_analysis(
     session: Session,
-    project: ProjectRow,
+    project: ProjectRow | None,
     result: AnalysisResult,
     captures: Sequence[StoredCapture],
     note: str | None = None,
@@ -100,7 +100,7 @@ def save_analysis(
     if result.policy.version != POLICY_VERSION:
         raise ValueError("Ergebnis wurde nicht mit der aktuellen Safety-Policy erzeugt")
     row = AnalysisRow(
-        project_id=project.id,
+        project_id=project.id if project else None,
         trade=result.trade.value,
         note=note,
         result=result.model_dump(mode="json"),
@@ -138,7 +138,8 @@ def save_analysis(
     )
     now = utcnow()
     row.created_at = now
-    project.updated_at = now
+    if project is not None:
+        project.updated_at = now
     session.add(row)
     session.commit()
     return row
@@ -151,6 +152,20 @@ def list_analyses(session: Session, project_id: str) -> list[AnalysisRow]:
         .order_by(AnalysisRow.created_at.desc())
     )
     return list(session.scalars(stmt))
+
+
+def list_recent_analyses(session: Session, limit: int = 20) -> list[AnalysisRow]:
+    """Verlauf wie in V2: die letzten Analysen, egal ob mit oder ohne Projekt."""
+    stmt = select(AnalysisRow).order_by(AnalysisRow.created_at.desc()).limit(limit)
+    return list(session.scalars(stmt))
+
+
+def assign_project(session: Session, row: AnalysisRow, project: ProjectRow | None) -> AnalysisRow:
+    row.project_id = project.id if project else None
+    if project is not None:
+        project.updated_at = utcnow()
+    session.commit()
+    return row
 
 
 def get_analysis(session: Session, analysis_id: str) -> AnalysisRow | None:

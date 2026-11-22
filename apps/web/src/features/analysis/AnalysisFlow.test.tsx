@@ -56,10 +56,12 @@ function standardApi(uploadReply?: { status?: number; body: unknown }) {
     const p = path(req);
     if (p === "/health") return { body: health };
     if (p === "/meta/trades") return { body: trades };
+    if (p === "/projects") return { body: [project] };
     if (p === "/projects/p1") return { body: project };
-    if (p === "/projects/p1/analyses" && req.method === "POST")
+    if ((p === "/analyses" || p === "/projects/p1/analyses") && req.method === "POST")
       return uploadReply ?? { status: 201, body: detail };
-    if (p === "/projects/p1/analyses") return { body: [] };
+    if (p === `/analyses/${detail.id}` && req.method === "PATCH")
+      return { body: { ...detail, project_id: "p1" } };
     if (p === `/analyses/${detail.id}`) return { body: detail };
     if (p === `/analyses/${detail.id}/overlay`) return { body: overlay };
     if (p === `/analyses/${unusable.id}`) return { body: unusable };
@@ -68,45 +70,73 @@ function standardApi(uploadReply?: { status?: number; body: unknown }) {
   });
 }
 
-describe("Neue Analyse", () => {
-  it("lädt Fotos mit Gewerk und Notiz hoch und öffnet das Ergebnis", async () => {
+async function postedForm(calls: Request[]) {
+  const post = calls.find((c) => c.method === "POST");
+  if (!post) throw new Error("kein Upload");
+  return { url: path(post), form: await post.formData() };
+}
+
+describe("Startseite im V2-Ablauf", () => {
+  it("zeigt die drei V2-Schritte und Allround als Startberuf", async () => {
+    standardApi();
+    renderWithProviders(<App />);
+
+    expect(await screen.findByText("1. Beruf auswählen")).toBeInTheDocument();
+    expect(screen.getByText("2. Problem dokumentieren & analysieren")).toBeInTheDocument();
+    expect(screen.getByText("3. Ergebnis der KI-Analyse")).toBeInTheDocument();
+    expect(screen.getByText("Starten Sie Ihre Bauanalyse")).toBeInTheDocument();
+    expect(screen.getByText(/HAFTUNGSAUSSCHLUSS/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Problem analysieren" })).toBeDisabled();
+  });
+
+  it("analysiert Fotos mit Beruf und Beschreibung und zeigt das Ergebnis darunter", async () => {
     const { calls } = standardApi();
     const user = userEvent.setup();
-    renderWithProviders(<App />, { route: "/projects/p1/analyses/new" });
+    renderWithProviders(<App />);
 
     await user.click(await screen.findByRole("button", { name: "Elektriker" }));
+    expect(screen.getByText("Elektriker", { selector: "span.font-bold" })).toBeInTheDocument();
     await user.upload(screen.getByTestId("gallery-input"), [photo("a.jpg"), photo("b.jpg")]);
     expect(await screen.findByAltText("Foto 2")).toBeInTheDocument();
-    await user.type(screen.getByLabelText("Problembeschreibung (optional)"), "Keller");
+    await user.type(screen.getByLabelText("Problembeschreibung"), "Keller");
     await user.click(screen.getByRole("button", { name: "Problem analysieren" }));
 
-    expect(await screen.findByRole("region", { name: "Sicherheit" })).toBeInTheDocument();
-    const post = calls.find((c) => c.method === "POST");
-    if (!post) throw new Error("kein Upload");
-    const form = await post.formData();
+    expect(await screen.findByRole("heading", { name: "Lösung und Diagnose" })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Sicherheit" })).toBeInTheDocument();
+    expect(screen.getByText(detail.result.diagnosis as string)).toBeInTheDocument();
+    const { url, form } = await postedForm(calls);
+    expect(url).toBe("/analyses");
     expect(form.get("trade")).toBe("elektriker");
     expect(form.get("note")).toBe("Keller");
     expect(form.getAll("files")).toHaveLength(2);
   });
 
-  it("verlangt Gewerk und Foto, ohne den Server zu fragen", async () => {
+  it("analysiert wie in V2 auch nur mit Beschreibung", async () => {
     const { calls } = standardApi();
     const user = userEvent.setup();
-    renderWithProviders(<App />, { route: "/projects/p1/analyses/new" });
+    renderWithProviders(<App />);
 
-    await user.click(await screen.findByRole("button", { name: "Problem analysieren" }));
-    expect(screen.getByRole("alert")).toHaveTextContent("Bitte einen Beruf auswählen.");
-
-    await user.click(await screen.findByRole("button", { name: "Klempner (Sanitär/Heizung)" }));
+    await user.type(await screen.findByLabelText("Problembeschreibung"), "Wasserhahn tropft");
     await user.click(screen.getByRole("button", { name: "Problem analysieren" }));
-    expect(screen.getByRole("alert")).toHaveTextContent("mindestens ein Foto");
-    expect(calls.some((c) => c.method === "POST")).toBe(false);
+
+    await screen.findByRole("heading", { name: "Lösung und Diagnose" });
+    const { form } = await postedForm(calls);
+    expect(form.get("trade")).toBe("allround");
+    expect(form.getAll("files")).toHaveLength(0);
+  });
+
+  it("merkt sich den Beruf", async () => {
+    standardApi();
+    const user = userEvent.setup();
+    renderWithProviders(<App />);
+    await user.click(await screen.findByRole("button", { name: "Klempner (Sanitär/Heizung)" }));
+    expect(window.localStorage.getItem("smartcraft.trade")).toBe("klempner");
   });
 
   it("begrenzt auf fünf Fotos und lässt Fotos entfernen", async () => {
     standardApi();
     const user = userEvent.setup();
-    renderWithProviders(<App />, { route: "/projects/p1/analyses/new" });
+    renderWithProviders(<App />);
 
     const input = await screen.findByTestId("gallery-input");
     await user.upload(input, [1, 2, 3, 4, 5, 6].map((i) => photo(`${i}.jpg`)));
@@ -117,20 +147,65 @@ describe("Neue Analyse", () => {
     expect(screen.getByTestId("gallery-input")).toBeDisabled();
 
     await user.click(screen.getByRole("button", { name: "Foto 1 entfernen" }));
-    expect(screen.getByText("Fotos: 4/5")).toBeInTheDocument();
+    expect(screen.getByText("4/5 Bilder ausgewählt")).toBeInTheDocument();
   });
 
-  it("zeigt eine verständliche Meldung bei zu großem Upload", async () => {
+  it("zeigt Analysefehler wie V2 und behält die Fotos", async () => {
     standardApi({ status: 413, body: {} });
     const user = userEvent.setup();
-    renderWithProviders(<App />, { route: "/projects/p1/analyses/new" });
+    renderWithProviders(<App />);
 
-    await user.click(await screen.findByRole("button", { name: "Elektriker" }));
-    await user.upload(screen.getByTestId("gallery-input"), [photo()]);
+    await user.upload(await screen.findByTestId("gallery-input"), [photo()]);
     await screen.findByAltText("Foto 1");
     await user.click(screen.getByRole("button", { name: "Problem analysieren" }));
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("zu groß");
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("Analysefehler");
+    expect(alert).toHaveTextContent("zu groß");
+    expect(screen.getByAltText("Foto 1")).toBeInTheDocument();
+  });
+
+  it("analysiert direkt für ein Projekt, wenn es aus der Projektseite kommt", async () => {
+    const { calls } = standardApi();
+    const user = userEvent.setup();
+    renderWithProviders(<App />, { route: "/?projekt=p1" });
+
+    expect(await screen.findByText("EFH Müller")).toBeInTheDocument();
+    await user.type(screen.getByLabelText("Problembeschreibung"), "Riss");
+    await user.click(screen.getByRole("button", { name: "Problem analysieren" }));
+    await screen.findByRole("heading", { name: "Lösung und Diagnose" });
+    expect((await postedForm(calls)).url).toBe("/projects/p1/analyses");
+  });
+
+  it("ordnet ein Ergebnis nachträglich einem Projekt zu", async () => {
+    let current: AnalysisDetail = { ...detail, project_id: null };
+    const { calls } = mockApi((req) => {
+      const p = path(req);
+      if (p === "/health") return { body: health };
+      if (p === "/meta/trades") return { body: trades };
+      if (p === "/projects") return { body: [project] };
+      if (p === "/analyses" && req.method === "POST") return { status: 201, body: current };
+      if (p === `/analyses/${detail.id}` && req.method === "PATCH") {
+        current = { ...current, project_id: "p1" };
+        return { body: current };
+      }
+      if (p === `/analyses/${detail.id}`) return { body: current };
+      if (p === `/analyses/${detail.id}/overlay`) return { body: overlay };
+      return undefined;
+    });
+    const user = userEvent.setup();
+    renderWithProviders(<App />);
+
+    await user.type(await screen.findByLabelText("Problembeschreibung"), "Riss");
+    await user.click(screen.getByRole("button", { name: "Problem analysieren" }));
+    await screen.findByRole("heading", { name: "Lösung und Diagnose" });
+
+    await user.selectOptions(await screen.findByLabelText(/Einem Projekt zuordnen/), "p1");
+    await user.click(screen.getByRole("button", { name: "Zuordnen" }));
+    await waitFor(() => expect(calls.some((c) => c.method === "PATCH")).toBe(true));
+    const patch = calls.find((c) => c.method === "PATCH") as Request;
+    expect(await patch.json()).toEqual({ project_id: "p1" });
+    expect(await screen.findByRole("link", { name: "EFH Müller" })).toBeInTheDocument();
   });
 });
 

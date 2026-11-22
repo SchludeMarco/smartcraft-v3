@@ -17,7 +17,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from smartcraft_api.domain.trades import Trade
 
-SCHEMA_VERSION = "1.2.0"
+SCHEMA_VERSION = "1.3.0"
 
 Confidence = Literal["low", "medium", "high"]
 Severity = Literal["info", "notice", "warning", "critical"]
@@ -135,6 +135,14 @@ class AnalysisDraft(_Strict):
     """Ausgabe eines KI-Providers vor der Safety-Policy."""
 
     summary: str = Field(description="Neutrale Kurzbeschreibung des Gesehenen, 1–2 Sätze")
+    diagnosis: str = Field(
+        default="",
+        description="Wahrscheinliche Ursache (wie V2-Diagnose), als Vermutung formuliert",
+    )
+    solution_steps: list[str] = Field(
+        default=[],
+        description="Schrittweise Lösung für einen erfahrenen Handwerker, ein Schritt pro Eintrag",
+    )
     image_quality: ImageQuality
     components: list[Component] = []
     observations: list[Observation] = []
@@ -201,6 +209,8 @@ class AnalysisResult(_Strict):
     trade: Trade
     source: AnalysisSource
     summary: str
+    diagnosis: str = ""
+    solution_steps: list[str] = []
     image_quality: ImageQuality
     components: list[Component]
     observations: list[Observation]

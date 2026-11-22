@@ -16,8 +16,9 @@ export function useTrades() {
   });
 }
 
-export function useAnalysis(analysisId: string) {
+export function useAnalysis(analysisId: string, enabled = true) {
   return useQuery({
+    enabled: enabled && analysisId !== "",
     queryKey: analysisKeys.detail(analysisId),
     queryFn: async () =>
       unwrap(
@@ -42,32 +43,48 @@ export function captureImageUrl(analysisId: string, captureId: string): string {
   return `${apiBaseUrl}/analyses/${encodeURIComponent(analysisId)}/captures/${encodeURIComponent(captureId)}/image`;
 }
 
-export type NewAnalysis = { trade: Trade; note: string; photos: Blob[] };
+/** Wie V2: Foto(s) und/oder Beschreibung; Projekt optional. */
+export type NewAnalysis = { trade: Trade; note: string; photos: Blob[]; projectId?: string | null };
 
-export async function uploadAnalysis(projectId: string, data: NewAnalysis): Promise<AnalysisDetail> {
+export async function uploadAnalysis(data: NewAnalysis): Promise<AnalysisDetail> {
   const form = new FormData();
   form.append("trade", data.trade);
   if (data.note.trim()) form.append("note", data.note.trim());
   data.photos.forEach((photo, i) => form.append("files", photo, `foto-${i + 1}.jpg`));
-  const response = await globalThis.fetch(
-    new Request(`${apiBaseUrl}/projects/${encodeURIComponent(projectId)}/analyses`, {
-      method: "POST",
-      body: form,
-    }),
-  );
+  const url = data.projectId
+    ? `${apiBaseUrl}/projects/${encodeURIComponent(data.projectId)}/analyses`
+    : `${apiBaseUrl}/analyses`;
+  const response = await globalThis.fetch(new Request(url, { method: "POST", body: form }));
   const body: unknown = await response.json().catch(() => undefined);
   if (!response.ok) throw new ApiError(response.status, describeError(body, response.status));
   return body as AnalysisDetail;
 }
 
-export function useCreateAnalysis(projectId: string) {
+export function useCreateAnalysis() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: NewAnalysis) => uploadAnalysis(projectId, data),
+    mutationFn: uploadAnalysis,
     onSuccess: (detail) => {
       queryClient.setQueryData(analysisKeys.detail(detail.id), detail);
-      void queryClient.invalidateQueries({ queryKey: projectKeys.analyses(projectId) });
-      void queryClient.invalidateQueries({ queryKey: projectKeys.detail(projectId) });
+      void queryClient.invalidateQueries({ queryKey: ["analyses"] });
+      void queryClient.invalidateQueries({ queryKey: projectKeys.all });
+    },
+  });
+}
+
+/** Analyse einem Projekt zuordnen (oder mit `null` lösen). */
+export function useAssignProject(analysisId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (projectId: string | null) =>
+      unwrap(
+        await api.PATCH("/analyses/{analysis_id}", {
+          params: { path: { analysis_id: analysisId } },
+          body: { project_id: projectId },
+        }),
+      ),
+    onSuccess: (detail) => {
+      queryClient.setQueryData(analysisKeys.detail(detail.id), detail);
       void queryClient.invalidateQueries({ queryKey: projectKeys.all });
     },
   });

@@ -13,8 +13,13 @@ export function ProjectsPage() {
 
   return (
     <div className="space-y-4">
+      <Link to="/" className="text-sm font-semibold text-(--accent)">
+        ← Zur Analyse
+      </Link>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold tracking-tight text-ink">Projekte</h1>
+        <h1>
+          <span className="badge-pill">Projekte</span>
+        </h1>
         {!showForm && (
           <button
             onClick={() => setShowForm(true)}
@@ -37,7 +42,7 @@ export function ProjectsPage() {
       {projects.isError && <ErrorMessage error={projects.error} />}
       {projects.data?.length === 0 && !showForm && (
         <p className="rounded-xl border-2 border-dashed border-line p-6 text-center text-slate-600">
-          Noch keine Projekte. Lege eines an, um Analysen einer Baustelle zu sammeln.
+          Noch keine Projekte. Lege eines an, um Analysen einer Baustelle zu sammeln – oder ordne eine Analyse direkt nach dem Ergebnis zu.
         </p>
       )}
 
