@@ -2,6 +2,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AnalysisDetail, AnalysisOverlay } from "../../api/types";
+import { deleteLocalAnalysis } from "../../lib/localAnalyses";
 import { App } from "../../app/App";
 import detailFixture from "../../test/fixtures/analysis-unterverteilung.json";
 import unusableFixture from "../../test/fixtures/analysis-unbrauchbares_foto.json";
@@ -425,5 +426,38 @@ describe("PDF, Teilen, Lokal speichern, Verlauf (wie V2)", () => {
     expect(await screen.findByText("Lokal gespeicherte Analyse")).toBeInTheDocument();
     expect(screen.getByText(/Lokal auf diesem Gerät gespeichert/)).toBeInTheDocument();
     expect(screen.getByRole("region", { name: "Sicherheit" })).toBeInTheDocument();
+  });
+
+  it("zeigt eine lokal gespeicherte Analyse sofort im Verlauf, ohne Neuladen", async () => {
+    await deleteLocalAnalysis(detail.id);
+    standardApi();
+    const user = await analyzeOnce();
+
+    // Verlauf „Lokal“ einmal öffnen, solange noch nichts gespeichert ist
+    await user.click(screen.getByRole("button", { name: "Verlauf" }));
+    let dialog = await screen.findByRole("dialog", { name: "Verlauf" });
+    await user.click(within(dialog).getByRole("tab", { name: "Lokal" }));
+    expect(within(dialog).queryByText(detail.result.diagnosis as string)).not.toBeInTheDocument();
+    await user.click(within(dialog).getByRole("button", { name: "Verlauf schließen" }));
+    await waitFor(() => expect(screen.queryByRole("dialog", { name: "Verlauf" })).not.toBeInTheDocument());
+
+    await user.click(screen.getByRole("button", { name: "Lokal speichern" }));
+    expect(await screen.findByText("Gespeichert!")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Verlauf" }));
+    dialog = await screen.findByRole("dialog", { name: "Verlauf" });
+    await user.click(within(dialog).getByRole("tab", { name: "Lokal" }));
+    expect(await within(dialog).findByText(detail.result.diagnosis as string)).toBeInTheDocument();
+  });
+
+  it("bietet nach neuen Werkzeug-Ergebnissen erneutes lokales Speichern an", async () => {
+    standardApi();
+    const user = await analyzeOnce();
+    await user.click(screen.getByRole("button", { name: "Lokal speichern" }));
+    expect(await screen.findByText("Gespeichert!")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /Materialliste/ }));
+    expect(await screen.findByText("Blindabdeckung 1 TE")).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "Lokal speichern" })).toBeInTheDocument();
   });
 });

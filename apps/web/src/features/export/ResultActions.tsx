@@ -1,4 +1,5 @@
 import { AlertTriangle, CheckCircle, FileText, Loader2, Save, Share2 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import type { AnalysisDetail, ToolResult } from "../../api/types";
 import { saveLocalAnalysis } from "../../lib/localAnalyses";
@@ -48,7 +49,13 @@ export function ExportButtons({
   canSaveLocally?: boolean;
 }) {
   const input = useReportInput(detail, tools);
+  const queryClient = useQueryClient();
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  // Was zuletzt gesichert wurde: Kommen danach Werkzeug-Ergebnisse dazu, zeigt der Knopf
+  // wieder „Lokal speichern“, damit die neue Fassung gesichert werden kann.
+  const signature = `${detail.id}|${tools.map((t) => `${t.tool_id}:${t.text?.length ?? 0}:${t.materials?.length ?? 0}`).join(",")}`;
+  const [savedSignature, setSavedSignature] = useState<string | null>(null);
+  const shownState = saveState === "saved" && savedSignature !== signature ? "idle" : saveState;
   const [pdfError, setPdfError] = useState<string | null>(null);
 
   async function exportPdf() {
@@ -67,7 +74,10 @@ export function ExportButtons({
     try {
       const blobs = await loadPhotoBlobs(detail, photos);
       await saveLocalAnalysis({ id: detail.id, detail, tools, photos: blobs });
+      setSavedSignature(signature);
       setSaveState("saved");
+      // Verlauf „Lokal“ und geöffnete lokale Analysen sofort aktualisieren
+      await queryClient.invalidateQueries({ queryKey: ["local-analyses"] });
     } catch {
       setSaveState("error");
     }
@@ -87,20 +97,20 @@ export function ExportButtons({
         <button
           type="button"
           onClick={() => void saveLocally()}
-          disabled={saveState === "saving"}
+          disabled={shownState === "saving"}
           title="Analyse inkl. Bilder nur auf diesem Gerät speichern (kein Upload)"
           className="btn-secondary flex items-center justify-center px-4 py-2"
         >
-          {saveState === "saving" ? (
+          {shownState === "saving" ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-          ) : saveState === "saved" ? (
+          ) : shownState === "saved" ? (
             <CheckCircle className="mr-2 h-4 w-4 text-green-600" aria-hidden="true" />
-          ) : saveState === "error" ? (
+          ) : shownState === "error" ? (
             <AlertTriangle className="mr-2 h-4 w-4 text-red-600" aria-hidden="true" />
           ) : (
             <Save className="mr-2 h-4 w-4" aria-hidden="true" />
           )}
-          {saveState === "saved" ? "Gespeichert!" : saveState === "error" ? "Fehler beim Speichern" : "Lokal speichern"}
+          {shownState === "saved" ? "Gespeichert!" : shownState === "error" ? "Fehler beim Speichern" : "Lokal speichern"}
         </button>
       )}
       {pdfError && (

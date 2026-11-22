@@ -5,6 +5,16 @@ Alle Änderungen an Sm@rtCraft 3.0, neueste zuerst. Jeder Eintrag trägt einen Z
 der App unter „Änderungsprotokoll“ (Fußzeile) zu sehen; die CI prüft, dass jeder PR hier
 einen Eintrag mit Zeitstempel ergänzt.
 
+## [0.22.2] – 2026-11-22 16:01
+
+### Behoben (Wunsch Marco)
+- **„Lokal speichern“ aktualisiert die App sofort:** Die gesicherte Analyse erscheint direkt
+  im Verlauf unter „Lokal“ (vorher bis zu 30 s alter Stand oder erst nach Neuladen).
+- Kommen nach dem Speichern weitere Werkzeug-Ergebnisse dazu, zeigt der Knopf wieder
+  „Lokal speichern“, damit die neue Fassung gesichert werden kann.
+- Tests laufen mit denselben Zwischenspeicher-Einstellungen wie die App, damit solche Fehler
+  auffallen.
+
 ## [0.22.1] – 2026-11-22 15:15
 
 ### Geändert (Wunsch Marco)

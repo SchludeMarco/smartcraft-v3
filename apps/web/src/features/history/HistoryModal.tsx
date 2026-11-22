@@ -21,6 +21,7 @@ export function HistoryModal({ onClose }: { onClose: () => void }) {
     queryKey: ["local-analyses"],
     queryFn: listLocalAnalyses,
     enabled: tab === "lokal",
+    staleTime: 0,
   });
 
   async function remove(id: string) {

@@ -110,6 +110,7 @@ stehen im [CHANGELOG](CHANGELOG.md) und in der App unter **Änderungsprotokoll**
 | 22.11.2026 14:27 | Behoben: Tipp auf Logo oder Schriftzug führt zur Projektübersicht (#27) |
 | 22.11.2026 14:42 | Neu: Abzeichen „AR-vorbereitet“ in der Kopfleiste (#28) |
 | 22.11.2026 15:15 | Geändert: „3.0“ direkt neben dem Schriftzug (#29) |
+| 22.11.2026 16:01 | Behoben: „Lokal speichern“ erscheint sofort im Verlauf (#30) |
 
 ### Ausblick
 
