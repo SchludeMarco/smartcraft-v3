@@ -2,6 +2,25 @@
 /* Cinzel für den Schriftzug wie in V2 – lokal statt über Google Fonts */
 @import "@fontsource/cinzel/700.css";
 
+/* Berufsfarben als echte Farb-Eigenschaften registriert, damit sie weich überblenden können:
+   Wechselt der Beruf, gleiten Kopfleiste, Hintergrund, Knöpfe und Rahmen langsam in die neue
+   Farbe (Übergang auf .app-backdrop, Kinder erben den Zwischenwert). */
+@property --accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #6b6355;
+}
+@property --accent-dark {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #554f45;
+}
+@property --accent-soft {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #eae7e0;
+}
+
 /* Gestaltung = Sm@rtCraft V2 (Pergament-Fenster, Spiel-Look-Buttons, Berufsfarben).
    Einziger bewusster Unterschied: Kopfleiste und Hintergrund in edlem Lila-Blau als
    Zeichen für die Weiterentwicklung 3.0. Siehe docs/adr/0012-v2-konzept-beibehalten.md. */
@@ -38,8 +57,13 @@ body {
   /* Pergament-Panel mit doppeltem Rahmen – unverändert aus V2 */
   .panel-parchment,
   .surface-panel {
-    background: linear-gradient(180deg, #fbf6e9 0%, var(--color-parchment) 100%);
-    border: 2px solid var(--color-steel);
+    /* Pergament wie V2, mit einem Hauch der Berufsfarbe (Rahmen und unterer Verlauf) */
+    background: linear-gradient(
+      180deg,
+      #fbf6e9 0%,
+      color-mix(in srgb, var(--accent) 7%, var(--color-parchment)) 100%
+    );
+    border: 2px solid color-mix(in srgb, var(--accent) 60%, var(--color-steel));
     box-shadow:
       inset 0 0 0 4px #fffdf6,
       inset 0 0 0 5px rgba(109, 43, 43, 0.35),
@@ -48,7 +72,13 @@ body {
 
   /* Kopfleiste wie V2, Farbe jetzt Lila-Blau mit feinem Glanz (HeaderPlate) */
   .header-ornate {
-    background: linear-gradient(180deg, #5b4fc0 0%, var(--color-wood) 55%, var(--color-wood-dark) 100%);
+    /* Lila-Blau bleibt das Zeichen von 3.0, die Berufsfarbe schimmert leicht durch */
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--accent) 22%, #5b4fc0) 0%,
+      color-mix(in srgb, var(--accent) 18%, var(--color-wood)) 55%,
+      color-mix(in srgb, var(--accent) 14%, var(--color-wood-dark)) 100%
+    );
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
   }
 
@@ -180,8 +210,25 @@ body {
   /* Seitenhintergrund wie V2, Töne jetzt Lila-Blau */
   .app-backdrop {
     background:
-      radial-gradient(ellipse 80% 50% at 50% -5%, rgba(167, 139, 250, 0.22), transparent 60%),
-      linear-gradient(165deg, #2a2461 0%, #221d52 35%, #16133a 65%, #0b0a20 100%);
+      radial-gradient(
+        ellipse 80% 50% at 50% -5%,
+        color-mix(in srgb, var(--accent) 45%, rgba(167, 139, 250, 0.22)),
+        transparent 60%
+      ),
+      linear-gradient(
+        165deg,
+        color-mix(in srgb, var(--accent) 35%, #2a2461) 0%,
+        color-mix(in srgb, var(--accent) 28%, #221d52) 35%,
+        color-mix(in srgb, var(--accent) 18%, #16133a) 65%,
+        #0b0a20 100%
+      );
+    transition:
+      --accent 1.2s ease-in-out,
+      --accent-dark 1.2s ease-in-out,
+      --accent-soft 1.2s ease-in-out;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .app-backdrop { transition: none; }
   }
 }
 
