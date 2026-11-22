@@ -2,6 +2,8 @@
 
 ## [0.18.0] – 2026-11-22
 
+- Neon-Datenbank in Vercel verbunden; Production speichert ab jetzt dauerhaft.
+
 ### Hinzugefügt (ADR 0013)
 - **Dauerhafter Speicher:** Postgres (Neon über Vercel) für Projekte, Analysen und Fotos.
   Behebt „Projekt nicht gefunden“ auf Vercel (flüchtiger Speicher je Instanz).
