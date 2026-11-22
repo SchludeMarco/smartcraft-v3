@@ -120,7 +120,7 @@ async function postedForm(calls: Request[]) {
 describe("Startseite im V2-Ablauf", () => {
   it("zeigt die drei V2-Schritte und Allround als Startberuf", async () => {
     standardApi();
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/analyse" });
 
     expect(await screen.findByText("1. Beruf auswählen")).toBeInTheDocument();
     expect(screen.getByText("2. Problem dokumentieren & analysieren")).toBeInTheDocument();
@@ -133,7 +133,7 @@ describe("Startseite im V2-Ablauf", () => {
   it("analysiert Fotos mit Beruf und Beschreibung und zeigt das Ergebnis darunter", async () => {
     const { calls } = standardApi();
     const user = userEvent.setup();
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/analyse" });
 
     await user.click(await screen.findByRole("button", { name: "Elektriker" }));
     expect(screen.getByText("Elektriker", { selector: "span.font-bold" })).toBeInTheDocument();
@@ -155,7 +155,7 @@ describe("Startseite im V2-Ablauf", () => {
   it("analysiert wie in V2 auch nur mit Beschreibung", async () => {
     const { calls } = standardApi();
     const user = userEvent.setup();
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/analyse" });
 
     await user.type(await screen.findByLabelText("Problembeschreibung"), "Wasserhahn tropft");
     await user.click(screen.getByRole("button", { name: "Problem analysieren" }));
@@ -169,7 +169,7 @@ describe("Startseite im V2-Ablauf", () => {
   it("merkt sich den Beruf", async () => {
     standardApi();
     const user = userEvent.setup();
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/analyse" });
     await user.click(await screen.findByRole("button", { name: "Klempner (Sanitär/Heizung)" }));
     expect(window.localStorage.getItem("smartcraft.trade")).toBe("klempner");
   });
@@ -177,7 +177,7 @@ describe("Startseite im V2-Ablauf", () => {
   it("begrenzt auf fünf Fotos und lässt Fotos entfernen", async () => {
     standardApi();
     const user = userEvent.setup();
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/analyse" });
 
     const input = await screen.findByTestId("gallery-input");
     await user.upload(input, [1, 2, 3, 4, 5, 6].map((i) => photo(`${i}.jpg`)));
@@ -194,7 +194,7 @@ describe("Startseite im V2-Ablauf", () => {
   it("zeigt Analysefehler wie V2 und behält die Fotos", async () => {
     standardApi({ status: 413, body: {} });
     const user = userEvent.setup();
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/analyse" });
 
     await user.upload(await screen.findByTestId("gallery-input"), [photo()]);
     await screen.findByAltText("Foto 1");
@@ -209,7 +209,7 @@ describe("Startseite im V2-Ablauf", () => {
   it("analysiert direkt für ein Projekt, wenn es aus der Projektseite kommt", async () => {
     const { calls } = standardApi();
     const user = userEvent.setup();
-    renderWithProviders(<App />, { route: "/?projekt=p1" });
+    renderWithProviders(<App />, { route: "/analyse?projekt=p1" });
 
     expect(await screen.findByText("EFH Müller")).toBeInTheDocument();
     await user.type(screen.getByLabelText("Problembeschreibung"), "Riss");
@@ -235,7 +235,7 @@ describe("Startseite im V2-Ablauf", () => {
       return undefined;
     });
     const user = userEvent.setup();
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/analyse" });
 
     await user.type(await screen.findByLabelText("Problembeschreibung"), "Riss");
     await user.click(screen.getByRole("button", { name: "Problem analysieren" }));
@@ -317,7 +317,7 @@ describe("KI-Werkzeuge wie V2", () => {
   it("bietet Berufs-Spezial-Tools sofort nach der Berufswahl an", async () => {
     const { calls } = standardApi();
     const user = userEvent.setup();
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/analyse" });
 
     await user.click(await screen.findByRole("button", { name: "Elektriker" }));
     expect(await screen.findByText("Elektriker-Spezial-Tools")).toBeInTheDocument();
@@ -338,7 +338,7 @@ describe("KI-Werkzeuge wie V2", () => {
 
   it("zeigt beim Allround-Handwerker alle Spezial-Tools", async () => {
     standardApi();
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/analyse" });
     expect(await screen.findByText("Alle Berufs-Spezial-Tools")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Normteile-Finder/ })).toBeInTheDocument();
   });
@@ -346,7 +346,7 @@ describe("KI-Werkzeuge wie V2", () => {
   it("erstellt nach der Analyse eine Materialliste auf Basis der Diagnose", async () => {
     const { calls } = standardApi();
     const user = userEvent.setup();
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/analyse" });
 
     await user.type(await screen.findByLabelText("Problembeschreibung"), "FI fliegt");
     await user.click(screen.getByRole("button", { name: "Problem analysieren" }));
@@ -362,7 +362,7 @@ describe("KI-Werkzeuge wie V2", () => {
     const vibrate = vi.fn();
     Object.defineProperty(navigator, "vibrate", { value: vibrate, configurable: true });
     const user = userEvent.setup();
-    const { container } = renderWithProviders(<App />);
+    const { container } = renderWithProviders(<App />, { route: "/analyse" });
 
     await user.type(await screen.findByLabelText("Problembeschreibung"), "Riss");
     await user.click(screen.getByRole("button", { name: "Problem analysieren" }));
@@ -375,7 +375,7 @@ describe("KI-Werkzeuge wie V2", () => {
 describe("PDF, Teilen, Lokal speichern, Verlauf (wie V2)", () => {
   async function analyzeOnce() {
     const user = userEvent.setup();
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/analyse" });
     await user.type(await screen.findByLabelText("Problembeschreibung"), "FI fliegt");
     await user.click(screen.getByRole("button", { name: "Problem analysieren" }));
     await screen.findByRole("heading", { name: "Lösung und Diagnose" });

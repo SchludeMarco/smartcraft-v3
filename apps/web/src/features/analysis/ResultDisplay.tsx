@@ -373,7 +373,7 @@ function AssignProject({ detail }: { detail: AnalysisDetail }) {
       ) : (
         <p className="text-xs text-gray-500">
           Noch keine Projekte –{" "}
-          <Link to="/projects" className="font-semibold text-(--accent) underline">
+          <Link to="/" className="font-semibold text-(--accent) underline">
             Projekt anlegen
           </Link>
           .

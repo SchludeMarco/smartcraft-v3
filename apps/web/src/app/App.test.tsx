@@ -94,6 +94,32 @@ describe("Projektübersicht", () => {
   });
 });
 
+describe("Start in der Projektübersicht", () => {
+  it("zeigt beim App-Start die Projekte zur Auswahl", async () => {
+    mockApi((req) => {
+      if (path(req) === "/health") return { body: health };
+      if (path(req) === "/projects") return { body: [project] };
+      return undefined;
+    });
+    renderWithProviders(<App />);
+    expect(await screen.findByText("Projekt auswählen")).toBeInTheDocument();
+    expect(await screen.findByRole("link", { name: /EFH Müller/ })).toHaveAttribute("href", "/projects/p1");
+    expect(screen.getByRole("link", { name: "Schnellanalyse ohne Projekt" })).toHaveAttribute("href", "/analyse");
+    expect(screen.queryByLabelText("Projektname *")).not.toBeInTheDocument();
+  });
+
+  it("öffnet ohne Projekte direkt das Formular für das erste Projekt", async () => {
+    mockApi((req) => {
+      if (path(req) === "/health") return { body: health };
+      if (path(req) === "/projects") return { body: [] };
+      return undefined;
+    });
+    renderWithProviders(<App />);
+    expect(await screen.findByText(/leg dein erstes Projekt an/)).toBeInTheDocument();
+    expect(screen.getByLabelText("Projektname *")).toBeInTheDocument();
+  });
+});
+
 describe("Projekt anlegen", () => {
   it("legt ein Projekt an und öffnet es", async () => {
     const created: Project = { ...project, id: "neu", name: "Neubau Schmidt", analysis_count: 0 };

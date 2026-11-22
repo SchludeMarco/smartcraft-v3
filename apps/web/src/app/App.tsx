@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, Route, Routes } from "react-router";
+import { Link, Navigate, Route, Routes } from "react-router";
 import { Disclaimer } from "../components/Disclaimer";
 import { Header } from "../components/Header";
 import { StorageHint, TestModeBanner } from "../components/TestModeBanner";
@@ -45,8 +45,9 @@ function Shell() {
           <TestModeBanner />
           <Disclaimer />
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/" element={<ProjectsPage />} />
+            <Route path="/analyse" element={<HomePage />} />
+            <Route path="/projects" element={<Navigate to="/" replace />} />
             <Route path="/projects/:projectId" element={<ProjectPage />} />
             <Route path="/projects/:projectId/report" element={<ReportPage />} />
             <Route path="/analyses/:analysisId" element={<AnalysisPage />} />
