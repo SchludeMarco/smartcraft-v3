@@ -1,4 +1,4 @@
-import { FolderOpen, Hammer, History, Zap } from "lucide-react";
+import { Hammer, History, Zap } from "lucide-react";
 import { Link } from "react-router";
 
 /** Glanzstreifen und Akzentlinie der V2-Kopfleiste (reines Deko-Overlay). */
@@ -42,8 +42,8 @@ export function Header({ onHistory }: { onHistory: () => void }) {
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <Link
             to="/"
-            title="Zur Startseite"
-            aria-label="Sm@rtCraft – zur Startseite"
+            title="Zur Projektübersicht"
+            aria-label="Sm@rtCraft – zur Projektübersicht"
             className="relative block h-9 w-9 shrink-0 rounded-full sm:h-10 sm:w-10 focus:ring-2 focus:ring-white/70 focus:outline-none"
           >
             <Hammer className="absolute inset-0 h-full w-full text-white/90" aria-hidden="true" />
@@ -70,9 +70,9 @@ export function Header({ onHistory }: { onHistory: () => void }) {
             </button>
           </div>
           <div className="relative flex flex-col items-center">
-            <span className="mb-0.5 text-[9px] tracking-wide text-white/70 uppercase sm:text-[10px]">Projekte:</span>
-            <Link to="/projects" aria-label="Projekte" title="Projekte" className={ROUND}>
-              <FolderOpen className="h-5 w-5 text-white" aria-hidden="true" />
+            <span className="mb-0.5 text-[9px] tracking-wide text-white/70 uppercase sm:text-[10px]">Analyse:</span>
+            <Link to="/analyse" aria-label="Analyse" title="Schnellanalyse ohne Projekt" className={ROUND}>
+              <Zap className="h-5 w-5 text-white" aria-hidden="true" />
             </Link>
           </div>
         </div>

@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.19.0] – 2026-11-22
+
+### Geändert (Wunsch Marco)
+- **Start in der Projektübersicht:** Projekt auswählen oder anlegen; ohne Projekte ist das
+  Formular für das erste Projekt direkt offen. Der V2-Ablauf liegt unter `/analyse` und wird
+  aus dem Projekt („Neue Analyse für dieses Projekt“) oder als „Schnellanalyse ohne Projekt“
+  geöffnet. Kopfleiste: Logo → Projektübersicht, Knopf „Analyse“ → Schnellanalyse.
+- **App-Symbol in V3-Farben:** Lila-Blau mit Lavendel-Ring und -Blitz (Favicon,
+  Homescreen- und PWA-Icons, erzeugt mit `npm run icons`).
+
 ## [0.18.0] – 2026-11-22
 
 - Neon-Datenbank in Vercel verbunden; Production speichert ab jetzt dauerhaft.

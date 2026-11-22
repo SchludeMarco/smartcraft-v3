@@ -36,7 +36,7 @@ describe("Offline wie V2", () => {
   it("speichert ohne Empfang für später und holt die Analyse automatisch nach", async () => {
     const { calls } = api();
     const user = userEvent.setup();
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/analyse" });
     setOnline(false);
 
     expect(await screen.findByText("Kein Empfang")).toBeInTheDocument();
@@ -58,7 +58,7 @@ describe("Offline wie V2", () => {
   it("zeigt die Offline-Kurzhilfe des gewählten Berufs", async () => {
     api();
     const user = userEvent.setup();
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/analyse" });
     await user.click(await screen.findByRole("button", { name: "Elektriker" }));
     setOnline(false);
     await user.click(await screen.findByRole("button", { name: "Sofort-Checkliste ohne Internet ansehen" }));
@@ -84,7 +84,7 @@ describe("Diagnose vorlesen", () => {
       },
     );
     const user = userEvent.setup();
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, { route: "/analyse" });
     await user.type(await screen.findByLabelText("Problembeschreibung"), "FI");
     await user.click(screen.getByRole("button", { name: "Problem analysieren" }));
     await user.click(await screen.findByRole("button", { name: "Diagnose vorlesen" }));

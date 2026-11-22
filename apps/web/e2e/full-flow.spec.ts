@@ -7,11 +7,8 @@ const photo = path.join(path.dirname(fileURLToPath(import.meta.url)), "fixtures"
 test("V2-Ablauf: Beruf → Foto → Analyse → Projekt → Prüfschritt → Bericht", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("status")).toContainText("Testmodus");
-  await expect(page.getByText("1. Beruf auswählen")).toBeVisible();
-
-  // Projekt anlegen (über den Projekte-Knopf in der Kopfleiste)
-  await page.getByRole("link", { name: "Projekte" }).click();
-  await page.getByRole("button", { name: "Neues Projekt" }).click();
+  // Start in der Projektübersicht: ohne Projekte ist das Formular direkt offen
+  await expect(page.getByText("Projekt auswählen")).toBeVisible();
   await page.getByLabel("Projektname *").fill("E2E Unterverteilung Keller");
   await page.getByLabel("Adresse").fill("Teststraße 1");
   await page.getByRole("button", { name: "Projekt anlegen" }).click();
@@ -60,7 +57,7 @@ test("V2-Ablauf: Beruf → Foto → Analyse → Projekt → Prüfschritt → Ber
 });
 
 test("Hochgeladenes Foto wird ohne Standortdaten ausgeliefert", async ({ page, request }) => {
-  await page.goto("/");
+  await page.goto("/analyse");
   await page.getByRole("button", { name: "Maler" }).click();
   await page.getByTestId("gallery-input").setInputFiles(photo);
   await expect(page.getByAltText("Foto 1")).toBeVisible();
@@ -76,6 +73,7 @@ test("Hochgeladenes Foto wird ohne Standortdaten ausgeliefert", async ({ page, r
 
 test("Analyse nur mit Beschreibung, ohne Foto (wie V2)", async ({ page }) => {
   await page.goto("/");
+  await page.getByRole("link", { name: "Schnellanalyse ohne Projekt" }).click();
   await page.getByLabel("Problembeschreibung").fill("Silikonfuge in der Dusche schimmelt [mock:heizung]");
   await page.getByRole("button", { name: "Problem analysieren" }).click();
   await expect(page.getByRole("heading", { name: "Lösung und Diagnose" })).toBeVisible();
@@ -100,7 +98,7 @@ test("Analyse nur mit Beschreibung, ohne Foto (wie V2)", async ({ page }) => {
 });
 
 test("Offline: Analyse für später speichern und automatisch nachholen (wie V2)", async ({ page, context }) => {
-  await page.goto("/");
+  await page.goto("/analyse");
   await expect(page.getByText("1. Beruf auswählen")).toBeVisible();
   await context.setOffline(true);
   await expect(page.getByText("Kein Empfang")).toBeVisible();

@@ -53,3 +53,9 @@ Weiterentwicklung von V2. Lila-Blau soll nur die neue Version signalisieren.
 - Weiterhin bewusst nicht übernommen (kostenpflichtig bzw. eigene Entscheidung):
   Google-Sprachausgabe, Adresssuche/Standort, Video-Suche, Google-Login/Gästeliste, Feedback-
   und Admin-Bereich.
+
+## Nachtrag 22.11.2026 – Startseite
+
+Auf Wunsch von Marco startet die App in der Projektübersicht (Projekt wählen oder erstes
+anlegen). Der V2-Ablauf bleibt unverändert und liegt unter `/analyse`; erreichbar aus dem
+Projekt oder als Schnellanalyse ohne Projekt. Das App-Symbol trägt die V3-Farben.

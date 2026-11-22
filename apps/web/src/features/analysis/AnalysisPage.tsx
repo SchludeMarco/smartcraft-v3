@@ -24,10 +24,10 @@ export function AnalysisPage() {
   return (
     <article className="space-y-4" style={tradeStyle(detail.result.trade)}>
       <Link
-        to={detail.project_id ? `/projects/${detail.project_id}` : "/"}
+        to={detail.project_id ? `/projects/${detail.project_id}` : "/analyse"}
         className="text-sm font-semibold text-(--accent)"
       >
-        ← {detail.project_id ? "Zum Projekt" : "Zur Startseite"}
+        ← {detail.project_id ? "Zum Projekt" : "Zur Analyse"}
       </Link>
       <h2>
         <span className="badge-pill">Ergebnis der KI-Analyse</span>
