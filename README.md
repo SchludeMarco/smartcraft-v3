@@ -19,7 +19,9 @@ Optik, neuer Unterbau (siehe [ADR 0012](docs/adr/0012-v2-konzept-beibehalten.md)
    Sicherheitsblock, Unsicherheiten, nächste Prüfschritte (abhakbar) und Bauteil-Markierungen
 4. **KI-Werkzeuge** wie V2: Materialliste, Sicherheits-Check, Kostenschätzung, Kundenbericht
    und je Beruf zwei Spezial-Tools (auch ohne Analyse nutzbar)
-5. Optional: Analyse einem Projekt zuordnen, Projektbericht
+5. **Weitergeben** wie V2: Als PDF exportieren, Teilen (WhatsApp, Telegram, E-Mail …),
+   Lokal speichern; **Verlauf** über die Kopfleiste
+6. Optional: Analyse einem Projekt zuordnen, Projektbericht
 
 > Sm@rtCraft erteilt **keine** Sicherheitsfreigaben. Bei elektrischen Installationen weist
 > jede Analyse Risiken, Unsicherheiten und die Pflicht zur Prüfung durch eine

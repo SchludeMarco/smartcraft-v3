@@ -1,12 +1,15 @@
-import { AlertTriangle, ClipboardList, FolderPlus, ListChecks, Wrench } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { AlertTriangle, ClipboardList, FolderPlus, HardDrive, ListChecks, Wrench } from "lucide-react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link } from "react-router";
-import type { AnalysisDetail, OverlayAnchor } from "../../api/types";
+import type { AnalysisDetail, OverlayAnchor, ToolResult } from "../../api/types";
 import { ErrorMessage } from "../../components/ErrorMessage";
 import { TradeChip } from "../../components/TradeChip";
 import { formatDateTime } from "../../lib/format";
+import { SPECIAL_SCOPE, useToolResults } from "../../lib/toolResultsStore";
+import { ExportButtons, ShareButton, type PhotoSource } from "../export/ResultActions";
 import { useProjects } from "../projects/api";
 import { GenericTools } from "../tools/GenericTools";
+import { ToolResultCard } from "../tools/ToolResultCard";
 import { captureImageUrl, useAssignProject, useOverlay } from "./api";
 import { CheckItemCard } from "./CheckItemCard";
 import { CONFIDENCE_LABELS, SEVERITY_LABELS, SEVERITY_STYLES } from "./labels";
@@ -18,9 +21,25 @@ import { SafetyPanel } from "./SafetyPanel";
  * Prüfschritte mit Dokumentation und die Bauteil-Markierungen im Foto.
  * Reine Anzeige – Sicherheitslogik liegt ausschließlich im Backend.
  */
-export function ResultDisplay({ detail }: { detail: AnalysisDetail }) {
+export function ResultDisplay({
+  detail,
+  local,
+  includeSpecialTools = false,
+}: {
+  detail: AnalysisDetail;
+  /** Lokal gesicherte Analyse (nur Ansicht): Fotos und Werkzeug-Ergebnisse vom Gerät */
+  local?: { photos: Blob[]; tools: ToolResult[] };
+  /** Berufs-Spezial-Tool-Ergebnisse der Sitzung mit exportieren (Startseite, wie V2) */
+  includeSpecialTools?: boolean;
+}) {
   const result = detail.result;
-  const overlay = useOverlay(detail.id);
+  const overlay = useOverlay(local ? "" : detail.id);
+  const genericResults = useToolResults(detail.id);
+  const specialResults = useToolResults(SPECIAL_SCOPE);
+  const exportTools: ToolResult[] = local
+    ? local.tools
+    : [...genericResults, ...(includeSpecialTools ? specialResults : [])];
+  const photoSource: PhotoSource = local ? { kind: "local", photos: local.photos } : { kind: "server" };
   const [selected, setSelected] = useState<number | null>(null);
   const anchors = overlay.data?.anchors ?? [];
   const selectedAnchor = anchors.find((a) => a.component_index === selected);
@@ -59,6 +78,8 @@ export function ResultDisplay({ detail }: { detail: AnalysisDetail }) {
         {detail.note && <p className="text-sm text-gray-500">Ihre Beschreibung: {detail.note}</p>}
       </div>
 
+      <ExportButtons detail={detail} tools={exportTools} photos={photoSource} canSaveLocally={!local} />
+
       {result.solution_steps.length > 0 && (
         <section className="space-y-2" aria-label="Lösung">
           <h3 className="flex items-center text-lg font-semibold text-gray-700">
@@ -87,9 +108,22 @@ export function ResultDisplay({ detail }: { detail: AnalysisDetail }) {
         </section>
       )}
 
-      <GenericTools detail={detail} />
+      {local ? (
+        local.tools.length > 0 && (
+          <div className="space-y-3 border-t border-gray-100 pt-4">
+            <h3 className="text-lg font-semibold text-gray-700">Gespeicherte KI-Tool-Ergebnisse:</h3>
+            {local.tools.map((t) => (
+              <ToolResultCard key={t.tool_id} result={t} />
+            ))}
+          </div>
+        )
+      ) : (
+        <GenericTools detail={detail} />
+      )}
 
-      {detail.captures.length > 0 && (
+      {local && local.photos.length > 0 && <LocalPhotos photos={local.photos} />}
+
+      {!local && detail.captures.length > 0 && (
         <section className="space-y-2" aria-label="Fotos">
           <h3 className="text-lg font-semibold text-gray-700">Fotos</h3>
           {!result.image_quality.usable && (
@@ -124,9 +158,19 @@ export function ResultDisplay({ detail }: { detail: AnalysisDetail }) {
           Abhaken dokumentiert Ihre Arbeit – es ändert nicht die Einschätzung und ist keine Freigabe.
         </p>
         <ol className="space-y-2">
-          {detail.checks.map((check) => (
-            <CheckItemCard key={check.id} analysisId={detail.id} check={check} result={result} />
-          ))}
+          {detail.checks.map((check) =>
+            local ? (
+              <li key={check.id} className="rounded-lg border border-gray-200 bg-white p-3 text-sm shadow-inner">
+                <span className="font-medium">{check.action}</span>
+                {check.requires_qualified_person && <strong className="text-red-700"> – nur Fachkraft</strong>}
+                <span className="block text-xs text-gray-500">
+                  Status: {check.status === "done" ? "erledigt" : check.status === "not_applicable" ? "nicht zutreffend" : "offen"}
+                </span>
+              </li>
+            ) : (
+              <CheckItemCard key={check.id} analysisId={detail.id} check={check} result={result} />
+            ),
+          )}
         </ol>
       </section>
 
@@ -187,7 +231,16 @@ export function ResultDisplay({ detail }: { detail: AnalysisDetail }) {
         </details>
       )}
 
-      <AssignProject detail={detail} />
+      {local ? (
+        <p className="flex items-center gap-2 text-xs text-gray-500">
+          <HardDrive className="h-4 w-4" aria-hidden="true" />
+          Lokal auf diesem Gerät gespeichert (nur Ansicht).
+        </p>
+      ) : (
+        <AssignProject detail={detail} />
+      )}
+
+      <ShareButton detail={detail} tools={exportTools} photos={photoSource} />
 
       <footer className="space-y-1 border-t border-gray-200 pt-3 text-xs text-gray-500">
         <p>
@@ -206,6 +259,21 @@ export function ResultDisplay({ detail }: { detail: AnalysisDetail }) {
         )}
       </footer>
     </div>
+  );
+}
+
+function LocalPhotos({ photos }: { photos: Blob[] }) {
+  const urls = useMemo(() => photos.map((p) => URL.createObjectURL(p)), [photos]);
+  useEffect(() => () => urls.forEach((u) => URL.revokeObjectURL(u)), [urls]);
+  return (
+    <section className="space-y-2" aria-label="Fotos">
+      <h3 className="text-lg font-semibold text-gray-700">Fotos</h3>
+      <div className="grid grid-cols-2 gap-2">
+        {urls.map((u, i) => (
+          <img key={u} src={u} alt={`Foto ${i + 1}`} className="w-full rounded-lg border border-gray-200" />
+        ))}
+      </div>
+    </section>
   );
 }
 

@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { Link, Route, Routes } from "react-router";
 import { Disclaimer } from "../components/Disclaimer";
 import { Header } from "../components/Header";
 import { StorageHint, TestModeBanner } from "../components/TestModeBanner";
 import { AnalysisPage } from "../features/analysis/AnalysisPage";
 import { HomePage } from "../features/analysis/HomePage";
+import { HistoryModal } from "../features/history/HistoryModal";
+import { LocalAnalysisPage } from "../features/history/LocalAnalysisPage";
 import { ProjectPage } from "../features/projects/ProjectPage";
 import { ProjectsPage } from "../features/projects/ProjectsPage";
 import { ReportPage } from "../features/report/ReportPage";
@@ -21,6 +24,7 @@ export function App() {
 /** Aufbau wie V2: dunkler Hintergrund, Kopfleiste, Pergament-Hauptfenster, Fußzeile. */
 function Shell() {
   const { trade } = useCurrentTrade();
+  const [showHistory, setShowHistory] = useState(false);
   return (
     <div
       className="app-backdrop relative flex min-h-dvh justify-center p-4 sm:p-6 lg:p-8 print:block print:p-0"
@@ -30,7 +34,8 @@ function Shell() {
         id="app-shell"
         className="relative z-10 flex w-full max-w-sm flex-col items-center sm:max-w-xl md:max-w-2xl lg:max-w-3xl print:max-w-none"
       >
-        <Header />
+        <Header onHistory={() => setShowHistory(true)} />
+        {showHistory && <HistoryModal onClose={() => setShowHistory(false)} />}
         <main className="panel-parchment w-full space-y-6 p-4 sm:p-6 lg:p-8 print:border-0 print:p-0 print:shadow-none">
           <TestModeBanner />
           <Disclaimer />
@@ -40,6 +45,7 @@ function Shell() {
             <Route path="/projects/:projectId" element={<ProjectPage />} />
             <Route path="/projects/:projectId/report" element={<ReportPage />} />
             <Route path="/analyses/:analysisId" element={<AnalysisPage />} />
+            <Route path="/lokal/:localId" element={<LocalAnalysisPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

@@ -85,6 +85,9 @@ function standardApi(uploadReply?: { status?: number; body: unknown }) {
     const p = path(req);
     if (p === "/health") return { body: health };
     if (p === "/tools") return { body: tools };
+    if (p === "/analyses" && req.method === "GET")
+      return { body: [{ id: detail.id, project_id: null, created_at: detail.created_at, trade: "elektriker", risk_level: "high", qualified_person_required: true, is_test_data: true, capture_count: 1, open_check_count: 3, title: "Unterverteilung ohne Blindabdeckung", note: null }] };
+    if (p.startsWith(`/analyses/${detail.id}/captures/`)) return { body: "bild" };
     if (p === "/tools/elektriker-vde") return { body: toolReply("elektriker-vde", "elektriker") };
     if (p === "/tools/materialliste")
       return {
@@ -366,5 +369,61 @@ describe("KI-Werkzeuge wie V2", () => {
     await screen.findByRole("heading", { name: "Lösung und Diagnose" });
     expect(container.querySelector("#app-shell")).toHaveClass("shake");
     expect(vibrate).toHaveBeenCalled();
+  });
+});
+
+describe("PDF, Teilen, Lokal speichern, Verlauf (wie V2)", () => {
+  async function analyzeOnce() {
+    const user = userEvent.setup();
+    renderWithProviders(<App />);
+    await user.type(await screen.findByLabelText("Problembeschreibung"), "FI fliegt");
+    await user.click(screen.getByRole("button", { name: "Problem analysieren" }));
+    await screen.findByRole("heading", { name: "Lösung und Diagnose" });
+    return user;
+  }
+
+  it("exportiert den Bericht als druckbare Seite", async () => {
+    standardApi();
+    const written: string[] = [];
+    const fakeWindow = {
+      document: { open: vi.fn(), write: (h: string) => written.push(h), close: vi.fn() },
+      focus: vi.fn(),
+      print: vi.fn(),
+      setTimeout: (fn: () => void) => fn(),
+    };
+    vi.spyOn(window, "open").mockReturnValue(fakeWindow as unknown as Window);
+    const user = await analyzeOnce();
+
+    await user.click(screen.getByRole("button", { name: "Als PDF exportieren" }));
+    await waitFor(() => expect(fakeWindow.print).toHaveBeenCalled());
+    expect(written.join("")).toContain("<h2>Sicherheit</h2>");
+    expect(written.join("")).toContain(detail.result.safety.disclaimer);
+  });
+
+  it("teilt den Bericht per WhatsApp-Link mit Sicherheitshinweis", async () => {
+    standardApi();
+    const user = await analyzeOnce();
+    await user.click(screen.getByRole("button", { name: "Teilen" }));
+    const dialog = await screen.findByRole("dialog", { name: "Analyse teilen" });
+    const href = within(dialog).getByRole("link", { name: "WhatsApp" }).getAttribute("href") ?? "";
+    expect(decodeURIComponent(href)).toContain("Risiko: hoch");
+    expect(decodeURIComponent(href)).toContain("TESTDATEN");
+  });
+
+  it("speichert lokal und öffnet die Analyse aus dem Verlauf ohne Server", async () => {
+    standardApi();
+    const user = await analyzeOnce();
+    await user.click(screen.getByRole("button", { name: "Lokal speichern" }));
+    expect(await screen.findByText("Gespeichert!")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Verlauf" }));
+    const dialog = await screen.findByRole("dialog", { name: "Verlauf" });
+    expect(await within(dialog).findByText("Unterverteilung ohne Blindabdeckung")).toBeInTheDocument();
+    await user.click(within(dialog).getByRole("tab", { name: "Lokal" }));
+    await user.click(await within(dialog).findByText(detail.result.diagnosis as string));
+
+    expect(await screen.findByText("Lokal gespeicherte Analyse")).toBeInTheDocument();
+    expect(screen.getByText(/Lokal auf diesem Gerät gespeichert/)).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Sicherheit" })).toBeInTheDocument();
   });
 });

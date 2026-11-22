@@ -29,6 +29,7 @@ export function useAnalysis(analysisId: string, enabled = true) {
 
 export function useOverlay(analysisId: string) {
   return useQuery({
+    enabled: analysisId !== "",
     queryKey: analysisKeys.overlay(analysisId),
     queryFn: async () =>
       unwrap(
@@ -41,6 +42,15 @@ export function useOverlay(analysisId: string) {
 
 export function captureImageUrl(analysisId: string, captureId: string): string {
   return `${apiBaseUrl}/analyses/${encodeURIComponent(analysisId)}/captures/${encodeURIComponent(captureId)}/image`;
+}
+
+/** Verlauf wie V2: die letzten Analysen auf dem Server. */
+export function useRecentAnalyses(enabled = true) {
+  return useQuery({
+    enabled,
+    queryKey: ["analyses", "recent"],
+    queryFn: async () => unwrap(await api.GET("/analyses", { params: { query: { limit: 20 } } })),
+  });
 }
 
 /** Wie V2: Foto(s) und/oder Beschreibung; Projekt optional. */
