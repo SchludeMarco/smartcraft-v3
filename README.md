@@ -112,6 +112,7 @@ stehen im [CHANGELOG](CHANGELOG.md) und in der App unter **Änderungsprotokoll**
 | 22.11.2026 15:15 | Geändert: „3.0“ direkt neben dem Schriftzug (#29) |
 | 22.11.2026 16:01 | Behoben: „Lokal speichern“ erscheint sofort im Verlauf (#30) |
 | 22.11.2026 16:13 | Neu: Berufsfarbe färbt App und Hintergrund mit weichem Übergang (#31) |
+| 26.11.2026 11:40 | Geändert: offen für eingeladene Gäste wie RetroMind (#32) |
 
 ### Ausblick
 
@@ -140,7 +141,7 @@ Video-Suche an.
 ## Online-Demo (Vercel)
 
 Projekt `smartcraft-v3` im Vercel-Team von Marco; jeder Push auf `main` wird automatisch
-veröffentlicht. **Nur nach Vercel-Login erreichbar.** KI: Gemini. Speicher: Postgres bei Neon
+veröffentlicht. **Nur für eingeladene Gäste** – gemeinsame Gästeliste mit RetroMind (Google-Anmeldung über RetroMind, `middleware.js` + `guest-gate.js`, Secret `APPS_GUEST_SECRET`). KI: Gemini. Speicher: Postgres bei Neon
 (kostenlos, über den Vercel-Marketplace verbunden, ADR 0013); ohne verbundene Datenbank läuft
 der Demo-Betrieb mit flüchtigem Speicher (ADR 0007).
 

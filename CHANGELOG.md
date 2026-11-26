@@ -5,6 +5,14 @@ Alle Änderungen an Sm@rtCraft 3.0, neueste zuerst. Jeder Eintrag trägt einen Z
 der App unter „Änderungsprotokoll“ (Fußzeile) zu sehen; die CI prüft, dass jeder PR hier
 einen Eintrag mit Zeitstempel ergänzt.
 
+## [0.24.0] – 2026-11-26 11:40
+
+### Geändert (Wunsch Marco)
+- **Für Freunde und Bekannte geöffnet – wie RetroMind:** Statt Vercel-Login gilt jetzt die
+  gemeinsame Gästeliste aus dem RetroMind-Adminbereich. Wer eingeladen ist, meldet sich einmal
+  mit Google bei RetroMind an und landet direkt in Sm@rtCraft (`middleware.js`,
+  `guest-gate.js`, 30 Tage angemeldet, täglich nachgeprüft).
+
 ## [0.23.0] – 2026-11-22 16:13
 
 ### Hinzugefügt (Wunsch Marco)
